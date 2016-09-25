@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">zen</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_challenge">ChallengeActivity</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <string-array name="multi_select_list_preference_default_value"/>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_initial_reminder">Initial reminder</string>
+    <string name="pref_header_constant_reminder">Constant reminder</string>
+    <string name="pref_header_final_reminder">Final reminder</string>
+
+    <string name="pref_reminder_show_notification">Show notification</string>
+
+    <string name="pref_reminder_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_reminder_vibrate">Vibrate</string>
+</resources>
