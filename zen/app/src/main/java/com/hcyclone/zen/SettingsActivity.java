@@ -38,7 +38,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
    * A preference value change listener that updates the preference's summary
    * to reflect its new value.
    */
-  private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener = new Preference.OnPreferenceChangeListener() {
+  private static Preference.OnPreferenceChangeListener sBindPreferenceSummaryToValueListener
+      = new Preference.OnPreferenceChangeListener() {
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
       String stringValue = value.toString();
@@ -120,6 +121,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setupActionBar();
+    getFragmentManager().beginTransaction().replace(android.R.id.content,
+        new NotificationPreferenceFragment()).commit();
   }
 
   /**
@@ -139,15 +142,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   @Override
   public boolean onIsMultiPane() {
     return isXLargeTablet(this);
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-  public void onBuildHeaders(List<Header> target) {
-    loadHeadersFromResource(R.xml.pref_headers, target);
   }
 
   /**
@@ -176,13 +170,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       // updated to reflect the new value, per the Android Design
       // guidelines.
       bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+      bindPreferenceSummaryToValue(findPreference("pref_initial_reminder_list"));
+      bindPreferenceSummaryToValue(findPreference("pref_constant_reminder_list"));
+      bindPreferenceSummaryToValue(findPreference("pref_final_reminder_list"));
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
       int id = item.getItemId();
       if (id == android.R.id.home) {
-        startActivity(new Intent(getActivity(), SettingsActivity.class));
+        getActivity().finish();
         return true;
       }
       return super.onOptionsItemSelected(item);

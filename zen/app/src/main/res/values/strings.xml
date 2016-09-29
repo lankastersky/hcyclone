@@ -23,4 +23,66 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_reminder_vibrate">Vibrate</string>
+
+    <string-array name="pref_initial_reminder_list_titles">
+        <item>Never</item>
+        <item>6:00</item>
+        <item>7:00</item>
+        <item>8:00</item>
+        <item>9:00</item>
+        <item>10:00</item>
+        <item>11:00</item>
+        <item>12:00</item>
+    </string-array>
+    <string-array name="pref_initial_reminder_list_values">
+        <item>-1</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+    </string-array>
+
+    <string-array name="pref_final_reminder_list_titles">
+        <item>Never</item>
+        <item>18:00</item>
+        <item>19:00</item>
+        <item>20:00</item>
+        <item>21:00</item>
+        <item>22:00</item>
+        <item>23:00</item>
+        <item>24:00</item>
+    </string-array>
+    <string-array name="pref_final_reminder_list_values">
+        <item>-1</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+    </string-array>
+
+    <string-array name="pref_constant_reminder_list_titles">
+        <item>Never</item>
+        <item>every 15 minutes</item>
+        <item>every 30 minutes</item>
+        <item>every 1 hour</item>
+        <item>every 2 hours</item>
+        <item>every 3 hours</item>
+        <item>every 6 hours</item>
+    </string-array>
+    <string-array name="pref_constant_reminder_list_values">
+        <item>-1</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>180</item>
+        <item>360</item>
+    </string-array>
+
 </resources>
