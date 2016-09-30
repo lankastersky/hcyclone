@@ -1,5 +1,6 @@
 package com.hcyclone.zen;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,11 +16,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
-    ChallengeListFragment.OnListFragmentInteractionListener {
+    ChallengeListFragment.OnListFragmentInteractionListener,
+    FirebaseAdapter.FirebaseAuthListener {
 
-  Fragment currentFragment;
+  private Fragment currentFragment;
+  private ProgressDialog progress;
+
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,12 @@ public class MainActivity extends AppCompatActivity
           challengeListFragment, ChallengeFragment.class.getSimpleName()).commit();
 
       currentFragment = challengeListFragment;
+
+      FirebaseAdapter firebaseAdapter = new FirebaseAdapter();
+      progress = ProgressDialog.show(this,
+          "Initialization", "Loading data from server...", true);
+      firebaseAdapter.signIn(this);
+
     }
   }
 
@@ -104,6 +117,20 @@ public class MainActivity extends AppCompatActivity
     drawer.closeDrawer(GravityCompat.START);
 
     return true;
+  }
+
+  @Override
+  public void onAuthSuccess() {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("message");
+
+    myRef.setValue("Hello, World!");
+    progress.dismiss();
+  }
+
+  @Override
+  public void onAuthError(Exception exception) {
+    progress.dismiss();
   }
 
   private void replaceFragment(Fragment newFragment, Class clazz) {
