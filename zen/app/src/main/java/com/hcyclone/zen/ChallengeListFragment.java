@@ -61,6 +61,12 @@ public class ChallengeListFragment extends Fragment {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    ChallengeModel.getInstance().updateCurrentChallengeId();
+  }
+
+  @Override
   public void onDetach() {
     super.onDetach();
     mListener = null;

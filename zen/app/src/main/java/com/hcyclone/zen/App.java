@@ -14,13 +14,13 @@ public class App extends Application {
     if (BuildConfig.DEBUG) {
       enableStrictMode();
     }
-//    initSingletons();
-
+    initSingletons();
   }
 
-//  protected void initSingletons() {
-//    DB.getInstance().init(this);
-//  }
+  protected void initSingletons() {
+    ChallengeModel.getInstance().init(this);
+    AlarmService.getInstance().init(this);
+  }
 
   private static void enableStrictMode() {
     StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()

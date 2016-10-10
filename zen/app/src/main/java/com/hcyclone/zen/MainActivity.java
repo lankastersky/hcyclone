@@ -16,8 +16,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
@@ -45,17 +44,9 @@ public class MainActivity extends AppCompatActivity
     navigationView.setNavigationItemSelectedListener(this);
 
     if (savedInstanceState == null) {
-      ChallengeFragment challengeListFragment = new ChallengeFragment();
-      getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-          challengeListFragment, ChallengeFragment.class.getSimpleName()).commit();
-
-      currentFragment = challengeListFragment;
-
-      FirebaseAdapter firebaseAdapter = new FirebaseAdapter();
       progress = ProgressDialog.show(this,
           "Initialization", "Loading data from server...", true);
-      firebaseAdapter.signIn(this);
-
+      FirebaseAdapter.getInstance().signIn(this);
     }
   }
 
@@ -121,11 +112,25 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onAuthSuccess() {
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("message");
+    ChallengeModel.getInstance().loadChallenges(new FirebaseAdapter.FirebaseDataListener() {
 
-    myRef.setValue("Hello, World!");
-    progress.dismiss();
+      @Override
+      public void onError(Exception e) {
+        progress.dismiss();
+      }
+
+      @Override
+      public void onChallenges(List<Challenge> challenges) {
+        progress.dismiss();
+
+        ChallengeFragment challengeFragment = new ChallengeFragment();
+        // TODO: don't call commitAllowingStateLoss().
+        getSupportFragmentManager().beginTransaction().add(R.id.content_container,
+            challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
+
+        currentFragment = challengeFragment;
+      }
+    });
   }
 
   @Override

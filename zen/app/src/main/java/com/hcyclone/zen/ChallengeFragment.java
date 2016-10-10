@@ -12,22 +12,16 @@ import android.widget.TextView;
 
 public class ChallengeFragment extends Fragment {
 
+  private static final String TAG = ChallengeFragment.class.getSimpleName();
   public static final String CHALLENGE_ID = "challengeId";
 
-  private String mChallengeId;
-  private Button mAcceptButton;
+  private String challengeId;
+  private Button acceptButton;
 
   public ChallengeFragment() {
     // Required empty public constructor
   }
 
-  /**
-   * Use this factory method to create a new instance of
-   * this fragment using the provided parameters.
-   *
-   * @return A new instance of fragment ChallengeFragment.
-   */
-  // TODO: Rename and change types and number of parameters
   public static ChallengeFragment newInstance(String challengeId) {
     ChallengeFragment fragment = new ChallengeFragment();
     Bundle args = new Bundle();
@@ -40,7 +34,7 @@ public class ChallengeFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     if (getArguments() != null) {
-      mChallengeId = getArguments().getString(CHALLENGE_ID);
+      challengeId = getArguments().getString(CHALLENGE_ID);
     }
   }
 
@@ -49,32 +43,28 @@ public class ChallengeFragment extends Fragment {
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_challenge, container, false);
-
-    Challenge challenge;
-    if (TextUtils.isEmpty(mChallengeId)) {
-      challenge = ChallengeModel.getInstance().getCurrentChallenge();
-      mChallengeId = challenge.id;
-    } else {
-      challenge = ChallengeModel.ITEM_MAP.get(mChallengeId);
+    if (TextUtils.isEmpty(challengeId)) {
+      createChallengeButton(view);
+      ChallengeModel.getInstance().updateCurrentChallenge();
     }
-
-    createChallengeButton(view, challenge);
-
     return view;
   }
 
-  private void createChallengeButton(View view, Challenge challenge) {
+
+
+  private void createChallengeButton(View view) {
+    final Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
     ((TextView) view.findViewById(R.id.id)).setText(challenge.id);
     ((TextView) view.findViewById(R.id.content)).setText(challenge.content);
     ((TextView) view.findViewById(R.id.details)).setText(challenge.details);
 
-    mAcceptButton = (Button) view.findViewById(R.id.accept_button);
-    mAcceptButton.setOnClickListener(new View.OnClickListener() {
+    acceptButton = (Button) view.findViewById(R.id.accept_button);
+    acceptButton.setVisibility(View.VISIBLE);
+    acceptButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Log.d(ChallengeFragment.class.getSimpleName(), "mAcceptButton clicked");
-        Challenge challenge = ChallengeModel.ITEM_MAP.get(mChallengeId);
-        challenge.updateStatus();
+        Log.d(TAG, "acceptButton clicked");
+        ChallengeModel.getInstance().updateCurrentChallenge();
         updateAcceptButton(challenge);
       }
     });
@@ -82,13 +72,11 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void updateAcceptButton(Challenge challenge) {
-    if (challenge.getStatus() == Challenge.NONACCEPTED
-        || challenge.getStatus() == Challenge.ACCEPTED) {
-      mAcceptButton.setVisibility(View.VISIBLE);
-    } else {
-      mAcceptButton.setVisibility(View.GONE);
+    if (challenge.getStatus() == Challenge.FINISHED
+        || challenge.getStatus() == Challenge.DECLINED) {
+      acceptButton.setEnabled(false);
     }
-    mAcceptButton.setText(getAcceptButtonText(challenge));
+    acceptButton.setText(getAcceptButtonText(challenge));
   }
 
   private String getAcceptButtonText(Challenge challenge) {
@@ -100,10 +88,8 @@ public class ChallengeFragment extends Fragment {
       case Challenge.FINISHED:
         text = "Finished";
         break;
-//      case Challenge.DECLINED:
-//        text = "Declined";
-//        break;
       default:
+        Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;
     }
     return text;

@@ -55,18 +55,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             index >= 0
                 ? listPreference.getEntries()[index]
                 : null);
-
       } else if (preference instanceof RingtonePreference) {
         // For ringtone preferences, look up the correct display value
         // using RingtoneManager.
         if (TextUtils.isEmpty(stringValue)) {
           // Empty values correspond to 'silent' (no ringtone).
           preference.setSummary(R.string.pref_ringtone_silent);
-
         } else {
           Ringtone ringtone = RingtoneManager.getRingtone(
               preference.getContext(), Uri.parse(stringValue));
-
           if (ringtone == null) {
             // Clear the summary if there was a lookup error.
             preference.setSummary(null);
@@ -77,7 +74,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             preference.setSummary(name);
           }
         }
-
       } else {
         // For all other preferences, set the summary to the value's
         // simple string representation.
@@ -153,10 +149,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         || NotificationPreferenceFragment.class.getName().equals(fragmentName);
   }
 
-  /**
-   * This fragment shows notification preferences only. It is used when the
-   * activity is showing a two-pane settings UI.
-   */
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public static class NotificationPreferenceFragment extends PreferenceFragment {
     @Override
