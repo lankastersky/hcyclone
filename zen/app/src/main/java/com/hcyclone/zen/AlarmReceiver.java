@@ -13,23 +13,30 @@ public class AlarmReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    NotificationCompat.Builder mBuilder =
-        new NotificationCompat.Builder(context)
-            .setSmallIcon(android.R.drawable.ic_notification_overlay)
-            .setContentTitle("My notification")
-            .setContentText("Hello World!");
-    Intent resultIntent = new Intent(context, MainActivity.class);
-    PendingIntent resultPendingIntent =
-        PendingIntent.getActivity(
-            context,
-            0,
-            resultIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
-        );
-    mBuilder.setContentIntent(resultPendingIntent);
-    int mNotificationId = 001;
-    NotificationManager mNotifyMgr =
-        (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    switch (intent.getIntExtra(AlarmService.ID_PARAM, 0)) {
+      case AlarmService.NIGHTLY_ALARM_CODE:
+
+        break;
+      default:
+        NotificationCompat.Builder mBuilder =
+            new NotificationCompat.Builder(context)
+                .setSmallIcon(android.R.drawable.ic_notification_overlay)
+                .setContentTitle("My notification")
+                .setContentText("Hello World!");
+        Intent resultIntent = new Intent(context, MainActivity.class);
+        PendingIntent resultPendingIntent =
+            PendingIntent.getActivity(
+                context,
+                0,
+                resultIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            );
+        mBuilder.setContentIntent(resultPendingIntent);
+        int mNotificationId = 001;
+        NotificationManager mNotifyMgr =
+            (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        break;
+    }
   }
 }

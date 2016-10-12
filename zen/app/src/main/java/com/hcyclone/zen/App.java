@@ -15,8 +15,12 @@ public class App extends Application {
       enableStrictMode();
     }
     initSingletons();
+    setAlarms();
   }
 
+  private void setAlarms() {
+    AlarmService.getInstance().createNightlyAlarmIfNeeded();
+  }
   protected void initSingletons() {
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);
