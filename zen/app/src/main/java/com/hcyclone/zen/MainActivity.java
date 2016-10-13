@@ -1,8 +1,13 @@
 package com.hcyclone.zen;
 
 import android.app.ProgressDialog;
+import android.app.Service;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,11 +26,30 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener,
-    FirebaseAdapter.FirebaseAuthListener {
+    FirebaseAdapter.FirebaseDataListener {
+
+  private static final String TAG = MainActivity.class.getSimpleName();
 
   private Fragment currentFragment;
   private ProgressDialog progress;
+  private FirebaseService firebaseService;
+  private boolean bound;
 
+  private final ServiceConnection serviceConnection = new ServiceConnection() {
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+      Log.d(TAG, "onServiceConnected  " + name);
+      firebaseService = ((FirebaseService.ServiceBinder) service).getService();
+      firebaseService.loadChallenges(MainActivity.this);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+      Log.d(TAG, "onServiceDisconnected");
+      firebaseService = null;
+    }
+  };
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +67,43 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-    if (savedInstanceState == null) {
-      progress = ProgressDialog.show(this,
-          "Initialization", "Loading data from server...", true);
-      FirebaseAdapter.getInstance().signIn(this);
+//    if (savedInstanceState == null) {
+//      progress = ProgressDialog.show(this,
+//          "Initialization", "Loading data from server...", true);
+//      FirebaseAdapter.getInstance().signIn(this);
+//    }
+    progress = ProgressDialog.show(this, "Initialization", "Loading data from server...", true);
+
+    bindService(new Intent(this, FirebaseService.class),
+        serviceConnection, Service.BIND_AUTO_CREATE);
+    bound = true;
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    // Don't receive notifications if app is started.
+    ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+    getPackageManager().setComponentEnabledSetting(receiver,
+        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+        PackageManager.DONT_KILL_APP);
+  }
+
+  @Override
+  protected void onStop() {
+    super.onStop();
+    ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+    getPackageManager().setComponentEnabledSetting(receiver,
+        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+        PackageManager.DONT_KILL_APP);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    if (bound) {
+      unbindService(serviceConnection);
+      bound = false;
     }
   }
 
@@ -111,32 +168,49 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onAuthSuccess() {
-    ChallengeModel.getInstance().loadChallenges(new FirebaseAdapter.FirebaseDataListener() {
+  public void onChallenges(List<Challenge> challenges) {
+    progress.dismiss();
 
-      @Override
-      public void onError(Exception e) {
-        progress.dismiss();
-      }
+    ChallengeFragment challengeFragment = new ChallengeFragment();
+    // TODO: don't call commitAllowingStateLoss().
+    getSupportFragmentManager().beginTransaction().add(R.id.content_container,
+        challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
 
-      @Override
-      public void onChallenges(List<Challenge> challenges) {
-        progress.dismiss();
-
-        ChallengeFragment challengeFragment = new ChallengeFragment();
-        // TODO: don't call commitAllowingStateLoss().
-        getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-            challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
-
-        currentFragment = challengeFragment;
-      }
-    });
+    currentFragment = challengeFragment;
   }
 
   @Override
-  public void onAuthError(Exception exception) {
-    progress.dismiss();
+  public void onError(Exception exception) {
+      progress.dismiss();
   }
+
+//  @Override
+//  public void onAuthSuccess() {
+//    ChallengeModel.getInstance().loadChallenges(new FirebaseAdapter.FirebaseDataListener() {
+//
+//      @Override
+//      public void onError(Exception exception) {
+//        progress.dismiss();
+//      }
+//
+//      @Override
+//      public void onChallenges(List<Challenge> challenges) {
+//        progress.dismiss();
+//
+//        ChallengeFragment challengeFragment = new ChallengeFragment();
+//        // TODO: don't call commitAllowingStateLoss().
+//        getSupportFragmentManager().beginTransaction().add(R.id.content_container,
+//            challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
+//
+//        currentFragment = challengeFragment;
+//      }
+//    });
+//  }
+//
+//  @Override
+//  public void onAuthError(Exception exception) {
+//    progress.dismiss();
+//  }
 
   private void replaceFragment(Fragment newFragment, Class clazz) {
     if (newFragment == currentFragment) {

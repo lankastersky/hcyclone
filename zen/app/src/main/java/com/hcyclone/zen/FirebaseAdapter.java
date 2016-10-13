@@ -86,8 +86,6 @@ public class FirebaseAdapter {
     FirebaseAuth.getInstance().signOut();
     FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     authStateListener = null;
-    //firebaseAuth = null;
-    //firebase = null;
   }
 
   private void authenticate() {

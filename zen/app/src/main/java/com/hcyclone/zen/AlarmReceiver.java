@@ -15,7 +15,7 @@ public class AlarmReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     switch (intent.getIntExtra(AlarmService.ID_PARAM, 0)) {
       case AlarmService.NIGHTLY_ALARM_CODE:
-
+        context.startService(new Intent(context, FirebaseService.class));
         break;
       default:
         NotificationCompat.Builder mBuilder =
