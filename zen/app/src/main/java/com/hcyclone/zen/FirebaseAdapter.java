@@ -47,8 +47,7 @@ public class FirebaseAdapter {
   /**
    * Reference to Firebase backend.
    */
-  //private DatabaseReference firebase;
-  //private FirebaseAuth firebaseAuth;
+  private FirebaseAuth firebaseAuth;
   private FirebaseAuthListener firebaseAuthListener;
   FirebaseAuth.AuthStateListener authStateListener;
 
@@ -65,7 +64,7 @@ public class FirebaseAdapter {
     FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
       @Override
       public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
-        //this.FirebaseAdapter.firebaseAuth = firebaseAuth;
+        FirebaseAdapter.this.firebaseAuth = firebaseAuth;
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
           Log.d(TAG, "User is signed in with uid: " + user.getUid());
@@ -86,6 +85,11 @@ public class FirebaseAdapter {
     FirebaseAuth.getInstance().signOut();
     FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
     authStateListener = null;
+    firebaseAuth = null;
+  }
+
+  public boolean isSignedIn() {
+    return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
   }
 
   private void authenticate() {

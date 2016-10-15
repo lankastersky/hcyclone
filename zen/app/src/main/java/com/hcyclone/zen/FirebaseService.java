@@ -1,66 +1,72 @@
 package com.hcyclone.zen;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
-import android.os.Binder;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.ResultReceiver;
+import android.util.Log;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
-public class FirebaseService extends Service implements FirebaseAdapter.FirebaseAuthListener {
+public class FirebaseService extends IntentService implements FirebaseAdapter.FirebaseAuthListener {
 
-  private final ServiceBinder binder = new ServiceBinder();
-  private FirebaseAdapter.FirebaseDataListener firebaseDataListener;
+  private static final String TAG = FirebaseService.class.getSimpleName();
 
-  public class ServiceBinder extends Binder {
-    public FirebaseService getService() {
-      return FirebaseService.this;
-    }
+  public static final String INTENT_KEY_RECEIVER = "INTENT_KEY_RECEIVER";
+  public static final int RESULT_CODE_OK = 0;
+  public static final int RESULT_CODE_ERROR = 1;
+
+  private CountDownLatch countDownLatch;
+  private ResultReceiver receiver;
+
+  public FirebaseService() {
+    super("FirebaseService");
   }
-    @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    return START_REDELIVER_INTENT;
-  }
 
-  @Nullable
   @Override
-  public IBinder onBind(Intent intent) {
-    return binder;
+  protected void onHandleIntent(Intent intent) {
+    receiver = intent.getParcelableExtra(INTENT_KEY_RECEIVER);
+    countDownLatch = new CountDownLatch(1);
+    if (!FirebaseAdapter.getInstance().isSignedIn()) {
+      FirebaseAdapter.getInstance().signIn(this);
+    } else {
+      loadChallenges();
+    }
+    try {
+      countDownLatch.await();
+    } catch (InterruptedException exception) {
+      Log.e(TAG, exception.toString());
+    }
   }
 
   @Override
   public void onAuthSuccess() {
-    ChallengeModel.getInstance().loadChallenges(new FirebaseAdapter.FirebaseDataListener() {
-
-      @Override
-      public void onError(Exception exception) {
-        if (firebaseDataListener != null) {
-          firebaseDataListener.onError(exception);
-        }
-        stopSelf();
-      }
-
-      @Override
-      public void onChallenges(List<Challenge> challenges) {
-        if (firebaseDataListener != null) {
-          firebaseDataListener.onChallenges(challenges);
-        }
-        stopSelf();
-      }
-    });
+    loadChallenges();
   }
 
   @Override
   public void onAuthError(Exception exception) {
-    if (firebaseDataListener != null) {
-      firebaseDataListener.onError(exception);
-    }
-    stopSelf();
+    Log.e(TAG, exception.toString());
+    receiver.send(RESULT_CODE_ERROR, null);
+    countDownLatch.countDown();
   }
 
-  public void loadChallenges(FirebaseAdapter.FirebaseDataListener listener) {
-    this.firebaseDataListener = listener;
-    FirebaseAdapter.getInstance().signIn(this);
+  private void loadChallenges() {
+    FirebaseAdapter.getInstance().getChallenges(new FirebaseAdapter.FirebaseDataListener() {
+      @Override
+      public void onError(Exception exception) {
+        Log.e(TAG, exception.toString());
+        receiver.send(RESULT_CODE_ERROR, null);
+        countDownLatch.countDown();
+      }
+
+      @Override
+      public void onChallenges(List<Challenge> challenges) {
+        Log.d(TAG, "Challenges loaded");
+        ChallengeModel.getInstance().loadChallenges(challenges);
+        receiver.send(RESULT_CODE_OK, null);
+        countDownLatch.countDown();
+      }
+    });
   }
 }

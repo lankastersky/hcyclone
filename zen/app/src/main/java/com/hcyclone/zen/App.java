@@ -20,7 +20,9 @@ public class App extends Application {
 
   private void setAlarms() {
     AlarmService.getInstance().createNightlyAlarmIfNeeded();
+    AlarmService.getInstance().createInitialAlarmIfNeeded();
   }
+
   protected void initSingletons() {
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);

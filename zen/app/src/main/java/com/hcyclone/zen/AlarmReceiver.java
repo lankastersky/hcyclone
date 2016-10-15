@@ -13,30 +13,36 @@ public class AlarmReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    switch (intent.getIntExtra(AlarmService.ID_PARAM, 0)) {
-      case AlarmService.NIGHTLY_ALARM_CODE:
+    switch (intent.getIntExtra(AlarmService.PARAM_ID, 0)) {
+      case AlarmService.ALARM_CODE_NIGHTLY:
         context.startService(new Intent(context, FirebaseService.class));
         break;
-      default:
-        NotificationCompat.Builder mBuilder =
-            new NotificationCompat.Builder(context)
-                .setSmallIcon(android.R.drawable.ic_notification_overlay)
-                .setContentTitle("My notification")
-                .setContentText("Hello World!");
-        Intent resultIntent = new Intent(context, MainActivity.class);
-        PendingIntent resultPendingIntent =
-            PendingIntent.getActivity(
-                context,
-                0,
-                resultIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            );
-        mBuilder.setContentIntent(resultPendingIntent);
-        int mNotificationId = 001;
-        NotificationManager mNotifyMgr =
-            (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+      case AlarmService.ALARM_CODE_INITIAL:
+        showInitialAlarmNotification(context);
+        AlarmService.getInstance().updateInitialAlarm();
         break;
     }
+  }
+
+  private void showInitialAlarmNotification(Context context) {
+    // TODO: show current challenge.
+    NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(context)
+            .setSmallIcon(android.R.drawable.ic_notification_overlay)
+            .setContentTitle("New challenge available")
+            .setContentText("Let's start!");
+    Intent resultIntent = new Intent(context, MainActivity.class);
+    PendingIntent resultPendingIntent =
+        PendingIntent.getActivity(
+            context,
+            0,
+            resultIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
+    mBuilder.setContentIntent(resultPendingIntent);
+    int mNotificationId = 001;
+    NotificationManager mNotifyMgr =
+        (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+    mNotifyMgr.notify(mNotificationId, mBuilder.build());
   }
 }

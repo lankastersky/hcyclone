@@ -44,6 +44,7 @@ public class ChallengeFragment extends Fragment {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_challenge, container, false);
     if (TextUtils.isEmpty(challengeId)) {
+      // Show current challenge.
       createChallengeButton(view);
       ChallengeModel.getInstance().updateCurrentChallenge();
     }

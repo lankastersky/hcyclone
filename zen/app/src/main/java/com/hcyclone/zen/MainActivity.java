@@ -1,17 +1,16 @@
 package com.hcyclone.zen;
 
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.os.ResultReceiver;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -21,33 +20,28 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
-    ChallengeListFragment.OnListFragmentInteractionListener,
-    FirebaseAdapter.FirebaseDataListener {
+    ChallengeListFragment.OnListFragmentInteractionListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
   private Fragment currentFragment;
   private ProgressDialog progress;
-  private FirebaseService firebaseService;
-  private boolean bound;
-
-  private final ServiceConnection serviceConnection = new ServiceConnection() {
-
+  private ResultReceiver receiver = new ResultReceiver(new Handler()) {
     @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-      Log.d(TAG, "onServiceConnected  " + name);
-      firebaseService = ((FirebaseService.ServiceBinder) service).getService();
-      firebaseService.loadChallenges(MainActivity.this);
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-      Log.d(TAG, "onServiceDisconnected");
-      firebaseService = null;
+    protected void onReceiveResult(int resultCode, Bundle resultData) {
+      super.onReceiveResult(resultCode, resultData);
+      progress.dismiss();
+      switch (resultCode) {
+        case FirebaseService.RESULT_CODE_OK:
+          showCurrentChallenge();
+          break;
+        case FirebaseService.RESULT_CODE_ERROR:
+          // TODO: show error.
+          break;
+      }
     }
   };
 
@@ -67,16 +61,11 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-//    if (savedInstanceState == null) {
-//      progress = ProgressDialog.show(this,
-//          "Initialization", "Loading data from server...", true);
-//      FirebaseAdapter.getInstance().signIn(this);
-//    }
     progress = ProgressDialog.show(this, "Initialization", "Loading data from server...", true);
 
-    bindService(new Intent(this, FirebaseService.class),
-        serviceConnection, Service.BIND_AUTO_CREATE);
-    bound = true;
+    Intent intent = new Intent(this, FirebaseService.class);
+    intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);
+    startService(intent);
   }
 
   @Override
@@ -96,15 +85,6 @@ public class MainActivity extends AppCompatActivity
     getPackageManager().setComponentEnabledSetting(receiver,
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
         PackageManager.DONT_KILL_APP);
-  }
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-    if (bound) {
-      unbindService(serviceConnection);
-      bound = false;
-    }
   }
 
   @Override
@@ -167,50 +147,12 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
-  @Override
-  public void onChallenges(List<Challenge> challenges) {
-    progress.dismiss();
-
-    ChallengeFragment challengeFragment = new ChallengeFragment();
+  private void showCurrentChallenge() {
+    currentFragment = new ChallengeFragment();
     // TODO: don't call commitAllowingStateLoss().
     getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-        challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
-
-    currentFragment = challengeFragment;
+        currentFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
   }
-
-  @Override
-  public void onError(Exception exception) {
-      progress.dismiss();
-  }
-
-//  @Override
-//  public void onAuthSuccess() {
-//    ChallengeModel.getInstance().loadChallenges(new FirebaseAdapter.FirebaseDataListener() {
-//
-//      @Override
-//      public void onError(Exception exception) {
-//        progress.dismiss();
-//      }
-//
-//      @Override
-//      public void onChallenges(List<Challenge> challenges) {
-//        progress.dismiss();
-//
-//        ChallengeFragment challengeFragment = new ChallengeFragment();
-//        // TODO: don't call commitAllowingStateLoss().
-//        getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-//            challengeFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
-//
-//        currentFragment = challengeFragment;
-//      }
-//    });
-//  }
-//
-//  @Override
-//  public void onAuthError(Exception exception) {
-//    progress.dismiss();
-//  }
 
   private void replaceFragment(Fragment newFragment, Class clazz) {
     if (newFragment == currentFragment) {

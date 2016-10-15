@@ -11,21 +11,19 @@ import java.util.Calendar;
 
 /*
 start app (1st time)
-    create daily repeatable alarm with firetime (at night) if not yet?
+    create daily repeatable alarm with firetime (at night) if not yet
         decline current challenge if needed
         go to server and gets challenges
         ask model for next challenge
-        create initial alarm?
+        generates accept time, stores it
 
 When fired daily alarm
     decline current challenge if needed
-    go to server and gets challenges
+    go to server and get challenges
     ask model for next challenge
-    create initial alarm
+    generates accept time, stores it
 
 create initial alarm:
-    generates accept time, stores it
-    create initial alarm for this challenge
 
 when reboot before daily alarm; before initial alarm; before final alarm
     create daily alarm
@@ -49,12 +47,14 @@ public final class AlarmService {
 
   private static final String TAG = AlarmService.class.getSimpleName();
 
-  public static final String ID_PARAM = "id";
-  public static final int NIGHTLY_ALARM_CODE = 1;
+  public static final String PARAM_ID = "id";
+  public static final int ALARM_CODE_NIGHTLY = 1;
+  public static final int ALARM_CODE_INITIAL = 2;
 
   private static final AlarmService instance = new AlarmService();
   private Context context;
   private PendingIntent nightlyAlarmPengingIntent;
+  private PendingIntent initialAlarmPengingIntent;
 
   private AlarmService() {
   }
@@ -65,20 +65,30 @@ public final class AlarmService {
 
   public void init(Context context) {
     this.context = context;
+
     Intent nightlyAlarmIntent = new Intent(context, AlarmReceiver.class);
-    nightlyAlarmIntent.putExtra(ID_PARAM, NIGHTLY_ALARM_CODE);
-    nightlyAlarmPengingIntent = PendingIntent.getBroadcast(context, NIGHTLY_ALARM_CODE,
+    nightlyAlarmIntent.putExtra(PARAM_ID, ALARM_CODE_NIGHTLY);
+    nightlyAlarmPengingIntent = PendingIntent.getBroadcast(context, ALARM_CODE_NIGHTLY,
         nightlyAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    Intent initialAlarmIntent = new Intent(context, AlarmReceiver.class);
+    initialAlarmIntent.putExtra(PARAM_ID, ALARM_CODE_INITIAL);
+    initialAlarmPengingIntent = PendingIntent.getBroadcast(context, ALARM_CODE_INITIAL,
+        initialAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+  }
+
+  private boolean isAlarmSet(int code) {
+    return (PendingIntent.getBroadcast(context, code,
+        new Intent(context, AlarmReceiver.class), PendingIntent.FLAG_NO_CREATE) != null);
   }
 
   /**
    * Nightly alarm is fired at 2am every night.
    */
   public void createNightlyAlarmIfNeeded() {
-    boolean alarmUp = (PendingIntent.getBroadcast(context, NIGHTLY_ALARM_CODE,
-        new Intent(context, AlarmReceiver.class), PendingIntent.FLAG_NO_CREATE) != null);
-    if (alarmUp) {
+    if (isAlarmSet(ALARM_CODE_NIGHTLY)) {
       Log.d(TAG, "Nightly alarm is already active");
+      return;
     }
 
     Log.d(TAG, "Set nightly alarm");
@@ -89,6 +99,7 @@ public final class AlarmService {
       alarmTime = 5_000;
     } else {
       calendar.setTimeInMillis(System.currentTimeMillis());
+      // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 2);
       alarmTime = calendar.getTimeInMillis();
     }
@@ -96,5 +107,33 @@ public final class AlarmService {
     AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
         AlarmManager.INTERVAL_DAY, nightlyAlarmPengingIntent);
+  }
+
+  public void createInitialAlarmIfNeeded() {
+    if (isAlarmSet(ALARM_CODE_INITIAL)) {
+      Log.d(TAG, "Initial alarm is already active");
+      return;
+    }
+
+    Log.d(TAG, "Set initial alarm");
+
+    Calendar calendar = Calendar.getInstance();
+    long alarmTime;
+    if (BuildConfig.DEBUG) {
+      alarmTime = 5_000;
+    } else {
+      calendar.setTimeInMillis(System.currentTimeMillis());
+      // TODO: add randomness.
+      calendar.set(Calendar.HOUR_OF_DAY, 6);
+      alarmTime = calendar.getTimeInMillis();
+    }
+
+    AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
+        AlarmManager.INTERVAL_DAY, initialAlarmPengingIntent);
+  }
+
+  public void updateInitialAlarm() {
+    // TODO: add randomness for the next day.
   }
 }

@@ -5,9 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
-import java.util.Date;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.Date;
 
 import android.util.Log;
 
@@ -15,12 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 
 public final class ChallengeModel {
@@ -30,12 +29,14 @@ public final class ChallengeModel {
 
   //public static final Map<String, Challenge> ITEM_MAP = new HashMap<>();
   //private static final int COUNT = 25;
-  private static final String CHALLENGE_STATUSES_KEY = "challenge_statuses";
-  private static final String CURRENT_CHALLENGE_SHOWN_TIME_KEY = "current_challenge_shown_time";
+  private static final String KEY_CHALLENGE_STATUSES = "challenge_statuses";
+  private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
+  //private static final String KEY_CURRENT_CHALLENGE_TO_SHOW_TIME = "current_challenge_to_show_time";
   private static final String CURRENT_CHALLENGE_ID_KEY = "current_challenge_id";
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
+  //private long currentChallengeToShowTime;
   private Map<String, Challenge> challengeMap = new HashMap<>();
   private Context context;
 
@@ -58,7 +59,6 @@ public final class ChallengeModel {
   }
 
   public Challenge getCurrentChallenge() {
-    //updateCurrentChallengeId();
     return getChallengesMap().get(currentChallengeId);
   }
 
@@ -78,25 +78,13 @@ public final class ChallengeModel {
     return challengeMap; //ITEM_MAP;
   }
 
-  public void loadChallenges(final FirebaseAdapter.FirebaseDataListener listener) {
-    challengeMap.clear();
-    FirebaseAdapter.getInstance().getChallenges(new FirebaseAdapter.FirebaseDataListener() {
-      @Override
-      public void onError(Exception e) {
-        listener.onError(e);
-      }
-
-      @Override
-      public void onChallenges(List<Challenge> challenges) {
-        for (Challenge challenge : challenges) {
-          challengeMap.put(challenge.id, challenge);
-        }
-        restoreChallengeStatuses(challengeMap);
-        restoreCurrentChallenge();
-        updateCurrentChallengeId();
-        listener.onChallenges(challenges);
-      }
-    });
+  public void loadChallenges(List<Challenge> challenges) {
+    for (Challenge challenge : challenges) {
+      challengeMap.put(challenge.id, challenge);
+    }
+    restoreChallengeStatuses(challengeMap);
+    restoreCurrentChallenge();
+    selectCurrentChallenge();
   }
 
   public void updateCurrentChallenge() {
@@ -108,16 +96,17 @@ public final class ChallengeModel {
     storeCurrentChallenge();
   }
 
-  public void updateCurrentChallengeId() {
+  public void selectCurrentChallenge() {
     if (TextUtils.isEmpty(currentChallengeId)) {
       currentChallengeId = getNewChallengeId();
     } else {
       if (isTimeToDecline()) {
         getChallengesMap().get(currentChallengeId).decline();
       }
-      if (isNewChallengeRequired()) {
+//      if (isNewChallengeRequired()) {
         currentChallengeId = getNewChallengeId();
-      }
+//        currentChallengeToShowTime = 0; // TODO
+//      }
     }
     storeChallengeStatuses();
     storeCurrentChallenge();
@@ -156,15 +145,15 @@ public final class ChallengeModel {
     return false;
   }
 
-  // New challenge is available after midnight.
-  private boolean isNewChallengeRequired() {
-    Challenge challenge = getChallengesMap().get(currentChallengeId);
-    if (challenge.getStatus() == Challenge.FINISHED
-        || challenge.getStatus() == Challenge.DECLINED) {
-      return isChallengeTimeExpired();
-    }
-    return false;
-  }
+//  // New challenge is available after midnight.
+//  private boolean isNewChallengeRequired() {
+//    Challenge challenge = getChallengesMap().get(currentChallengeId);
+//    if (challenge.getStatus() == Challenge.FINISHED
+//        || challenge.getStatus() == Challenge.DECLINED) {
+//      return isChallengeTimeExpired();
+//    }
+//    return false;
+//  }
 
   private String getNewChallengeId() {
     String challengeId;
@@ -209,14 +198,17 @@ public final class ChallengeModel {
 
   private void storeCurrentChallenge() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    sharedPreferences.edit().putLong(CURRENT_CHALLENGE_SHOWN_TIME_KEY, currentChallengeShownTime)
+    sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, currentChallengeShownTime)
         .apply();
+//    sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_TO_SHOW_TIME, currentChallengeToShowTime)
+//        .apply();
     sharedPreferences.edit().putString(CURRENT_CHALLENGE_ID_KEY, currentChallengeId).apply();
   }
 
   private void restoreCurrentChallenge() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    currentChallengeShownTime = sharedPreferences.getLong(CURRENT_CHALLENGE_SHOWN_TIME_KEY, 0);
+    currentChallengeShownTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
+//    currentChallengeToShowTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_TO_SHOW_TIME, 0);
     currentChallengeId = sharedPreferences.getString(CURRENT_CHALLENGE_ID_KEY, null);
   }
 
@@ -227,12 +219,12 @@ public final class ChallengeModel {
     }
     String statusesString = statusesMap.toString();
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    sharedPreferences.edit().putString(CHALLENGE_STATUSES_KEY, statusesString).apply();
+    sharedPreferences.edit().putString(KEY_CHALLENGE_STATUSES, statusesString).apply();
   }
 
   private void restoreChallengeStatuses(Map<String, Challenge> challengeMap) {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String statusesString = sharedPreferences.getString(CHALLENGE_STATUSES_KEY, null);
+    String statusesString = sharedPreferences.getString(KEY_CHALLENGE_STATUSES, null);
     if (!TextUtils.isEmpty(statusesString)) {
       Map<String, String> statusesMap;
       try {
