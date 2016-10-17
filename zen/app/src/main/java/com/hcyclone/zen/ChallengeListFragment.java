@@ -17,7 +17,7 @@ import android.view.ViewGroup;
  */
 public class ChallengeListFragment extends Fragment {
 
-  private OnListFragmentInteractionListener mListener;
+  private OnListFragmentInteractionListener onListFragmentInteractionListener;
 
   /**
    * Mandatory empty constructor for the fragment manager to instantiate the
@@ -43,7 +43,7 @@ public class ChallengeListFragment extends Fragment {
       recyclerView.setHasFixedSize(true);
       recyclerView.setLayoutManager(new LinearLayoutManager(context));
       recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
-          ChallengeModel.getInstance().getFinishedChallenges(), mListener));
+          ChallengeModel.getInstance().getFinishedChallenges(), onListFragmentInteractionListener));
     }
     return view;
   }
@@ -53,23 +53,23 @@ public class ChallengeListFragment extends Fragment {
   public void onAttach(Context context) {
     super.onAttach(context);
     if (context instanceof OnListFragmentInteractionListener) {
-      mListener = (OnListFragmentInteractionListener) context;
+      onListFragmentInteractionListener = (OnListFragmentInteractionListener) context;
     } else {
       throw new RuntimeException(context.toString()
           + " must implement OnListFragmentInteractionListener");
     }
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    ChallengeModel.getInstance().updateCurrentChallengeId();
-  }
+//  @Override
+//  public void onResume() {
+//    super.onResume();
+//    ChallengeModel.getInstance().selectCurrentChallenge();
+//  }
 
   @Override
   public void onDetach() {
     super.onDetach();
-    mListener = null;
+    onListFragmentInteractionListener = null;
   }
 
   /**

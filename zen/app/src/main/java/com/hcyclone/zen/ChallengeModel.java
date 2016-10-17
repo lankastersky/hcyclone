@@ -3,6 +3,7 @@ package com.hcyclone.zen;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import java.util.Calendar;
@@ -31,7 +32,6 @@ public final class ChallengeModel {
   //private static final int COUNT = 25;
   private static final String KEY_CHALLENGE_STATUSES = "challenge_statuses";
   private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
-  //private static final String KEY_CURRENT_CHALLENGE_TO_SHOW_TIME = "current_challenge_to_show_time";
   private static final String CURRENT_CHALLENGE_ID_KEY = "current_challenge_id";
 
   private String currentChallengeId;
@@ -105,7 +105,6 @@ public final class ChallengeModel {
       }
 //      if (isNewChallengeRequired()) {
         currentChallengeId = getNewChallengeId();
-//        currentChallengeToShowTime = 0; // TODO
 //      }
     }
     storeChallengeStatuses();
@@ -155,6 +154,7 @@ public final class ChallengeModel {
 //    return false;
 //  }
 
+  @NonNull
   private String getNewChallengeId() {
     String challengeId;
     List<Challenge> nonacceptedChallenges = getChallengesMap(Challenge.UNKNOWN);
@@ -175,17 +175,21 @@ public final class ChallengeModel {
     return challengeId;
   }
 
-  private Challenge getRandomChallenge(Collection<Challenge> challenges) {
+  @NonNull
+  private Challenge getRandomChallenge(@NonNull Collection<Challenge> challenges) {
     int id = (int) (Math.random() * challenges.size());
     int i = 0;
+    Challenge result = challenges.iterator().next();
     for (Challenge challenge : challenges) {
       if (i++ == id) {
-        return challenge;
+        result = challenge;
+        break;
       }
     }
-    return null;
+    return result;
   }
 
+  @NonNull
   private List<Challenge> getChallengesMap(int status) {
     List<Challenge> challenges = new ArrayList<>();
     for (Challenge challenge : getChallengesMap().values()) {
@@ -200,15 +204,12 @@ public final class ChallengeModel {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, currentChallengeShownTime)
         .apply();
-//    sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_TO_SHOW_TIME, currentChallengeToShowTime)
-//        .apply();
     sharedPreferences.edit().putString(CURRENT_CHALLENGE_ID_KEY, currentChallengeId).apply();
   }
 
   private void restoreCurrentChallenge() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     currentChallengeShownTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
-//    currentChallengeToShowTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_TO_SHOW_TIME, 0);
     currentChallengeId = sharedPreferences.getString(CURRENT_CHALLENGE_ID_KEY, null);
   }
 

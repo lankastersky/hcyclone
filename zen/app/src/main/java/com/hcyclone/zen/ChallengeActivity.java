@@ -28,9 +28,9 @@ public class ChallengeActivity extends AppCompatActivity {
     }
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    ChallengeModel.getInstance().updateCurrentChallengeId();
-  }
+//  @Override
+//  public void onResume() {
+//    super.onResume();
+//    ChallengeModel.getInstance().selectCurrentChallenge();
+//  }
 }
