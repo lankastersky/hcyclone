@@ -27,10 +27,4 @@ public class ChallengeActivity extends AppCompatActivity {
       fragmentTransaction.add(R.id.content_container, challengeFragment).commit();
     }
   }
-
-//  @Override
-//  public void onResume() {
-//    super.onResume();
-//    ChallengeModel.getInstance().selectCurrentChallenge();
-//  }
 }

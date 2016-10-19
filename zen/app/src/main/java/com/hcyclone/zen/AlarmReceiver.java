@@ -14,23 +14,38 @@ public class AlarmReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
     switch (intent.getIntExtra(AlarmService.PARAM_ID, 0)) {
-      case AlarmService.ALARM_CODE_NIGHTLY:
+      case AlarmService.ALARM_CODE_SERVICE:
         context.startService(new Intent(context, FirebaseService.class));
+        AlarmService.getInstance().updateServiceAlarm();
         break;
       case AlarmService.ALARM_CODE_INITIAL:
         showInitialAlarmNotification(context);
         AlarmService.getInstance().updateInitialAlarm();
         break;
+      case AlarmService.ALARM_CODE_FINAL:
+        showFinalAlarmNotification(context);
+        AlarmService.getInstance().updateFinalAlarm();
+        AlarmService.getInstance().stopReminderAlarm();
+        break;
+      case AlarmService.ALARM_CODE_REMINDER:
+        showReminderAlarmNotification(context);
+        break;
     }
   }
 
   private void showInitialAlarmNotification(Context context) {
-    // TODO: show current challenge.
+    Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+    if (!(challenge.getStatus() == Challenge.UNKNOWN || challenge.getStatus() == Challenge.SHOWN)) {
+      // Show notification only for not accepted challenge.
+      return;
+    }
+
+    // TODO: add action.
     NotificationCompat.Builder mBuilder =
         new NotificationCompat.Builder(context)
             .setSmallIcon(android.R.drawable.ic_notification_overlay)
             .setContentTitle("New challenge available")
-            .setContentText("Let's start!");
+            .setContentText(challenge.getContent());
     Intent resultIntent = new Intent(context, MainActivity.class);
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(
@@ -40,9 +55,65 @@ public class AlarmReceiver extends BroadcastReceiver {
             PendingIntent.FLAG_UPDATE_CURRENT
         );
     mBuilder.setContentIntent(resultPendingIntent);
-    int mNotificationId = 001;
+    int mNotificationId = 1;
     NotificationManager mNotifyMgr =
-        (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+  }
+
+  private void showFinalAlarmNotification(Context context) {
+    Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+    if (challenge.getStatus() != Challenge.ACCEPTED) {
+      // Show notification only for accepted challenge.
+      return;
+    }
+
+    // TODO: add action.
+    NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(context)
+            .setSmallIcon(android.R.drawable.ic_notification_overlay)
+            .setContentTitle("Finish your challenge")
+            .setContentText(challenge.getContent());
+    Intent resultIntent = new Intent(context, MainActivity.class);
+    PendingIntent resultPendingIntent =
+        PendingIntent.getActivity(
+            context,
+            0,
+            resultIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
+    mBuilder.setContentIntent(resultPendingIntent);
+    int mNotificationId = 2;
+    NotificationManager mNotifyMgr =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    mNotifyMgr.notify(mNotificationId, mBuilder.build());
+  }
+
+  private void showReminderAlarmNotification(Context context) {
+    Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+    if (challenge.getStatus() != Challenge.ACCEPTED) {
+      // Show notification only for accepted challenge.
+      return;
+    }
+
+    // TODO: add action.
+    NotificationCompat.Builder mBuilder =
+        new NotificationCompat.Builder(context)
+            .setSmallIcon(android.R.drawable.ic_notification_overlay)
+            .setContentTitle("Remember about your challenge")
+            .setContentText(challenge.getContent());
+    Intent resultIntent = new Intent(context, MainActivity.class);
+    PendingIntent resultPendingIntent =
+        PendingIntent.getActivity(
+            context,
+            0,
+            resultIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT
+        );
+    mBuilder.setContentIntent(resultPendingIntent);
+    int mNotificationId = 3;
+    NotificationManager mNotifyMgr =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     mNotifyMgr.notify(mNotificationId, mBuilder.build());
   }
 }

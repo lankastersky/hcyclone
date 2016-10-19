@@ -11,7 +11,7 @@ public class BootReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
       Log.d(BootReceiver.class.getSimpleName(), "Setting alarm on boot");
-      AlarmService.getInstance().createNightlyAlarmIfNeeded();
+      AlarmService.getInstance().createServiceAlarmIfNeeded();
     }
   }
 }

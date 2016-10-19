@@ -60,12 +60,6 @@ public class ChallengeListFragment extends Fragment {
     }
   }
 
-//  @Override
-//  public void onResume() {
-//    super.onResume();
-//    ChallengeModel.getInstance().selectCurrentChallenge();
-//  }
-
   @Override
   public void onDetach() {
     super.onDetach();

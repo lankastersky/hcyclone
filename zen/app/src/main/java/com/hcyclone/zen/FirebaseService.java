@@ -64,6 +64,12 @@ public class FirebaseService extends IntentService implements FirebaseAdapter.Fi
       public void onChallenges(List<Challenge> challenges) {
         Log.d(TAG, "Challenges loaded");
         ChallengeModel.getInstance().loadChallenges(challenges);
+
+        Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+        if (challenge.getStatus() == Challenge.ACCEPTED) {
+          AlarmService.getInstance().startReminderAlarmIfNeeded();
+        }
+
         receiver.send(RESULT_CODE_OK, null);
         countDownLatch.countDown();
       }

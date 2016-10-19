@@ -84,33 +84,44 @@ public final class ChallengeModel {
     }
     restoreChallengeStatuses(challengeMap);
     restoreCurrentChallenge();
-    selectCurrentChallenge();
+    selectCurrentChallengeIfNeeded();
   }
 
-  public void updateCurrentChallenge() {
+  public void setCurrentChallengeShown() {
+    currentChallengeShownTime = new Date().getTime();
+    updateCurrentChallenge();
+  }
+
+  public void setCurrentChallengeAccepted() {
+    updateCurrentChallenge();
+  }
+
+  public void setCurrentChallengeFinished() {
+    updateCurrentChallenge();
+  }
+
+  private void updateCurrentChallenge() {
     getCurrentChallenge().updateStatus();
-    if (getCurrentChallenge().getStatus() == Challenge.SHOWN) {
-      currentChallengeShownTime = new Date().getTime();
-    }
     storeChallengeStatuses();
     storeCurrentChallenge();
   }
 
-  public void selectCurrentChallenge() {
+  public void selectCurrentChallengeIfNeeded() {
     if (TextUtils.isEmpty(currentChallengeId)) {
       currentChallengeId = getNewChallengeId();
     } else {
       if (isTimeToDecline()) {
         getChallengesMap().get(currentChallengeId).decline();
       }
-//      if (isNewChallengeRequired()) {
+      if (isNewChallengeRequired()) {
         currentChallengeId = getNewChallengeId();
-//      }
+      }
     }
     storeChallengeStatuses();
     storeCurrentChallenge();
   }
 
+  // Challenge expires in one day.
   private boolean isChallengeTimeExpired() {
     Date timeToDecline = new Date(currentChallengeShownTime);
     // today
@@ -123,7 +134,7 @@ public final class ChallengeModel {
     date.set(Calendar.SECOND, 0);
     date.set(Calendar.MILLISECOND, 0);
     if (BuildConfig.DEBUG) {
-      date.add(Calendar.MINUTE, 5);
+      date.add(Calendar.MINUTE, 2);
     } else {
       // midnight of next day
       date.add(Calendar.DAY_OF_MONTH, 1);
@@ -134,7 +145,7 @@ public final class ChallengeModel {
     return false;
   }
 
-  // Challenge is declined after midnight.
+  // Shown challenge is automatically declined after midnight.
   private boolean isTimeToDecline() {
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.SHOWN
@@ -144,15 +155,15 @@ public final class ChallengeModel {
     return false;
   }
 
-//  // New challenge is available after midnight.
-//  private boolean isNewChallengeRequired() {
-//    Challenge challenge = getChallengesMap().get(currentChallengeId);
-//    if (challenge.getStatus() == Challenge.FINISHED
-//        || challenge.getStatus() == Challenge.DECLINED) {
-//      return isChallengeTimeExpired();
-//    }
-//    return false;
-//  }
+  // New challenge is available after midnight.
+  private boolean isNewChallengeRequired() {
+    Challenge challenge = getChallengesMap().get(currentChallengeId);
+    if (challenge.getStatus() == Challenge.FINISHED
+        || challenge.getStatus() == Challenge.DECLINED) {
+      return isChallengeTimeExpired();
+    }
+    return false;
+  }
 
   @NonNull
   private String getNewChallengeId() {

@@ -16,7 +16,7 @@ public class ChallengeFragment extends Fragment {
   public static final String CHALLENGE_ID = "challengeId";
 
   private String challengeId;
-  private Button acceptButton;
+  private Button challengeButton;
 
   public ChallengeFragment() {
     // Required empty public constructor
@@ -46,7 +46,7 @@ public class ChallengeFragment extends Fragment {
     if (TextUtils.isEmpty(challengeId)) {
       // Show current challenge.
       createChallengeButton(view);
-      ChallengeModel.getInstance().updateCurrentChallenge();
+      ChallengeModel.getInstance().setCurrentChallengeShown();
     }
     return view;
   }
@@ -59,28 +59,35 @@ public class ChallengeFragment extends Fragment {
     ((TextView) view.findViewById(R.id.content)).setText(challenge.content);
     ((TextView) view.findViewById(R.id.details)).setText(challenge.details);
 
-    acceptButton = (Button) view.findViewById(R.id.accept_button);
-    acceptButton.setVisibility(View.VISIBLE);
-    acceptButton.setOnClickListener(new View.OnClickListener() {
+    challengeButton = (Button) view.findViewById(R.id.accept_button);
+    challengeButton.setVisibility(View.VISIBLE);
+    challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Log.d(TAG, "acceptButton clicked");
-        ChallengeModel.getInstance().updateCurrentChallenge();
-        updateAcceptButton(challenge);
+        Log.d(TAG, "challengeButton clicked");
+        if (challenge.getStatus() != Challenge.ACCEPTED) {
+          ChallengeModel.getInstance().setCurrentChallengeAccepted();
+          AlarmService.getInstance().startReminderAlarmIfNeeded();
+        } else {
+          ChallengeModel.getInstance().setCurrentChallengeFinished();
+          AlarmService.getInstance().stopReminderAlarm();
+        }
+        updateChallengeButton(challenge);
       }
     });
-    updateAcceptButton(challenge);
+    updateChallengeButton(challenge);
   }
 
-  private void updateAcceptButton(Challenge challenge) {
+  private void updateChallengeButton(Challenge challenge) {
     if (challenge.getStatus() == Challenge.FINISHED
         || challenge.getStatus() == Challenge.DECLINED) {
-      acceptButton.setEnabled(false);
+      // Todo: show comments if needed.
+      challengeButton.setEnabled(false);
     }
-    acceptButton.setText(getAcceptButtonText(challenge));
+    challengeButton.setText(getChallengeButtonText(challenge));
   }
 
-  private String getAcceptButtonText(Challenge challenge) {
+  private String getChallengeButtonText(Challenge challenge) {
     String text = "Accept";
     switch (challenge.getStatus()) {
       case Challenge.ACCEPTED:
@@ -89,6 +96,8 @@ public class ChallengeFragment extends Fragment {
       case Challenge.FINISHED:
         text = "Finished";
         break;
+      case Challenge.DECLINED:
+        text = "Declined";
       default:
         Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;

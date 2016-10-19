@@ -19,8 +19,9 @@ public class App extends Application {
   }
 
   private void setAlarms() {
-    AlarmService.getInstance().createNightlyAlarmIfNeeded();
+    AlarmService.getInstance().createServiceAlarmIfNeeded();
     AlarmService.getInstance().createInitialAlarmIfNeeded();
+    AlarmService.getInstance().createFinalAlarmIfNeeded();
   }
 
   protected void initSingletons() {
