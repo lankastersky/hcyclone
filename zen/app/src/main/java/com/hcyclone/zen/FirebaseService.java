@@ -28,6 +28,7 @@ public class FirebaseService extends IntentService implements FirebaseAdapter.Fi
     receiver = intent.getParcelableExtra(INTENT_KEY_RECEIVER);
     countDownLatch = new CountDownLatch(1);
     if (!FirebaseAdapter.getInstance().isSignedIn()) {
+      Log.d(TAG, "Sign in to Firebase");
       FirebaseAdapter.getInstance().signIn(this);
     } else {
       loadChallenges();
@@ -52,11 +53,14 @@ public class FirebaseService extends IntentService implements FirebaseAdapter.Fi
   }
 
   private void loadChallenges() {
+    Log.d(TAG, "Load challenges");
     FirebaseAdapter.getInstance().getChallenges(new FirebaseAdapter.FirebaseDataListener() {
       @Override
       public void onError(Exception exception) {
         Log.e(TAG, exception.toString());
-        receiver.send(RESULT_CODE_ERROR, null);
+        if (receiver != null) {
+          receiver.send(RESULT_CODE_ERROR, null);
+        }
         countDownLatch.countDown();
       }
 
@@ -70,7 +74,9 @@ public class FirebaseService extends IntentService implements FirebaseAdapter.Fi
           AlarmService.getInstance().startReminderAlarmIfNeeded();
         }
 
-        receiver.send(RESULT_CODE_OK, null);
+        if (receiver != null) {
+          receiver.send(RESULT_CODE_OK, null);
+        }
         countDownLatch.countDown();
       }
     });

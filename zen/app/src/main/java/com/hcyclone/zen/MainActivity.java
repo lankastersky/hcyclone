@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
   protected void onStart() {
     super.onStart();
     // Don't receive notifications if app is started.
+    Log.d(TAG, "Disable alarm receiver");
     ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
     getPackageManager().setComponentEnabledSetting(receiver,
         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onStop() {
     super.onStop();
+    Log.d(TAG, "Enable alarm receiver");
     ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
     getPackageManager().setComponentEnabledSetting(receiver,
         PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public boolean onNavigationItemSelected(MenuItem item) {
+  public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     int id = item.getItemId();
     FragmentManager fragmentManager = getSupportFragmentManager();
 

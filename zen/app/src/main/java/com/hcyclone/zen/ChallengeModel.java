@@ -74,7 +74,7 @@ public final class ChallengeModel {
     return challenges;
   }
 
-  public Map<String, Challenge> getChallengesMap() {
+  private Map<String, Challenge> getChallengesMap() {
     return challengeMap; //ITEM_MAP;
   }
 
@@ -88,6 +88,9 @@ public final class ChallengeModel {
   }
 
   public void setCurrentChallengeShown() {
+    if (getCurrentChallenge().getStatus() == Challenge.SHOWN) {
+      return;
+    }
     currentChallengeShownTime = new Date().getTime();
     updateCurrentChallenge();
   }
@@ -101,12 +104,13 @@ public final class ChallengeModel {
   }
 
   private void updateCurrentChallenge() {
+    Log.d(TAG, "updateCurrentChallenge");
     getCurrentChallenge().updateStatus();
     storeChallengeStatuses();
     storeCurrentChallenge();
   }
 
-  public void selectCurrentChallengeIfNeeded() {
+  private void selectCurrentChallengeIfNeeded() {
     if (TextUtils.isEmpty(currentChallengeId)) {
       currentChallengeId = getNewChallengeId();
     } else {
@@ -119,6 +123,7 @@ public final class ChallengeModel {
     }
     storeChallengeStatuses();
     storeCurrentChallenge();
+    Log.d(TAG, "Current challenge id:" + currentChallengeId);
   }
 
   // Challenge expires in one day.

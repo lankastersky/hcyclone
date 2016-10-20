@@ -107,24 +107,27 @@ public final class AlarmService {
   public void createServiceAlarmIfNeeded() {
     if (isAlarmSet(ALARM_CODE_SERVICE)) {
       Log.d(TAG, "Service alarm is already active");
-      return;
+      //return;
     }
 
     Log.d(TAG, "Set service alarm");
 
     Calendar calendar = Calendar.getInstance();
-    long alarmTime;
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    long alarmStartTime;
+    long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmTime = 5_000;
+      alarmRepeatTime = 10_000;
+      alarmStartTime = calendar.getTimeInMillis();
     } else {
-      calendar.setTimeInMillis(System.currentTimeMillis());
       // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 2);
-      alarmTime = calendar.getTimeInMillis();
+      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
+      alarmStartTime = calendar.getTimeInMillis();
     }
 
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
-        AlarmManager.INTERVAL_DAY, serviceAlarmPengingIntent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
+        alarmRepeatTime, serviceAlarmPengingIntent);
   }
 
   public void updateServiceAlarm() {
@@ -136,24 +139,27 @@ public final class AlarmService {
     // TODO: check if enabled in preferences.
     if (isAlarmSet(ALARM_CODE_INITIAL)) {
       Log.d(TAG, "Initial alarm is already active");
-      return;
+      //return;
     }
 
     Log.d(TAG, "Set initial alarm");
 
     Calendar calendar = Calendar.getInstance();
-    long alarmTime;
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    long alarmStartTime;
+    long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmTime = 5_000;
+      alarmRepeatTime = 5_000;
+      alarmStartTime = calendar.getTimeInMillis();
     } else {
-      calendar.setTimeInMillis(System.currentTimeMillis());
       // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 6);
-      alarmTime = calendar.getTimeInMillis();
+      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
+      alarmStartTime = calendar.getTimeInMillis();
     }
 
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
-        AlarmManager.INTERVAL_DAY, initialAlarmPengingIntent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
+        alarmRepeatTime, initialAlarmPengingIntent);
   }
 
   public void updateInitialAlarm() {
@@ -171,18 +177,21 @@ public final class AlarmService {
     Log.d(TAG, "Set final alarm");
 
     Calendar calendar = Calendar.getInstance();
-    long alarmTime;
+    calendar.setTimeInMillis(System.currentTimeMillis());
+    long alarmStartTime;
+    long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmTime = 5_000;
+      alarmRepeatTime = 5_000;
+      alarmStartTime = calendar.getTimeInMillis();
     } else {
-      calendar.setTimeInMillis(System.currentTimeMillis());
       // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 18);
-      alarmTime = calendar.getTimeInMillis();
+      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
+      alarmStartTime = calendar.getTimeInMillis();
     }
 
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
-        AlarmManager.INTERVAL_DAY, finalAlarmPengingIntent);
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
+        alarmRepeatTime, finalAlarmPengingIntent);
   }
 
   public void updateFinalAlarm() {

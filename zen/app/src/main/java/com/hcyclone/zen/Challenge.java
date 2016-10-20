@@ -6,6 +6,8 @@ import java.util.Date;
 
 public class Challenge {
 
+  private static final String TAG = Challenge.class.getSimpleName();
+
   public static final int UNKNOWN = 0;
   public static final int SHOWN = 1;
   public static final int ACCEPTED = 2;
@@ -74,6 +76,7 @@ public class Challenge {
   }
 
   public void updateStatus() {
+    Log.d(TAG, "Update status for challenge " + id + " from " + status);
     switch (status) {
       case UNKNOWN:
         status = SHOWN;
@@ -92,6 +95,7 @@ public class Challenge {
   }
 
   public void decline() {
+    Log.d(TAG, "Decline challenge: " + id);
     switch (status) {
       case SHOWN:
       case ACCEPTED:
@@ -100,6 +104,7 @@ public class Challenge {
         break;
       default:
         Log.e(Challenge.class.getSimpleName(), "Wrong status to decline: " + status);
+        break;
     }
   }
 }

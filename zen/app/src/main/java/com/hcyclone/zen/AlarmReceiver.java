@@ -8,12 +8,17 @@ import android.support.v4.app.NotificationCompat;
 
 import android.app.PendingIntent;
 import android.app.NotificationManager;
+import android.util.Log;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
+  private static final String TAG = AlarmReceiver.class.getSimpleName();
+
   @Override
   public void onReceive(Context context, Intent intent) {
-    switch (intent.getIntExtra(AlarmService.PARAM_ID, 0)) {
+    int alarmId = intent.getIntExtra(AlarmService.PARAM_ID, 0);
+    Log.d(TAG, "Alarm received with id: " + alarmId);
+    switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
         context.startService(new Intent(context, FirebaseService.class));
         AlarmService.getInstance().updateServiceAlarm();
@@ -36,10 +41,11 @@ public class AlarmReceiver extends BroadcastReceiver {
   private void showInitialAlarmNotification(Context context) {
     Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
     if (!(challenge.getStatus() == Challenge.UNKNOWN || challenge.getStatus() == Challenge.SHOWN)) {
-      // Show notification only for not accepted challenge.
+      Log.d(TAG, "Ignore initial alarm notification as challenge not shown");
       return;
     }
 
+    Log.d(TAG, "Show initial alarm notification");
     // TODO: add action.
     NotificationCompat.Builder mBuilder =
         new NotificationCompat.Builder(context)
@@ -65,8 +71,11 @@ public class AlarmReceiver extends BroadcastReceiver {
     Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
     if (challenge.getStatus() != Challenge.ACCEPTED) {
       // Show notification only for accepted challenge.
+      Log.d(TAG, "Ignore final alarm notification as challenge not accepted");
       return;
     }
+
+    Log.d(TAG, "Show final alarm notification");
 
     // TODO: add action.
     NotificationCompat.Builder mBuilder =
@@ -92,9 +101,11 @@ public class AlarmReceiver extends BroadcastReceiver {
   private void showReminderAlarmNotification(Context context) {
     Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
     if (challenge.getStatus() != Challenge.ACCEPTED) {
-      // Show notification only for accepted challenge.
+      Log.d(TAG, "Ignore reminder alarm notification as challenge not accepted");
       return;
     }
+
+    Log.d(TAG, "Show reminder alarm notification");
 
     // TODO: add action.
     NotificationCompat.Builder mBuilder =

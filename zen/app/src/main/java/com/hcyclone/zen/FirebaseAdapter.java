@@ -49,7 +49,7 @@ public class FirebaseAdapter {
    */
   private FirebaseAuth firebaseAuth;
   private FirebaseAuthListener firebaseAuthListener;
-  FirebaseAuth.AuthStateListener authStateListener;
+  private FirebaseAuth.AuthStateListener authStateListener;
 
   public static FirebaseAdapter getInstance() {
     return instance;
@@ -121,9 +121,13 @@ public class FirebaseAdapter {
           @Override
           public void onDataChange(DataSnapshot dataSnapshot) {
             // Get user value
-            List<Challenge> challenges = new ArrayList<>();
-            for (DataSnapshot child : dataSnapshot.getChildren()) {
-              Challenge challenge = child.getValue(Challenge.class);
+            Map<String, Object> challengesMap = (Map<String, Object>) dataSnapshot.getValue();
+            ArrayList<Challenge> challenges = new ArrayList<>();
+            for (String key : challengesMap.keySet()) {
+              Map<String, String> challengeMap = (Map<String, String>) challengesMap.get(key);
+              Challenge challenge = new Challenge(key,
+                  challengeMap.get("content"),
+                  challengeMap.get("details"));
               challenges.add(challenge);
             }
             listener.onChallenges(challenges);

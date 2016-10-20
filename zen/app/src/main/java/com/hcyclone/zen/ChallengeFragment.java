@@ -88,8 +88,12 @@ public class ChallengeFragment extends Fragment {
   }
 
   private String getChallengeButtonText(Challenge challenge) {
-    String text = "Accept";
+    String text = "";
     switch (challenge.getStatus()) {
+      case Challenge.UNKNOWN:
+      case Challenge.SHOWN:
+        text = "Accept";
+        break;
       case Challenge.ACCEPTED:
         text = "Finish";
         break;
