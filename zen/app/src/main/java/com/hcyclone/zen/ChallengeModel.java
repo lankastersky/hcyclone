@@ -74,6 +74,10 @@ public final class ChallengeModel {
     return challenges;
   }
 
+  public Challenge getChallengeById(String challengeId) {
+    return challengeMap.get(challengeId);
+  }
+
   private Map<String, Challenge> getChallengesMap() {
     return challengeMap; //ITEM_MAP;
   }
@@ -88,7 +92,7 @@ public final class ChallengeModel {
   }
 
   public void setCurrentChallengeShown() {
-    if (getCurrentChallenge().getStatus() == Challenge.SHOWN) {
+    if (getCurrentChallenge().getStatus() != Challenge.UNKNOWN) {
       return;
     }
     currentChallengeShownTime = new Date().getTime();

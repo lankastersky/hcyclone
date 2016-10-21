@@ -16,6 +16,7 @@ public class ChallengeFragment extends Fragment {
   public static final String CHALLENGE_ID = "challengeId";
 
   private String challengeId;
+  private Challenge challenge;
   private Button challengeButton;
 
   public ChallengeFragment() {
@@ -45,49 +46,57 @@ public class ChallengeFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_challenge, container, false);
     if (TextUtils.isEmpty(challengeId)) {
       // Show current challenge.
+      challenge = ChallengeModel.getInstance().getCurrentChallenge();
       createChallengeButton(view);
       ChallengeModel.getInstance().setCurrentChallengeShown();
+    } else {
+      challenge = ChallengeModel.getInstance().getChallengeById(challengeId);
     }
-    return view;
-  }
 
-
-
-  private void createChallengeButton(View view) {
-    final Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
     ((TextView) view.findViewById(R.id.id)).setText(challenge.id);
     ((TextView) view.findViewById(R.id.content)).setText(challenge.content);
     ((TextView) view.findViewById(R.id.details)).setText(challenge.details);
 
+    return view;
+  }
+
+  private void createChallengeButton(View view) {
     challengeButton = (Button) view.findViewById(R.id.accept_button);
     challengeButton.setVisibility(View.VISIBLE);
     challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
         Log.d(TAG, "challengeButton clicked");
-        if (challenge.getStatus() != Challenge.ACCEPTED) {
-          ChallengeModel.getInstance().setCurrentChallengeAccepted();
-          AlarmService.getInstance().startReminderAlarmIfNeeded();
-        } else {
-          ChallengeModel.getInstance().setCurrentChallengeFinished();
-          AlarmService.getInstance().stopReminderAlarm();
+        switch (challenge.getStatus()) {
+          case Challenge.SHOWN:
+            ChallengeModel.getInstance().setCurrentChallengeAccepted();
+            AlarmService.getInstance().startReminderAlarmIfNeeded();
+            NotificationManager.getInstance().cancelInitialNotification();
+            break;
+          case Challenge.ACCEPTED:
+            ChallengeModel.getInstance().setCurrentChallengeFinished();
+            AlarmService.getInstance().stopReminderAlarm();
+            NotificationManager.getInstance().cancelReminderNotification();
+            break;
+          default:
+            Log.e(TAG, "Wrong challenge status: " + challenge.getStatus());
         }
-        updateChallengeButton(challenge);
+        updateChallengeButton();
       }
     });
-    updateChallengeButton(challenge);
+    updateChallengeButton();
   }
 
-  private void updateChallengeButton(Challenge challenge) {
+  private void updateChallengeButton() {
     if (challenge.getStatus() == Challenge.FINISHED
         || challenge.getStatus() == Challenge.DECLINED) {
       // Todo: show comments if needed.
       challengeButton.setEnabled(false);
     }
-    challengeButton.setText(getChallengeButtonText(challenge));
+    challengeButton.setText(getChallengeButtonText());
   }
 
-  private String getChallengeButtonText(Challenge challenge) {
+  private String getChallengeButtonText() {
     String text = "";
     switch (challenge.getStatus()) {
       case Challenge.UNKNOWN:

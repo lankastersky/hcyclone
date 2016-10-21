@@ -27,6 +27,7 @@ public class App extends Application {
   protected void initSingletons() {
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);
+    NotificationManager.getInstance().init(this);
   }
 
   private static void enableStrictMode() {
