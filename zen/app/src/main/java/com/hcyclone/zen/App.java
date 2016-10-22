@@ -19,15 +19,15 @@ public class App extends Application {
   }
 
   private void setAlarms() {
-    AlarmService.getInstance().createServiceAlarmIfNeeded();
-    AlarmService.getInstance().createInitialAlarmIfNeeded();
-    AlarmService.getInstance().createFinalAlarmIfNeeded();
+    AlarmService.getInstance().setServiceAlarm();
+    AlarmService.getInstance().setInitialAlarm();
+    AlarmService.getInstance().setFinalAlarm();
   }
 
   protected void initSingletons() {
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);
-    NotificationManager.getInstance().init(this);
+    NotificationService.getInstance().init(this);
   }
 
   private static void enableStrictMode() {

@@ -96,88 +96,71 @@ public final class AlarmService {
         reminderAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
   }
 
-  private boolean isAlarmSet(int code) {
-    return (PendingIntent.getBroadcast(context, code,
-        new Intent(context, AlarmReceiver.class), PendingIntent.FLAG_NO_CREATE) != null);
-  }
-
   /**
    * Service alarm is fired at 2am every night.
    */
-  public void createServiceAlarmIfNeeded() {
-    if (isAlarmSet(ALARM_CODE_SERVICE)) {
-      Log.d(TAG, "Service alarm is already active");
-      //return;
-    }
-
+  public void setServiceAlarm() {
+    // TODO: check if enabled in preferences.
     Log.d(TAG, "Set service alarm");
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(System.currentTimeMillis());
     long alarmStartTime;
-    long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmRepeatTime = 10_000;
+      calendar.add(Calendar.SECOND, 10);
       alarmStartTime = calendar.getTimeInMillis();
     } else {
       // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 2);
-      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
       alarmStartTime = calendar.getTimeInMillis();
     }
 
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
-        alarmRepeatTime, serviceAlarmPengingIntent);
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmStartTime, serviceAlarmPengingIntent);
   }
 
-  public void updateServiceAlarm() {
+  public void setInitialAlarm() {
     // TODO: check if enabled in preferences.
-    // TODO: add randomness for the next day.
-  }
-
-  public void createInitialAlarmIfNeeded() {
-    // TODO: check if enabled in preferences.
-    if (isAlarmSet(ALARM_CODE_INITIAL)) {
-      Log.d(TAG, "Initial alarm is already active");
-      //return;
-    }
-
     Log.d(TAG, "Set initial alarm");
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(System.currentTimeMillis());
     long alarmStartTime;
-    long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmRepeatTime = 5_000;
+      calendar.add(Calendar.SECOND, 5);
       alarmStartTime = calendar.getTimeInMillis();
     } else {
       // TODO: add randomness.
       calendar.set(Calendar.HOUR_OF_DAY, 6);
-      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
       alarmStartTime = calendar.getTimeInMillis();
     }
 
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
-        alarmRepeatTime, initialAlarmPengingIntent);
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmStartTime, initialAlarmPengingIntent);
   }
 
-  public void updateInitialAlarm() {
+  public void setFinalAlarm() {
     // TODO: check if enabled in preferences.
-    // TODO: add randomness for the next day.
-  }
-
-  public void createFinalAlarmIfNeeded() {
-    // TODO: check if enabled in preferences.
-    if (isAlarmSet(ALARM_CODE_FINAL)) {
-      Log.d(TAG, "Final alarm is already active");
-      return;
-    }
-
     Log.d(TAG, "Set final alarm");
 
     Calendar calendar = Calendar.getInstance();
     calendar.setTimeInMillis(System.currentTimeMillis());
+    long alarmStartTime;
+    if (BuildConfig.DEBUG) {
+      calendar.add(Calendar.SECOND, 5);
+      alarmStartTime = calendar.getTimeInMillis();
+    } else {
+      // TODO: add randomness.
+      calendar.set(Calendar.HOUR_OF_DAY, 18);
+      alarmStartTime = calendar.getTimeInMillis();
+    }
+
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, alarmStartTime, finalAlarmPengingIntent);
+  }
+
+  public void setReminderAlarm() {
+    // TODO: check if enabled in preferences.
+    Log.d(TAG, "Set reminder alarm");
+
+    Calendar calendar = Calendar.getInstance();
     long alarmStartTime;
     long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
@@ -185,51 +168,16 @@ public final class AlarmService {
       alarmStartTime = calendar.getTimeInMillis();
     } else {
       // TODO: add randomness.
-      calendar.set(Calendar.HOUR_OF_DAY, 18);
-      alarmRepeatTime = AlarmManager.INTERVAL_DAY;
+      alarmRepeatTime = AlarmManager.INTERVAL_HOUR;
+      calendar.set(Calendar.HOUR_OF_DAY, 1);
       alarmStartTime = calendar.getTimeInMillis();
     }
 
     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime,
-        alarmRepeatTime, finalAlarmPengingIntent);
-  }
-
-  public void updateFinalAlarm() {
-    // TODO: check if enabled in preferences.
-    // TODO: add randomness for the next day.
-  }
-
-  public void startReminderAlarmIfNeeded() {
-    // TODO: check if enabled in preferences.
-    if (isAlarmSet(ALARM_CODE_REMINDER)) {
-      Log.d(TAG, "Reminder alarm is already active");
-      return;
-    }
-
-    Log.d(TAG, "Set reminder alarm");
-
-    Calendar calendar = Calendar.getInstance();
-    long alarmTime;
-    if (BuildConfig.DEBUG) {
-      alarmTime = 5_000;
-    } else {
-      calendar.setTimeInMillis(System.currentTimeMillis());
-      // TODO: read from preferences.
-      calendar.set(Calendar.HOUR_OF_DAY, 2);
-      alarmTime = calendar.getTimeInMillis();
-    }
-
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmTime,
-        AlarmManager.INTERVAL_DAY, reminderAlarmPengingIntent);
+        alarmRepeatTime, reminderAlarmPengingIntent);
   }
 
   public void stopReminderAlarm() {
-    // TODO: test if already cancelled.
     alarmManager.cancel(reminderAlarmPengingIntent);
-    // TODO: delete notification if shown.
-  }
-
-  public void updateReminderAlarm() {
-    // TODO: update with values from preferences.
   }
 }

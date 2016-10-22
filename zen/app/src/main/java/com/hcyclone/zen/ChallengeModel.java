@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.gson.Gson;
 
 public final class ChallengeModel {
 
@@ -33,12 +34,14 @@ public final class ChallengeModel {
   private static final String KEY_CHALLENGE_STATUSES = "challenge_statuses";
   private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
   private static final String CURRENT_CHALLENGE_ID_KEY = "current_challenge_id";
+  private static final String CURRENT_CHALLENGE_KEY = "current_challenge";
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
   //private long currentChallengeToShowTime;
   private Map<String, Challenge> challengeMap = new HashMap<>();
   private Context context;
+  private Gson gson;
 
 //  static {
 //    // Add some sample items.
@@ -56,6 +59,7 @@ public final class ChallengeModel {
 
   public void init(Context context) {
     this.context = context;
+    gson = new Gson();
   }
 
   public Challenge getCurrentChallenge() {
@@ -105,6 +109,12 @@ public final class ChallengeModel {
 
   public void setCurrentChallengeFinished() {
     updateCurrentChallenge();
+  }
+
+  public Challenge getSerializedCurrentChallenge() {
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    String currentChallengeString = sharedPreferences.getString(CURRENT_CHALLENGE_KEY, null);
+    return gson.fromJson(currentChallengeString, Challenge.class);
   }
 
   private void updateCurrentChallenge() {
@@ -225,6 +235,9 @@ public final class ChallengeModel {
     sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, currentChallengeShownTime)
         .apply();
     sharedPreferences.edit().putString(CURRENT_CHALLENGE_ID_KEY, currentChallengeId).apply();
+
+    String currentChallengeString = gson.toJson(getCurrentChallenge());
+    sharedPreferences.edit().putString(CURRENT_CHALLENGE_KEY, currentChallengeString).apply();
   }
 
   private void restoreCurrentChallenge() {

@@ -71,7 +71,7 @@ public class FirebaseService extends IntentService implements FirebaseAdapter.Fi
 
         Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
         if (challenge.getStatus() == Challenge.ACCEPTED) {
-          AlarmService.getInstance().startReminderAlarmIfNeeded();
+          AlarmService.getInstance().setReminderAlarm();
         }
 
         if (receiver != null) {

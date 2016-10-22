@@ -17,19 +17,19 @@ public class AlarmReceiver extends BroadcastReceiver {
     switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
         context.startService(new Intent(context, FirebaseService.class));
-        AlarmService.getInstance().updateServiceAlarm();
+        AlarmService.getInstance().setServiceAlarm();
         break;
       case AlarmService.ALARM_CODE_INITIAL:
-        NotificationManager.getInstance().showInitialAlarmNotification();
-        AlarmService.getInstance().updateInitialAlarm();
+        NotificationService.getInstance().showInitialAlarmNotification();
+        AlarmService.getInstance().setInitialAlarm();
         break;
       case AlarmService.ALARM_CODE_FINAL:
-        NotificationManager.getInstance().showFinalAlarmNotification();
-        AlarmService.getInstance().updateFinalAlarm();
+        NotificationService.getInstance().showFinalAlarmNotification();
+        AlarmService.getInstance().setFinalAlarm();
         AlarmService.getInstance().stopReminderAlarm();
         break;
       case AlarmService.ALARM_CODE_REMINDER:
-        NotificationManager.getInstance().showReminderAlarmNotification();
+        NotificationService.getInstance().showReminderAlarmNotification();
         break;
     }
   }

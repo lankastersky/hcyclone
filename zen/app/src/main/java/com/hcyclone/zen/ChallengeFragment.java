@@ -70,13 +70,11 @@ public class ChallengeFragment extends Fragment {
         switch (challenge.getStatus()) {
           case Challenge.SHOWN:
             ChallengeModel.getInstance().setCurrentChallengeAccepted();
-            AlarmService.getInstance().startReminderAlarmIfNeeded();
-            NotificationManager.getInstance().cancelInitialNotification();
+            AlarmService.getInstance().setReminderAlarm();
             break;
           case Challenge.ACCEPTED:
             ChallengeModel.getInstance().setCurrentChallengeFinished();
             AlarmService.getInstance().stopReminderAlarm();
-            NotificationManager.getInstance().cancelReminderNotification();
             break;
           default:
             Log.e(TAG, "Wrong challenge status: " + challenge.getStatus());
