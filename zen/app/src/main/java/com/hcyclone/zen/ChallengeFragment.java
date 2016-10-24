@@ -20,7 +20,6 @@ public class ChallengeFragment extends Fragment {
   private Button challengeButton;
 
   public ChallengeFragment() {
-    // Required empty public constructor
   }
 
   public static ChallengeFragment newInstance(String challengeId) {
@@ -50,8 +49,10 @@ public class ChallengeFragment extends Fragment {
       createChallengeButton(view);
       ChallengeModel.getInstance().setCurrentChallengeShown();
     } else {
-      challenge = ChallengeModel.getInstance().getChallengeById(challengeId);
+      challenge = ChallengeModel.getInstance().getChallenge(challengeId);
     }
+
+    getActivity().setTitle(challenge.getContent());
 
     ((TextView) view.findViewById(R.id.id)).setText(challenge.id);
     ((TextView) view.findViewById(R.id.content)).setText(challenge.content);

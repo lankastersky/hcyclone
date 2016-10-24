@@ -28,6 +28,8 @@ public class App extends Application {
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);
     NotificationService.getInstance().init(this);
+    PreferencesService.getInstance().init(this);
+    Utils.getInstance().init(this);
   }
 
   private static void enableStrictMode() {

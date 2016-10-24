@@ -1,14 +1,10 @@
 package com.hcyclone.zen;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.View;
 
 public class ChallengeActivity extends AppCompatActivity {
 
@@ -19,12 +15,14 @@ public class ChallengeActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    if (savedInstanceState == null) {
+    //if (savedInstanceState == null) {
       String challengeId = getIntent().getExtras().getString(ChallengeFragment.CHALLENGE_ID);
+      setTitle(ChallengeModel.getInstance().getChallenge(challengeId).getContent());
+
       FragmentManager fragmentManager = getSupportFragmentManager();
       FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
       ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
       fragmentTransaction.add(R.id.content_container, challengeFragment).commit();
-    }
+    //}
   }
 }

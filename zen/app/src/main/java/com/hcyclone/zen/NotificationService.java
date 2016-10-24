@@ -1,12 +1,20 @@
 package com.hcyclone.zen;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class NotificationService {
+public final class NotificationService {
 
   private static final String TAG = NotificationService.class.getSimpleName();
 
@@ -24,7 +32,7 @@ public class NotificationService {
     return instance;
   }
 
-  public void init(Context context) {
+  public void init(@NonNull Context context) {
     this.context = context;
     notificationManager = (android.app.NotificationManager)
         context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -62,11 +70,12 @@ public class NotificationService {
   }
 
   private void showNotification(String title, String text) {
-    NotificationCompat.Builder mBuilder =
+    NotificationCompat.Builder builder =
         new NotificationCompat.Builder(context)
             .setSmallIcon(android.R.drawable.ic_notification_overlay)
             .setContentTitle(title)
             .setContentText(text)
+            .setLights(Color.RED, 3000, 3000)
             .setAutoCancel(true);
     Intent resultIntent = new Intent(context, MainActivity.class);
     PendingIntent resultPendingIntent =
@@ -76,7 +85,17 @@ public class NotificationService {
             resultIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
-    mBuilder.setContentIntent(resultPendingIntent);
-    notificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    builder.setContentIntent(resultPendingIntent);
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    if (sharedPreferences.getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, false)) {
+      builder.setVibrate(new long[] { 0, 50, 200, 50, 200, 50 });
+    }
+    String ringtoneUri = sharedPreferences.getString(
+        PreferencesService.PREF_KEY_NOTIFICATION_RINGTONE, null);
+    if (ringtoneUri != null) {
+      Uri uri = Uri.parse(ringtoneUri);
+      builder.setSound(uri);
+    }
+    notificationManager.notify(NOTIFICATION_ID, builder.build());
   }
 }

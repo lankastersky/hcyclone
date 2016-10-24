@@ -57,7 +57,7 @@ public final class ChallengeModel {
     return instance;
   }
 
-  public void init(Context context) {
+  public void init(@NonNull Context context) {
     this.context = context;
     gson = new Gson();
   }
@@ -78,12 +78,12 @@ public final class ChallengeModel {
     return challenges;
   }
 
-  public Challenge getChallengeById(String challengeId) {
+  public Challenge getChallenge(String challengeId) {
     return challengeMap.get(challengeId);
   }
 
   private Map<String, Challenge> getChallengesMap() {
-    return challengeMap; //ITEM_MAP;
+    return challengeMap;
   }
 
   public void loadChallenges(List<Challenge> challenges) {
@@ -140,31 +140,15 @@ public final class ChallengeModel {
     Log.d(TAG, "Current challenge id:" + currentChallengeId);
   }
 
-  // Challenge expires in one day.
+  // Challenge expires at midnight of next day.
   private boolean isChallengeTimeExpired() {
-    Date timeToDecline = new Date(currentChallengeShownTime);
-    // today
-    Calendar date = new GregorianCalendar();
-    Date timeNow = date.getTime();
-    date.setTime(timeToDecline);
-    // reset hour, minutes, seconds and millis
-    date.set(Calendar.HOUR_OF_DAY, 0);
-    date.set(Calendar.MINUTE, 0);
-    date.set(Calendar.SECOND, 0);
-    date.set(Calendar.MILLISECOND, 0);
-    if (BuildConfig.DEBUG) {
-      date.add(Calendar.MINUTE, 2);
-    } else {
-      // midnight of next day
-      date.add(Calendar.DAY_OF_MONTH, 1);
-    }
-    if (date.getTime().after(timeNow)) {
+    Date timeToDecline = Utils.getMidnight(currentChallengeShownTime);
+    if (timeToDecline.before(new Date())) {
       return true;
     }
     return false;
   }
 
-  // Shown challenge is automatically declined after midnight.
   private boolean isTimeToDecline() {
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.SHOWN
@@ -174,7 +158,6 @@ public final class ChallengeModel {
     return false;
   }
 
-  // New challenge is available after midnight.
   private boolean isNewChallengeRequired() {
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.FINISHED

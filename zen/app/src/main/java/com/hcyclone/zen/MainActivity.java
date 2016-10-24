@@ -115,7 +115,8 @@ public class MainActivity extends AppCompatActivity
     int id = item.getItemId();
 
     //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings) {
+    if (id == R.id.action_share) {
+      // TODO: implement
       return true;
     }
 
@@ -139,9 +140,11 @@ public class MainActivity extends AppCompatActivity
       Intent intent = new Intent(this, SettingsActivity.class);
       startActivity(intent);
     } else if (id == R.id.nav_help) {
-
+      Fragment newFragment = fragmentManager.findFragmentByTag(
+          HelpFragment.class.getSimpleName());
+      replaceFragment(newFragment, HelpFragment.class);
     } else if (id == R.id.nav_feedback) {
-
+      Utils.getInstance().sendFeedback(this);
     }
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

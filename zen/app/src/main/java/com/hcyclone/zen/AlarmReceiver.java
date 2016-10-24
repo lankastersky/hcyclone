@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import android.util.Log;
 
-public class AlarmReceiver extends BroadcastReceiver {
+public final class AlarmReceiver extends BroadcastReceiver {
 
   private static final String TAG = AlarmReceiver.class.getSimpleName();
 
@@ -17,14 +17,17 @@ public class AlarmReceiver extends BroadcastReceiver {
     switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
         context.startService(new Intent(context, FirebaseService.class));
+        // Restart alarm to make it random.
         AlarmService.getInstance().setServiceAlarm();
         break;
       case AlarmService.ALARM_CODE_INITIAL:
         NotificationService.getInstance().showInitialAlarmNotification();
+        // Restart alarm to make it random.
         AlarmService.getInstance().setInitialAlarm();
         break;
       case AlarmService.ALARM_CODE_FINAL:
         NotificationService.getInstance().showFinalAlarmNotification();
+        // Restart alarm to make it random.
         AlarmService.getInstance().setFinalAlarm();
         AlarmService.getInstance().stopReminderAlarm();
         break;

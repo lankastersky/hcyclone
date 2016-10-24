@@ -19,10 +19,6 @@ public class ChallengeListFragment extends Fragment {
 
   private OnListFragmentInteractionListener onListFragmentInteractionListener;
 
-  /**
-   * Mandatory empty constructor for the fragment manager to instantiate the
-   * fragment (e.g. upon screen orientation changes).
-   */
   public ChallengeListFragment() {
   }
 
@@ -34,6 +30,9 @@ public class ChallengeListFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
+
+    getActivity().setTitle("Finished challenges");
+
     View view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
 
     // Set the adapter
