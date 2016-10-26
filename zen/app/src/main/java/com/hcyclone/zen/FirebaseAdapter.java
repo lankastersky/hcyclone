@@ -29,18 +29,11 @@ import com.google.firebase.database.DataSnapshot;
 public class FirebaseAdapter {
 
   private static final String TAG = FirebaseAdapter.class.getSimpleName();
-
   private static final FirebaseAdapter instance = new FirebaseAdapter();
 
-  /**
-   * Initialize the static global Firebase default config. For some reason
-   * there is no way to pass a non-default config into the Firebase constructor.
-   * This must be done in a static context since it's also illegal to modify
-   * the config (e.g. do this again) after it's already been used.
-   */
   static {
     FirebaseDatabase firebaseConfig = FirebaseDatabase.getInstance();
-    firebaseConfig.setPersistenceEnabled(false);
+    firebaseConfig.setPersistenceEnabled(true);
     firebaseConfig.setLogLevel(Logger.Level.INFO);
   }
 
