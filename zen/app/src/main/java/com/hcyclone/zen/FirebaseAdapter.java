@@ -88,8 +88,7 @@ public class FirebaseAdapter {
   private void authenticate() {
     String firebaseUsername = "stalker@hcyclone.com";
     String firebasePassword = "stalking";
-    //firebaseAuth = null;
-    Log.d(TAG, "Starting authWithPassword");
+    Log.d(TAG, "signInWithEmailAndPassword");
     FirebaseAuth auth = FirebaseAuth.getInstance();
     auth.signInWithEmailAndPassword(firebaseUsername, firebasePassword)
         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -99,7 +98,11 @@ public class FirebaseAdapter {
             if (firebaseAuthListener != null) {
               if (task.isSuccessful()) {
                 firebaseAuthListener.onAuthSuccess();
+              } else if (!Utils.getInstance().isConnected()) {
+                // Use cached data.
+                firebaseAuthListener.onAuthSuccess();
               } else {
+                // Auth error.
                 firebaseAuthListener.onAuthError(task.getException());
               }
             }
@@ -108,6 +111,7 @@ public class FirebaseAdapter {
   }
 
   public void getChallenges(final FirebaseDataListener listener) {
+    Log.d(TAG, "getChallenges");
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     reference.child("challenges").addListenerForSingleValueEvent(
         new ValueEventListener() {

@@ -110,6 +110,7 @@ public class ChallengeFragment extends Fragment {
         break;
       case Challenge.DECLINED:
         text = "Declined";
+        break;
       default:
         Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;

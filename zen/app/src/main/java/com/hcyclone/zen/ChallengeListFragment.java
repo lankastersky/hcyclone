@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -23,6 +25,17 @@ public class ChallengeListFragment extends Fragment {
   }
 
   @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    if (context instanceof OnListFragmentInteractionListener) {
+      onListFragmentInteractionListener = (OnListFragmentInteractionListener) context;
+    } else {
+      throw new RuntimeException(context.toString()
+          + " must implement OnListFragmentInteractionListener");
+    }
+  }
+
+  @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
   }
@@ -33,7 +46,13 @@ public class ChallengeListFragment extends Fragment {
 
     getActivity().setTitle("Finished challenges");
 
-    View view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
+    View view;
+    List<Challenge> finishedChallenges = ChallengeModel.getInstance().getFinishedChallenges();
+    if (finishedChallenges.isEmpty()) {
+      view = inflater.inflate(R.layout.fragment_challenge_list_empty, container, false);
+    } else {
+      view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
+    }
 
     // Set the adapter
     if (view instanceof RecyclerView) {
@@ -42,21 +61,9 @@ public class ChallengeListFragment extends Fragment {
       recyclerView.setHasFixedSize(true);
       recyclerView.setLayoutManager(new LinearLayoutManager(context));
       recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
-          ChallengeModel.getInstance().getFinishedChallenges(), onListFragmentInteractionListener));
+          finishedChallenges, onListFragmentInteractionListener));
     }
     return view;
-  }
-
-
-  @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    if (context instanceof OnListFragmentInteractionListener) {
-      onListFragmentInteractionListener = (OnListFragmentInteractionListener) context;
-    } else {
-      throw new RuntimeException(context.toString()
-          + " must implement OnListFragmentInteractionListener");
-    }
   }
 
   @Override

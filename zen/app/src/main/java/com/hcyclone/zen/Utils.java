@@ -2,6 +2,8 @@ package com.hcyclone.zen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -72,5 +74,15 @@ public final class Utils {
       Log.e(TAG, "Couldn't get the version code.", e);
       return 0;
     }
+  }
+
+  /**
+   * Checks network connectivity.
+   */
+  public boolean isConnected() {
+    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
+        Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
 }

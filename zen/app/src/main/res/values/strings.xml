@@ -78,5 +78,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_help_text">How to use this app.</string>
+    <string name="fragment_challenge_list_empty_text">There are no finished challenges yet.</string>
 
 </resources>
