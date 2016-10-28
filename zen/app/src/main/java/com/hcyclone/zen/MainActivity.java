@@ -1,6 +1,5 @@
 package com.hcyclone.zen;
 
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,6 +19,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 public class MainActivity extends AppCompatActivity
@@ -29,12 +30,12 @@ public class MainActivity extends AppCompatActivity
   private static final String TAG = MainActivity.class.getSimpleName();
 
   private Fragment currentFragment;
-  private ProgressDialog progress;
+  private ProgressBar progressBar;
   private ResultReceiver receiver = new ResultReceiver(new Handler()) {
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
       super.onReceiveResult(resultCode, resultData);
-      progress.dismiss();
+      progressBar.setVisibility(View.GONE);
       switch (resultCode) {
         case FirebaseService.RESULT_CODE_OK:
           showCurrentChallenge();
@@ -63,7 +64,8 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-    progress = ProgressDialog.show(this, "Initialization", "Loading data from server...", true);
+    progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    progressBar.setVisibility(View.VISIBLE);
 
     Intent intent = new Intent(this, FirebaseService.class);
     intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);

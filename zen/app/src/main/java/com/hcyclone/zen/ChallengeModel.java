@@ -133,6 +133,11 @@ public final class ChallengeModel {
       }
       if (isNewChallengeRequired()) {
         currentChallengeId = getNewChallengeId();
+        Challenge challenge = getChallengesMap().get(currentChallengeId);
+        if (challenge.getStatus() != Challenge.UNKNOWN) {
+          // Challenge was shown before. Reset the status
+          challenge.setStatus(Challenge.UNKNOWN);
+        }
       }
     }
     storeChallengeStatuses();
