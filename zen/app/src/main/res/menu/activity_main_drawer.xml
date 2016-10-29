@@ -5,24 +5,24 @@
         <item
             android:id="@+id/nav_challenge"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Challenge"/>
+            android:title="@string/navigation_drawer_challenge"/>
         <item
             android:id="@+id/nav_journal"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Journal"/>
+            android:title="@string/navigation_drawer_journal"/>
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Settings"/>
+            android:title="@string/navigation_drawer_settings"/>
         <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_menu_share"
-            android:title="Help"/>
+            android:title="@string/navigation_drawer_help"/>
     </group>
 
             <item
                 android:id="@+id/nav_feedback"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Feedback"/>
+                android:title="@string/navigation_drawer_feedback"/>
 
 </menu>

@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import android.util.Log;
@@ -15,14 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public final class ChallengeModel {
 
@@ -38,8 +35,7 @@ public final class ChallengeModel {
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
-  //private long currentChallengeToShowTime;
-  private Map<String, Challenge> challengeMap = new HashMap<>();
+  private final Map<String, Challenge> challengeMap = new HashMap<>();
   private Context context;
   private Gson gson;
 
@@ -148,10 +144,7 @@ public final class ChallengeModel {
   // Challenge expires at midnight of next day.
   private boolean isChallengeTimeExpired() {
     Date timeToDecline = Utils.getMidnight(currentChallengeShownTime);
-    if (timeToDecline.before(new Date())) {
-      return true;
-    }
-    return false;
+    return timeToDecline.before(new Date());
   }
 
   private boolean isTimeToDecline() {
@@ -235,11 +228,12 @@ public final class ChallengeModel {
   }
 
   private void storeChallengeStatuses() {
-    Map<String, Integer> statusesMap = new HashMap<>();
+    List<ChallengeStatus> statuses = new ArrayList<>();
     for (Challenge challenge : challengeMap.values()) {
-      statusesMap.put(challenge.id, challenge.getStatus());
+      statuses.add(new ChallengeStatus(challenge.getId(), challenge.getStatus(),
+          challenge.getFinishedTime()));
     }
-    String statusesString = statusesMap.toString();
+    String statusesString = gson.toJson(statuses);
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     sharedPreferences.edit().putString(KEY_CHALLENGE_STATUSES, statusesString).apply();
   }
@@ -248,21 +242,12 @@ public final class ChallengeModel {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String statusesString = sharedPreferences.getString(KEY_CHALLENGE_STATUSES, null);
     if (!TextUtils.isEmpty(statusesString)) {
-      Map<String, String> statusesMap;
-      try {
-        statusesMap = Splitter
-            .on(",")
-            .trimResults(CharMatcher.anyOf("{} "))
-            .withKeyValueSeparator("=")
-            .split(statusesString);
-      } catch (Exception e) {
-        Log.e(TAG, "Service status parse error: " + e.toString());
-        return;
-      }
-      for (String challengeId : statusesMap.keySet()) {
-        Challenge challenge = challengeMap.get(challengeId);
-        int status = Integer.parseInt(statusesMap.get(challengeId));
-        challenge.setStatus(status);
+      List<ChallengeStatus> statuses = gson.fromJson(statusesString,
+          new TypeToken<List<ChallengeStatus>>(){}.getType());
+      for (ChallengeStatus challengeStatus : statuses) {
+        Challenge challenge = challengeMap.get(challengeStatus.id);
+        challenge.setStatus(challengeStatus.status);
+        challenge.setFinishedTime(challengeStatus.finishedTime);
       }
     }
   }

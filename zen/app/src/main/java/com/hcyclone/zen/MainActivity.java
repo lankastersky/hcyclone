@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity
       try {
         newFragment = (Fragment) clazz.newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
-        System.out.println(e.toString());
+        Log.d(TAG, e.toString());
       }
       fragmentTransaction.add(R.id.content_container,
           newFragment, clazz.getSimpleName()).commit();

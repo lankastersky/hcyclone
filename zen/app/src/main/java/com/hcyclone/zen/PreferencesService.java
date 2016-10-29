@@ -39,7 +39,7 @@ public final class PreferencesService {
    * A preference value change listener that updates the preference's summary
    * to reflect its new value.
    */
-  private Preference.OnPreferenceChangeListener bindPreferenceSummaryToValueListener
+  private final Preference.OnPreferenceChangeListener bindPreferenceSummaryToValueListener
       = new Preference.OnPreferenceChangeListener() {
 
     @Override

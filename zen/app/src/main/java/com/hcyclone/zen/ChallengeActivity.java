@@ -15,14 +15,12 @@ public class ChallengeActivity extends AppCompatActivity {
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    //if (savedInstanceState == null) {
-      String challengeId = getIntent().getExtras().getString(ChallengeFragment.CHALLENGE_ID);
-      setTitle(ChallengeModel.getInstance().getChallenge(challengeId).getContent());
+    String challengeId = getIntent().getExtras().getString(ChallengeFragment.CHALLENGE_ID);
+    setTitle(ChallengeModel.getInstance().getChallenge(challengeId).getContent());
 
-      FragmentManager fragmentManager = getSupportFragmentManager();
-      FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-      ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
-      fragmentTransaction.add(R.id.content_container, challengeFragment).commit();
-    //}
+    FragmentManager fragmentManager = getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
+    fragmentTransaction.add(R.id.content_container, challengeFragment).commit();
   }
 }

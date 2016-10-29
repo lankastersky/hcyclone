@@ -49,14 +49,19 @@ public class ChallengeFragment extends Fragment {
       createChallengeButton(view);
       ChallengeModel.getInstance().setCurrentChallengeShown();
     } else {
+      // show finished challenge.
       challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+
+      TextView statusView = (TextView) view.findViewById(R.id.status);
+      statusView.setText(String.format(getString(R.string.fragment_challenge_status),
+          challengeStatusAsString(challenge.getStatus())));
+      statusView.setVisibility(View.VISIBLE);
     }
 
     getActivity().setTitle(challenge.getContent());
 
-    ((TextView) view.findViewById(R.id.id)).setText(challenge.id);
-    ((TextView) view.findViewById(R.id.content)).setText(challenge.content);
-    ((TextView) view.findViewById(R.id.details)).setText(challenge.details);
+    ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
+    ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
 
     return view;
   }
@@ -95,26 +100,42 @@ public class ChallengeFragment extends Fragment {
     challengeButton.setText(getChallengeButtonText());
   }
 
+  private String challengeStatusAsString(int status) {
+    String result = "";
+    switch (status) {
+      case Challenge.FINISHED:
+        result = getString(R.string.fragment_challenge_finished);
+        break;
+      case Challenge.DECLINED:
+        result = getString(R.string.fragment_challenge_declined);
+        break;
+      default:
+        Log.d(TAG, "Wrong status to convert to string: " + status);
+        break;
+    }
+    return result;
+  }
+
   private String getChallengeButtonText() {
-    String text = "";
+    String result = "";
     switch (challenge.getStatus()) {
       case Challenge.UNKNOWN:
       case Challenge.SHOWN:
-        text = "Accept";
+        result = getString(R.string.fragment_challenge_accept);
         break;
       case Challenge.ACCEPTED:
-        text = "Finish";
+        result = getString(R.string.fragment_challenge_finish);
         break;
       case Challenge.FINISHED:
-        text = "Finished";
+        result = getString(R.string.fragment_challenge_finished);
         break;
       case Challenge.DECLINED:
-        text = "Declined";
+        result = getString(R.string.fragment_challenge_declined);
         break;
       default:
         Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;
     }
-    return text;
+    return result;
   }
 }

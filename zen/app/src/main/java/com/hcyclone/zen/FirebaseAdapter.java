@@ -4,9 +4,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
@@ -73,6 +70,7 @@ public class FirebaseAdapter {
   /**
    * Signs out from the server and clears listeners.
    */
+  // TODO: delete if not needed.
   public void signOut() {
     Log.d(TAG, "Sign out");
     FirebaseAuth.getInstance().signOut();

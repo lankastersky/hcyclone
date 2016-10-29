@@ -15,9 +15,7 @@ public class HelpFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    getActivity().setTitle("Help");
-
-    // Inflate the layout for this fragment
+    getActivity().setTitle(getString(R.string.fragment_help));
     return inflater.inflate(R.layout.fragment_help, container, false);
   }
 }

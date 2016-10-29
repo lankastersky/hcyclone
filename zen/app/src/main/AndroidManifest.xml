@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- todo: test backup -->
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -28,13 +29,11 @@
 
         <activity
             android:name=".ChallengeActivity"
-            android:label="@string/title_activity_challenge"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
+            android:name=".SettingsActivity">
         </activity>
 
         <receiver android:name="AlarmReceiver">

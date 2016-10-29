@@ -36,18 +36,16 @@ public class ChallengeListFragment extends Fragment {
   }
 
   @Override
-  public void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-  }
-
-  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    getActivity().setTitle("Finished challenges");
+    getActivity().setTitle(getString(R.string.fragment_challenge_list));
 
     View view;
     List<Challenge> finishedChallenges = ChallengeModel.getInstance().getFinishedChallenges();
+//    for (int i = 0; i < 9; i++) {
+//      finishedChallenges.addAll(ChallengeModel.getInstance().getFinishedChallenges());
+//    }
     if (finishedChallenges.isEmpty()) {
       view = inflater.inflate(R.layout.fragment_challenge_list_empty, container, false);
     } else {

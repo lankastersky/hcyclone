@@ -20,28 +20,33 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"/>
-
-        <TextView
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/text_margin"
-            android:textAppearance="?attr/textAppearanceListItem"/>
+            android:textSize="18sp"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:padding="@dimen/text_margin"
             android:textAppearance="?attr/textAppearanceListItem"/>
 
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/text_margin"
+            android:visibility="gone"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textStyle="italic"/>
+
         <Button
-            android:text="Accept"
+            android:text="@string/fragment_challenge_accept"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"

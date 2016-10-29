@@ -17,9 +17,8 @@ public class Challenge {
   public String id;
 
   //public final String title;
-  public String content;
-  public String details;
-
+  private String content;
+  private String details;
   private int status;
   private long finishedTime;
 
@@ -38,29 +37,12 @@ public class Challenge {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getContent() {
     return content;
   }
 
-  public void setContent(String content) {
-    this.content = content;
-  }
-
   public String getDetails() {
     return details;
-  }
-
-  public void setDetails(String details) {
-    this.details = details;
-  }
-
-  @Override
-  public String toString() {
-    return content;
   }
 
   public int getStatus() {
@@ -73,6 +55,10 @@ public class Challenge {
 
   public long getFinishedTime() {
     return finishedTime;
+  }
+
+  public void setFinishedTime(long finishedTime) {
+    this.finishedTime = finishedTime;
   }
 
   public void updateStatus() {
