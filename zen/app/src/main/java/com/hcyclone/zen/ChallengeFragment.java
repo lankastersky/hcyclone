@@ -2,7 +2,9 @@ package com.hcyclone.zen;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,8 +64,43 @@ public class ChallengeFragment extends Fragment {
 
     ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
     ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
+    if (!TextUtils.isEmpty(challenge.getSource())) {
+      ((TextView) view.findViewById(R.id.source)).setText(Html.fromHtml(challenge.getSource()));
+      ((TextView) view.findViewById(R.id.source)).setMovementMethod(
+          LinkMovementMethod.getInstance());
+      (view.findViewById(R.id.source)).setVisibility(View.VISIBLE);
+    }
+    ((TextView) view.findViewById(R.id.type)).setText(String.format(
+        getString(R.string.fragment_challenge_type), localizedChallengeType(challenge.getType())));
+    ((TextView) view.findViewById(R.id.level)).setText(String.format(
+        getString(R.string.fragment_challenge_level),
+        localizedChallengeLevel(challenge.getLevel())));
 
     return view;
+  }
+
+  private String localizedChallengeType(String type) {
+    String result = "";
+    switch (type) {
+      case Challenge.TYPE_STOP_INTERNAL_DIALOG:
+        result = getString(R.string.challenge_type_sid);
+        break;
+      default:
+        break;
+    }
+    return result;
+  }
+
+  private String localizedChallengeLevel(int level) {
+    String result = "";
+    switch (level) {
+      case Challenge.LEVEL_EASY:
+        result = getString(R.string.challenge_level_easy);
+        break;
+      default:
+        break;
+    }
+    return result;
   }
 
   private void createChallengeButton(View view) {

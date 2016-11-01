@@ -84,6 +84,14 @@
     <string name="fragment_challenge_finished">Finished</string>
     <string name="fragment_challenge_declined">Declined</string>
     <string name="fragment_challenge_status">Status: %s</string>
+    <string name="fragment_challenge_type">Type: %s</string>
+    <string name="fragment_challenge_level">Complexity: %s</string>
+
+    <!-- Challenge types -->
+    <string name="challenge_type_sid">Stop Internal Dialog</string>
+
+    <!-- Challenge levels -->
+    <string name="challenge_level_easy">Easy</string>
 
     <!-- Fragment Challenge List -->
     <string name="fragment_challenge_list">Finished Challenges</string>

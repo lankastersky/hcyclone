@@ -115,15 +115,21 @@ public class FirebaseAdapter {
         new ValueEventListener() {
           @Override
           public void onDataChange(DataSnapshot dataSnapshot) {
-            // Get user value
-            Map<String, Object> challengesMap = (Map<String, Object>) dataSnapshot.getValue();
             ArrayList<Challenge> challenges = new ArrayList<>();
-            for (String key : challengesMap.keySet()) {
-              Map<String, String> challengeMap = (Map<String, String>) challengesMap.get(key);
-              Challenge challenge = new Challenge(key,
-                  challengeMap.get("content"),
-                  challengeMap.get("details"));
-              challenges.add(challenge);
+            try {
+              Map<String, Object> challengesMap = (Map<String, Object>) dataSnapshot.getValue();
+              for (String key : challengesMap.keySet()) {
+                Map<String, Object> challengeMap = (Map<String, Object>) challengesMap.get(key);
+                Challenge challenge = new Challenge(key,
+                    (String) challengeMap.get("content"),
+                    (String) challengeMap.get("details"),
+                    (String) challengeMap.get("type"),
+                    (Long) challengeMap.get("level"),
+                    (String) challengeMap.get("source"));
+                challenges.add(challenge);
+              }
+            } catch (Exception e) {
+              Log.e(TAG, e.toString());
             }
             listener.onChallenges(challenges);
           }
@@ -134,6 +140,7 @@ public class FirebaseAdapter {
             listener.onError(databaseError.toException());
           }
         });
+    reference.child("challenges").keepSynced(true);
   }
 
   public interface FirebaseAuthListener {

@@ -14,11 +14,20 @@ public class Challenge {
   public static final int FINISHED = 3;
   public static final int DECLINED = 4;
 
-  public String id;
+  // Types
+  public static final String TYPE_STOP_INTERNAL_DIALOG = "SID";
 
+  // Levels
+  public static final int LEVEL_EASY = 1;
+
+  public String id;
   //public final String title;
   private String content;
   private String details;
+  private String type;
+  private int level;
+  private String source;
+
   private int status;
   private long finishedTime;
 
@@ -26,10 +35,14 @@ public class Challenge {
     this.status = UNKNOWN;
   }
 
-  public Challenge(String id, String content, String details) {
+  public Challenge(String id, String content, String details, String type, long level,
+                   String source) {
     this.id = id;
     this.content = content;
     this.details = details;
+    this.type = type;
+    this.level = (int) level;
+    this.source = source;
     this.status = UNKNOWN;
   }
 
@@ -51,6 +64,18 @@ public class Challenge {
 
   public void setStatus(int status) {
     this.status = status;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public int getLevel() {
+    return level;
+  }
+
+  public String getSource() {
+    return source;
   }
 
   public long getFinishedTime() {
