@@ -45,13 +45,28 @@ public class ChallengeFragment extends Fragment {
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_challenge, container, false);
+    showChallenge(view);
+    return view;
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    updateChallengeIfNeeded(getView());
+  }
+
+  private void showChallenge(View view) {
     if (TextUtils.isEmpty(challengeId)) {
       // Show current challenge.
+      getActivity().setTitle(getString(R.string.fragment_challenge_current));
+
       challenge = ChallengeModel.getInstance().getCurrentChallenge();
       createChallengeButton(view);
       ChallengeModel.getInstance().setCurrentChallengeShown();
     } else {
       // show finished challenge.
+      getActivity().setTitle(getString(R.string.fragment_challenge_journal_entry));
+
       challenge = ChallengeModel.getInstance().getChallenge(challengeId);
 
       TextView statusView = (TextView) view.findViewById(R.id.status);
@@ -60,23 +75,43 @@ public class ChallengeFragment extends Fragment {
       statusView.setVisibility(View.VISIBLE);
     }
 
-    getActivity().setTitle(challenge.getContent());
+    showChallengeData(view);
+  }
 
+  private void showChallengeData(View view) {
     ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
     ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
+    if (!TextUtils.isEmpty(challenge.getCitate())) {
+      ((TextView) view.findViewById(R.id.citate)).setText(challenge.getCitate());
+      view.findViewById(R.id.citate).setVisibility(View.VISIBLE);
+    }
+
     if (!TextUtils.isEmpty(challenge.getSource())) {
       ((TextView) view.findViewById(R.id.source)).setText(Html.fromHtml(challenge.getSource()));
       ((TextView) view.findViewById(R.id.source)).setMovementMethod(
           LinkMovementMethod.getInstance());
-      (view.findViewById(R.id.source)).setVisibility(View.VISIBLE);
+      view.findViewById(R.id.source).setVisibility(View.VISIBLE);
     }
     ((TextView) view.findViewById(R.id.type)).setText(String.format(
         getString(R.string.fragment_challenge_type), localizedChallengeType(challenge.getType())));
     ((TextView) view.findViewById(R.id.level)).setText(String.format(
         getString(R.string.fragment_challenge_level),
         localizedChallengeLevel(challenge.getLevel())));
+  }
 
-    return view;
+  private void updateChallengeIfNeeded(View view) {
+    if (!TextUtils.isEmpty(challengeId)) {
+      // finished challenge shown and can't be changed.
+      return;
+    }
+      if (challenge.getId().equals(ChallengeModel.getInstance().getCurrentChallenge().getId())) {
+      // current challenge was not changed.
+      return;
+    }
+    ChallengeModel.getInstance().setCurrentChallengeShown();
+    challenge = ChallengeModel.getInstance().getCurrentChallenge();
+    showChallengeData(view);
+    updateChallengeButton();
   }
 
   private String localizedChallengeType(String type) {
@@ -110,7 +145,7 @@ public class ChallengeFragment extends Fragment {
       @Override
       public void onClick(View view) {
         Log.d(TAG, "challengeButton clicked");
-        switch (challenge.getStatus()) {
+        switch (ChallengeModel.getInstance().getCurrentChallenge().getStatus()) {
           case Challenge.SHOWN:
             ChallengeModel.getInstance().setCurrentChallengeAccepted();
             AlarmService.getInstance().setReminderAlarm();
@@ -120,7 +155,8 @@ public class ChallengeFragment extends Fragment {
             AlarmService.getInstance().stopReminderAlarm();
             break;
           default:
-            Log.e(TAG, "Wrong challenge status: " + challenge.getStatus());
+            Log.e(TAG, "Wrong challenge status: "
+                + ChallengeModel.getInstance().getCurrentChallenge().getStatus());
         }
         updateChallengeButton();
       }
@@ -129,10 +165,12 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void updateChallengeButton() {
-    if (challenge.getStatus() == Challenge.FINISHED
-        || challenge.getStatus() == Challenge.DECLINED) {
+    if (ChallengeModel.getInstance().getCurrentChallenge().getStatus() == Challenge.FINISHED
+        || ChallengeModel.getInstance().getCurrentChallenge().getStatus() == Challenge.DECLINED) {
       // Todo: show comments if needed.
       challengeButton.setEnabled(false);
+    } else {
+      challengeButton.setEnabled(true);
     }
     challengeButton.setText(getChallengeButtonText());
   }
@@ -155,7 +193,7 @@ public class ChallengeFragment extends Fragment {
 
   private String getChallengeButtonText() {
     String result = "";
-    switch (challenge.getStatus()) {
+    switch (ChallengeModel.getInstance().getCurrentChallenge().getStatus()) {
       case Challenge.UNKNOWN:
       case Challenge.SHOWN:
         result = getString(R.string.fragment_challenge_accept);
@@ -170,7 +208,8 @@ public class ChallengeFragment extends Fragment {
         result = getString(R.string.fragment_challenge_declined);
         break;
       default:
-        Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
+        Log.e(TAG, "Wrong status to show on button: "
+            + ChallengeModel.getInstance().getCurrentChallenge().getStatus());
         break;
     }
     return result;

@@ -79,6 +79,8 @@
     </string-array>
 
     <!-- Fragment Challenge -->
+    <string name="fragment_challenge_current">Current Challenge</string>
+    <string name="fragment_challenge_journal_entry">Journal Entry</string>
     <string name="fragment_challenge_accept">Accept</string>
     <string name="fragment_challenge_finish">Finish</string>
     <string name="fragment_challenge_finished">Finished</string>

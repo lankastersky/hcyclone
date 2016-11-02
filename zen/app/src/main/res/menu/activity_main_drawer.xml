@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_challenge"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@mipmap/ic_android_black_24dp"
             android:title="@string/navigation_drawer_challenge"/>
         <item
             android:id="@+id/nav_journal"
@@ -16,13 +16,13 @@
             android:title="@string/navigation_drawer_settings"/>
         <item
             android:id="@+id/nav_help"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@mipmap/ic_help_black_24dp"
             android:title="@string/navigation_drawer_help"/>
     </group>
 
             <item
                 android:id="@+id/nav_feedback"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@mipmap/ic_feedback_black_24dp"
                 android:title="@string/navigation_drawer_feedback"/>
 
 </menu>

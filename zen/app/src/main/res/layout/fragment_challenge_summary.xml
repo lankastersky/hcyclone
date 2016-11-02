@@ -17,20 +17,30 @@
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="@dimen/text_margin"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/finishedTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/text_margin"
+                android:text="Nov 1, 2016"
                 android:textAppearance="?attr/textAppearanceListItem"/>
 
             <TextView
                 android:id="@+id/content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/text_margin"
+                android:paddingTop="@dimen/title_margin"
+                android:text="Some title"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Some details"
                 android:textAppearance="?attr/textAppearanceListItem"/>
 
         </LinearLayout>

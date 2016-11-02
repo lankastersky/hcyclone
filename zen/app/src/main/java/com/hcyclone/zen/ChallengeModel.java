@@ -168,18 +168,24 @@ public final class ChallengeModel {
   @NonNull
   private String getNewChallengeId() {
     String challengeId;
+    Challenge challenge;
     List<Challenge> nonacceptedChallenges = getChallengesMap(Challenge.UNKNOWN);
     if (nonacceptedChallenges.size() > 0) {
-      Challenge challenge = getRandomChallenge(nonacceptedChallenges);
+      challenge = getRandomChallenge(nonacceptedChallenges);
       challengeId = challenge.id;
     } else {
       List<Challenge> declinedChallenges = getChallengesMap(Challenge.DECLINED);
       if (nonacceptedChallenges.size() > 0) {
-        Challenge challenge = getRandomChallenge(declinedChallenges);
+        challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.id;
       } else {
         // All challenges are finished. Return random old one.
-        Challenge challenge = getRandomChallenge(getChallengesMap().values());
+        challenge = getRandomChallenge(getChallengesMap().values());
+        if (getCurrentChallenge() != null) {
+          while (challenge.getId().equals(getCurrentChallenge().getId())) {
+            challenge = getRandomChallenge(getChallengesMap().values());
+          }
+        }
         challengeId = challenge.id;
       }
     }

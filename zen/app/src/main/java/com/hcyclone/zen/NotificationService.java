@@ -63,13 +63,13 @@ public final class NotificationService {
       return;
     }
     Log.d(TAG, "Show reminder alarm notification");
-    showNotification("Remember about your challenge", challenge.getContent());
+    showNotification(challenge.getContent(), challenge.getDetails());
   }
 
   private void showNotification(String title, String text) {
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(context)
-            .setSmallIcon(android.R.drawable.ic_notification_overlay)
+            .setSmallIcon(R.mipmap.ic_adb_black_24dp)
             .setContentTitle(title)
             .setContentText(text)
             .setLights(Color.RED, 3000, 3000)

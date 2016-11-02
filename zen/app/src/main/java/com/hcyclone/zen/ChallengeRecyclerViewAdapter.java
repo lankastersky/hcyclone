@@ -46,6 +46,7 @@ public class ChallengeRecyclerViewAdapter
     holder.finishedTime.setText(dateString);
 
     holder.contentView.setText(values.get(position).getContent());
+    holder.detailsView.setText(values.get(position).getDetails());
 
     holder.view.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -67,6 +68,7 @@ public class ChallengeRecyclerViewAdapter
   public class ViewHolder extends RecyclerView.ViewHolder {
     public final View view;
     public final TextView contentView;
+    public final TextView detailsView;
     public final TextView finishedTime;
     public Challenge item;
 
@@ -75,11 +77,7 @@ public class ChallengeRecyclerViewAdapter
       this.view = view;
       finishedTime = (TextView) view.findViewById(R.id.finishedTime);
       contentView = (TextView) view.findViewById(R.id.content);
-    }
-
-    @Override
-    public String toString() {
-      return super.toString() + " '" + contentView.getText() + "'";
+      detailsView = (TextView) view.findViewById(R.id.details);
     }
   }
 }

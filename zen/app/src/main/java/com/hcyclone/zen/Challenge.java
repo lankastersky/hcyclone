@@ -27,6 +27,7 @@ public class Challenge {
   private String type;
   private int level;
   private String source;
+  private String citate;
 
   private int status;
   private long finishedTime;
@@ -36,13 +37,14 @@ public class Challenge {
   }
 
   public Challenge(String id, String content, String details, String type, long level,
-                   String source) {
+                   String source, String citate) {
     this.id = id;
     this.content = content;
     this.details = details;
     this.type = type;
     this.level = (int) level;
     this.source = source;
+    this.citate = citate;
     this.status = UNKNOWN;
   }
 
@@ -76,6 +78,10 @@ public class Challenge {
 
   public String getSource() {
     return source;
+  }
+
+  public String getCitate() {
+    return citate;
   }
 
   public long getFinishedTime() {
