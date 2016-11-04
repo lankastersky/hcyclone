@@ -52,8 +52,7 @@ public final class Utils {
     intent.putExtra(Intent.EXTRA_EMAIL, "lankastersky@gmail.com");
     intent.putExtra(Intent.EXTRA_SUBJECT, "Zen feedback " + getVersionName()
         + " (" + getVersionCode() + ")");
-    String message = "[Please add feedback here]";
-    intent.putExtra(Intent.EXTRA_TEXT, message);
+//    intent.putExtra(Intent.EXTRA_TEXT, message);
     activityContext.startActivity(Intent.createChooser(intent, "Send bug report via email"));
   }
 

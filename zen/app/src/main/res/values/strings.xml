@@ -29,13 +29,21 @@
     <string name="pref_time_never">-1</string>
     <string name="pref_time_random">-2</string>
 
+    <string name="pref_never">Never</string>
+    <string name="pref_random_6_12">Random between 6:00 and 12:00</string>
+    <string name="pref_random_18_24">Random between 18:00 and 24:00</string>
+    <string name="pref_every_1_hour">Every hour</string>
+    <string name="pref_every_2_hour">Every 2 hours</string>
+    <string name="pref_every_3_hour">Every 3 hours</string>
+    <string name="pref_every_4_hour">Every 4 hours</string>
+
     <string-array name="pref_initial_reminder_list_titles">
-        <item>Never</item>
+        <item>@string/pref_never</item>
         <item>6:00</item>
         <item>8:00</item>
         <item>10:00</item>
         <item>12:00</item>
-        <item>Random between 6:00 and 12:00</item>
+        <item>@string/pref_random_6_12</item>
     </string-array>
     <string-array name="pref_initial_reminder_list_values">
         <item>@string/pref_time_never</item>
@@ -47,12 +55,12 @@
     </string-array>
 
     <string-array name="pref_final_reminder_list_titles">
-        <item>Never</item>
+        <item>@string/pref_never</item>
         <item>18:00</item>
         <item>20:00</item>
         <item>22:00</item>
         <item>24:00</item>
-        <item>random between 18:00 and 24:00</item>
+        <item>@string/pref_random_18_24</item>
     </string-array>
     <string-array name="pref_final_reminder_list_values">
         <item>@string/pref_time_never</item>
@@ -64,8 +72,8 @@
     </string-array>
 
     <string-array name="pref_constant_reminder_list_titles">
-        <item>Never</item>
-        <item>every 1 hour</item>
+        <item>@string/pref_never</item>
+        <item>@string/pref_every_1_hour</item>
         <item>every 2 hours</item>
         <item>every 3 hours</item>
         <item>every 4 hours</item>

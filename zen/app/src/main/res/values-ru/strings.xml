@@ -30,4 +30,11 @@
     <string name="pref_ringtone_silent">Без звука</string>
     <string name="notification_challenge_finish">Закончите ваше задание</string>
     <string name="notification_challenge_start">Доступно новое задание</string>
+    <string name="pref_every_1_hour">Каждый час</string>
+    <string name="pref_every_2_hour">Каждые 2 часа</string>
+    <string name="pref_every_3_hour">Каждые 3 часа</string>
+    <string name="pref_every_4_hour">Каждые 4 часа</string>
+    <string name="pref_never">Никогда</string>
+    <string name="pref_random_18_24">Случайно между 18:00 и 24:00</string>
+    <string name="pref_random_6_12">Случайно между 6:00 и 12:00</string>
 </resources>
