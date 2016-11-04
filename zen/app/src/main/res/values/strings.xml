@@ -33,9 +33,9 @@
     <string name="pref_random_6_12">Random between 6:00 and 12:00</string>
     <string name="pref_random_18_24">Random between 18:00 and 24:00</string>
     <string name="pref_every_1_hour">Every hour</string>
-    <string name="pref_every_2_hour">Every 2 hours</string>
-    <string name="pref_every_3_hour">Every 3 hours</string>
-    <string name="pref_every_4_hour">Every 4 hours</string>
+    <string name="pref_every_2_hours">Every 2 hours</string>
+    <string name="pref_every_3_hours">Every 3 hours</string>
+    <string name="pref_every_4_hours">Every 4 hours</string>
 
     <string-array name="pref_initial_reminder_list_titles">
         <item>@string/pref_never</item>
@@ -74,9 +74,9 @@
     <string-array name="pref_constant_reminder_list_titles">
         <item>@string/pref_never</item>
         <item>@string/pref_every_1_hour</item>
-        <item>every 2 hours</item>
-        <item>every 3 hours</item>
-        <item>every 4 hours</item>
+        <item>@string/pref_every_2_hours</item>
+        <item>@string/pref_every_3_hours</item>
+        <item>@string/pref_every_4_hours</item>
     </string-array>
     <string-array name="pref_constant_reminder_list_values">
         <item>@string/pref_time_never</item>
