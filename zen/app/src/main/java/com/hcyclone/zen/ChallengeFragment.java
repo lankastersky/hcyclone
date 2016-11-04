@@ -81,9 +81,9 @@ public class ChallengeFragment extends Fragment {
   private void showChallengeData(View view) {
     ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
     ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
-    if (!TextUtils.isEmpty(challenge.getCitate())) {
-      ((TextView) view.findViewById(R.id.citate)).setText(challenge.getCitate());
-      view.findViewById(R.id.citate).setVisibility(View.VISIBLE);
+    if (!TextUtils.isEmpty(challenge.getQuote())) {
+      ((TextView) view.findViewById(R.id.quote)).setText(challenge.getQuote());
+      view.findViewById(R.id.quote).setVisibility(View.VISIBLE);
     }
 
     if (!TextUtils.isEmpty(challenge.getSource())) {

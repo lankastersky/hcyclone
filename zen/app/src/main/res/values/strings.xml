@@ -87,7 +87,7 @@
     <string name="fragment_challenge_declined">Declined</string>
     <string name="fragment_challenge_status">Status: %s</string>
     <string name="fragment_challenge_type">Type: %s</string>
-    <string name="fragment_challenge_level">Complexity: %s</string>
+    <string name="fragment_challenge_level">Difficulty: %s</string>
 
     <!-- Challenge types -->
     <string name="challenge_type_sid">Stop Internal Dialog</string>
@@ -103,5 +103,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="fragment_help_text">How to use this app.</string>
     <string name="fragment_help">Help</string>
+
+    <!-- Notifications -->
+    <string name="notification_challenge_start">New challenge available</string>
+    <string name="notification_challenge_finish">Finish your challenge</string>
 
 </resources>

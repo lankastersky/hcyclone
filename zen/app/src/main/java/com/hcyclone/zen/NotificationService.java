@@ -42,7 +42,8 @@ public final class NotificationService {
       return;
     }
     Log.d(TAG, "Show initial alarm notification");
-    showNotification("New challenge available", challenge.getContent());
+    showNotification(context.getString(R.string.notification_challenge_start),
+        challenge.getContent());
   }
 
   public void showFinalAlarmNotification() {
@@ -53,7 +54,8 @@ public final class NotificationService {
       return;
     }
     Log.d(TAG, "Show final alarm notification");
-    showNotification("Finish your challenge", challenge.getContent());
+    showNotification(context.getString(R.string.notification_challenge_finish),
+        challenge.getContent());
   }
 
   public void showReminderAlarmNotification() {

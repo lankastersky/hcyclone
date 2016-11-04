@@ -126,7 +126,7 @@ public class FirebaseAdapter {
                     (String) challengeMap.get("type"),
                     (Long) challengeMap.get("level"),
                     (String) challengeMap.get("source"),
-                    (String) challengeMap.get("citate"));
+                    (String) challengeMap.get("quote"));
                 challenges.add(challenge);
               }
             } catch (Exception e) {
