@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 public final class NotificationService {
@@ -91,10 +93,13 @@ public final class NotificationService {
     }
     String ringtoneUri = sharedPreferences.getString(
         PreferencesService.PREF_KEY_NOTIFICATION_RINGTONE, null);
-    if (ringtoneUri != null) {
-      Uri uri = Uri.parse(ringtoneUri);
-      builder.setSound(uri);
+    Uri soundUri;
+    if (!TextUtils.isEmpty(ringtoneUri)) {
+      soundUri = Uri.parse(ringtoneUri);
+    } else {
+      soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     }
+    builder.setSound(soundUri);
     notificationManager.notify(NOTIFICATION_ID, builder.build());
   }
 }

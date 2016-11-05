@@ -139,8 +139,11 @@ public class MainActivity extends AppCompatActivity
           ChallengeListFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeListFragment.class);
     } else if (id == R.id.nav_settings) {
-      Intent intent = new Intent(this, SettingsActivity.class);
-      startActivity(intent);
+//      Intent intent = new Intent(this, SettingsActivity.class);
+//      startActivity(intent);
+      Fragment newFragment = fragmentManager.findFragmentByTag(
+          SettingsFragment.class.getSimpleName());
+      replaceFragment(newFragment, SettingsFragment.class);
     } else if (id == R.id.nav_help) {
       Fragment newFragment = fragmentManager.findFragmentByTag(
           HelpFragment.class.getSimpleName());

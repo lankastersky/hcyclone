@@ -16,6 +16,8 @@
 
     <style name="splashScreenTheme" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen</item>
+        <!-- see http://stackoverflow.com/questions/32070670/preferencefragmentcompat-requires-preferencetheme-to-be-set -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
 </resources>
