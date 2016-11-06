@@ -110,6 +110,13 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       setFinalAlarm();
     } else if (PreferencesService.PREF_KEY_REMINDER_ALARM_LIST.equals(key)) {
       setReminderAlarm();
+    } else if (PreferencesService.PREF_KEY_SHOW_NOTIFICATION.equals(key)) {
+      Log.d(TAG, "Disable all notificatins");
+      if (!sharedPreferences.getBoolean(key, true)) {
+        alarmManager.cancel(initialAlarmPengingIntent);
+        alarmManager.cancel(finalAlarmPengingIntent);
+        stopReminderAlarm();
+      }
     }
   }
 
@@ -204,7 +211,7 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
         PreferencesService.PREF_KEY_REMINDER_ALARM_LIST, null);
     if (context.getResources().getString(R.string.pref_time_never).equals(summary)) {
       Log.d(TAG, "Reminder alarm disabled");
-      alarmManager.cancel(reminderAlarmPengingIntent);
+      stopReminderAlarm();
       return;
     }
 

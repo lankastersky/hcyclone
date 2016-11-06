@@ -33,7 +33,7 @@ public final class Utils {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
     if (BuildConfig.DEBUG) {
-      date.add(Calendar.SECOND, 20);
+      date.add(Calendar.SECOND, 30);
     } else {
       // Reset hour, minutes, seconds and millis.
       date.set(Calendar.HOUR_OF_DAY, 0);

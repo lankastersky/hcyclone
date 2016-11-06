@@ -166,6 +166,7 @@ public final class ChallengeModel {
   }
 
   @NonNull
+  // TODO: generate more difficult challenges with time.
   private String getNewChallengeId() {
     String challengeId;
     Challenge challenge;

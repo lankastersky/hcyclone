@@ -6,6 +6,7 @@
         android:entries="@array/pref_initial_reminder_list_titles"
         android:entryValues="@array/pref_initial_reminder_list_values"
         android:key="pref_initial_reminder_list"
+        android:dependency="pref_show_notification"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_header_initial_reminder"/>
@@ -15,6 +16,7 @@
         android:entries="@array/pref_constant_reminder_list_titles"
         android:entryValues="@array/pref_constant_reminder_list_values"
         android:key="pref_constant_reminder_list"
+        android:dependency="pref_show_notification"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_header_constant_reminder"/>
@@ -24,13 +26,14 @@
         android:entries="@array/pref_final_reminder_list_titles"
         android:entryValues="@array/pref_final_reminder_list_values"
         android:key="pref_final_reminder_list"
+        android:dependency="pref_show_notification"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"
         android:title="@string/pref_header_final_reminder"/>
 
     <SwitchPreferenceCompat
         android:defaultValue="true"
-        android:key="show_notification"
+        android:key="pref_show_notification"
         android:title="@string/pref_reminder_show_notification"/>
 
     <!-- Allows the user to choose a ringtone in the 'notification' category. -->
@@ -39,7 +42,7 @@
     <!--
     <Preference
         android:defaultValue="content://settings/system/notification_sound"
-        android:dependency="show_notification"
+        android:dependency="pref_show_notification"
         android:key="notification_ringtone"
         android:ringtoneType="notification"
         android:title="@string/pref_reminder_ringtone"/>
@@ -47,7 +50,7 @@
     <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
     <SwitchPreferenceCompat
         android:defaultValue="true"
-        android:dependency="show_notification"
+        android:dependency="pref_show_notification"
         android:key="notification_vibrate"
         android:title="@string/pref_reminder_vibrate"/>
 

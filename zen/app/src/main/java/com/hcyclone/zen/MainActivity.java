@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
+  public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
+
   private Fragment currentFragment;
   private ProgressBar progressBar;
   private ResultReceiver receiver = new ResultReceiver(new Handler()) {
@@ -72,24 +74,23 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onStart() {
-    super.onStart();
-    // Don't receive notifications if app is started.
-    Log.d(TAG, "Disable alarm receiver");
-    ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-    getPackageManager().setComponentEnabledSetting(receiver,
-        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-        PackageManager.DONT_KILL_APP);
+  protected void onNewIntent(Intent intent) {
+    super.onNewIntent(intent);
+    setIntent(intent);
   }
 
   @Override
-  protected void onStop() {
-    super.onStop();
-    Log.d(TAG, "Enable alarm receiver");
-    ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-    getPackageManager().setComponentEnabledSetting(receiver,
-        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-        PackageManager.DONT_KILL_APP);
+  protected void onStart() {
+    super.onStart();
+
+    Intent intent = getIntent();
+    if (intent.getExtras() != null
+        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
+      // Show current challenge when start from notification.
+      Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
+          ChallengeFragment.class.getSimpleName());
+      replaceFragment(newFragment, ChallengeFragment.class);
+    }
   }
 
   @Override

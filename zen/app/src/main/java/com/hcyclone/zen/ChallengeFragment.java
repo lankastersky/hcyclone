@@ -68,11 +68,6 @@ public class ChallengeFragment extends Fragment {
       getActivity().setTitle(getString(R.string.fragment_challenge_journal_entry));
 
       challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-
-      TextView statusView = (TextView) view.findViewById(R.id.status);
-      statusView.setText(String.format(getString(R.string.fragment_challenge_status),
-          challengeStatusAsString(challenge.getStatus())));
-      statusView.setVisibility(View.VISIBLE);
     }
 
     showChallengeData(view);

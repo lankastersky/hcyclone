@@ -6,8 +6,8 @@
     <string name="fragment_challenge_accept">Начать</string>
     <string name="fragment_challenge_current">Текущее задание</string>
     <string name="fragment_challenge_declined">Пропущено</string>
-    <string name="fragment_challenge_finish">Закончить</string>
-    <string name="fragment_challenge_finished">Закончено</string>
+    <string name="fragment_challenge_finish">Завершить</string>
+    <string name="fragment_challenge_finished">Завершено</string>
     <string name="fragment_challenge_journal_entry">Задание из журнала</string>
     <string name="fragment_challenge_level">Сложность: %s</string>
     <string name="fragment_challenge_list">Выполненные задания</string>
@@ -15,15 +15,15 @@
     <string name="fragment_challenge_status">Статус: %s</string>
     <string name="fragment_challenge_type">Тип : %s</string>
     <string name="fragment_help">Помощь</string>
-    <string name="fragment_help_text">Приложение для практики магии.</string>
+
     <string name="navigation_drawer_challenge">Задание</string>
     <string name="navigation_drawer_feedback">Обратная связь</string>
     <string name="navigation_drawer_help">Помощь</string>
     <string name="navigation_drawer_journal">Журнал</string>
     <string name="navigation_drawer_settings">Настройки</string>
-    <string name="pref_header_constant_reminder">Напоминание выполнить задание</string>
+    <string name="pref_header_constant_reminder">Напоминание о задании</string>
     <string name="pref_header_final_reminder">Напоминание начать задание</string>
-    <string name="pref_header_initial_reminder">Напоминание закончить задание</string>
+    <string name="pref_header_initial_reminder">Напоминание завершить задание</string>
     <string name="pref_reminder_ringtone">Мелодия</string>
     <string name="pref_reminder_show_notification">Показать уведомление</string>
     <string name="pref_reminder_vibrate">Вибросигнал</string>

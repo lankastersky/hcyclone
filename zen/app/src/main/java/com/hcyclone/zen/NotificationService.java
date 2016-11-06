@@ -76,9 +76,11 @@ public final class NotificationService {
             .setSmallIcon(R.mipmap.ic_adb_black_24dp)
             .setContentTitle(title)
             .setContentText(text)
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
             .setLights(Color.RED, 3000, 3000)
             .setAutoCancel(true);
     Intent resultIntent = new Intent(context, MainActivity.class);
+    resultIntent.putExtra(MainActivity.INTENT_PARAM_START_FROM_NOTIFICATION, true);
     PendingIntent resultPendingIntent =
         PendingIntent.getActivity(
             context,

@@ -16,6 +16,7 @@ public class App extends Application {
     }
     initSingletons();
     setAlarms();
+    registerActivityLifecycleCallbacks(new AppLifecycleManager(this));
   }
 
   private void setAlarms() {
