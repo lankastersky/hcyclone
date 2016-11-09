@@ -46,6 +46,17 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
 
   private Context context;
 
+  /** Returns true if app has foreground */
+  public static boolean isAppInForeground() {
+    return foregroundActivityCount > 0;
+  }
+
+  /** Returns true if any activity of app is visible (or device is sleep when
+   * an activity was visible) */
+  public static boolean isAppVisible() {
+    return visibleActivityCount > 0;
+  }
+
   public AppLifecycleManager(Context context) {
     this.context = context;
   }
@@ -71,25 +82,25 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
   public void onActivityStarted(Activity activity) {
     visibleActivityCount++;
 
-    if (visibleActivityCount == 1) {
-      // Don't receive notifications if app is started.
-      Log.d(TAG, "Disable alarm receiver");
-      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
-      context.getPackageManager().setComponentEnabledSetting(receiver,
-          PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-          PackageManager.DONT_KILL_APP);
-    }
+//    if (visibleActivityCount == 1) {
+//      // Don't receive notifications if app is started.
+//      Log.d(TAG, "Disable alarm receiver");
+//      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
+//      context.getPackageManager().setComponentEnabledSetting(receiver,
+//          PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+//          PackageManager.DONT_KILL_APP);
+//    }
   }
 
   public void onActivityStopped(Activity activity) {
     visibleActivityCount--;
 
-    if (visibleActivityCount == 0) {
-      Log.d(TAG, "Enable alarm receiver");
-      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
-      context.getPackageManager().setComponentEnabledSetting(receiver,
-          PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-          PackageManager.DONT_KILL_APP);
-    }
+//    if (visibleActivityCount == 0) {
+//      Log.d(TAG, "Enable alarm receiver");
+//      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
+//      context.getPackageManager().setComponentEnabledSetting(receiver,
+//          PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+//          PackageManager.DONT_KILL_APP);
+//    }
   }
 }

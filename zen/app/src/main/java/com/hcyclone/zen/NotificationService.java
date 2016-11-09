@@ -71,6 +71,10 @@ public final class NotificationService {
   }
 
   private void showNotification(String title, String text) {
+    if (AppLifecycleManager.isAppVisible()) {
+      return;
+    }
+
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(context)
             .setSmallIcon(R.mipmap.ic_adb_black_24dp)

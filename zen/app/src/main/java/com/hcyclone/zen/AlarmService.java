@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.DatabaseUtils;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -127,8 +128,10 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
     Calendar calendar = Calendar.getInstance();
     long alarmRepeatTime;
     if (BuildConfig.DEBUG) {
-      alarmRepeatTime = 10_000;
+      alarmRepeatTime = 5_000;
     } else {
+      Date midnight = Utils.getMidnight(calendar.getTimeInMillis());
+      calendar.setTime(midnight);
       alarmRepeatTime = AlarmManager.INTERVAL_DAY;
       // Random hour between 3 and 4.
       int hour = (int) (Math.random() * 2) + 3;
@@ -138,8 +141,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       calendar.add(Calendar.MINUTE, minute);
     }
     long alarmStartTime = calendar.getTimeInMillis();
-    Log.d(TAG, "Set service alarm to " + calendar.getTime());
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//    Log.d(TAG, "Set service alarm to " + calendar.getTime());
+//    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//        serviceAlarmPengingIntent);
+    Log.d(TAG, "Set service alarm to " + new Date(alarmStartTime + alarmRepeatTime));
+    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmStartTime + alarmRepeatTime,
         serviceAlarmPengingIntent);
   }
 
@@ -158,9 +164,13 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
     int hour = 0;
     if (BuildConfig.DEBUG) {
       alarmRepeatTime = 5_000;
+      //calendar.add(Calendar.SECOND, 1);
     } else {
+      Date midnight = Utils.getMidnight(calendar.getTimeInMillis());
+      calendar.setTime(midnight);
       alarmRepeatTime = AlarmManager.INTERVAL_DAY;
       if (context.getResources().getString(R.string.pref_time_random).equals(summary)) {
+        // Random hour between 6 and 12.
         hour = (int) (Math.random() * 7) + 6;
       } else {
         hour = Integer.parseInt(summary);
@@ -168,8 +178,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       calendar.set(Calendar.HOUR_OF_DAY, hour);
     }
     long alarmStartTime = calendar.getTimeInMillis();
-    Log.d(TAG, "Set initial alarm hour to " + hour);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//    Log.d(TAG, "Set initial alarm to " + calendar.getTime());
+//    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//        initialAlarmPengingIntent);
+    Log.d(TAG, "Set initial alarm to " + new Date(alarmStartTime + alarmRepeatTime));
+    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmStartTime + alarmRepeatTime,
         initialAlarmPengingIntent);
   }
 
@@ -183,16 +196,18 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       return;
     }
 
-    Log.d(TAG, "Set final alarm");
-
     Calendar calendar = Calendar.getInstance();
     long alarmRepeatTime;
     int hour = 0;
     if (BuildConfig.DEBUG) {
       alarmRepeatTime = 5_000;
+      //calendar.add(Calendar.SECOND, 1);
     } else {
+      Date midnight = Utils.getMidnight(calendar.getTimeInMillis());
+      calendar.setTime(midnight);
       alarmRepeatTime = AlarmManager.INTERVAL_DAY;
       if (context.getResources().getString(R.string.pref_time_random).equals(summary)) {
+        // Random hour between 18 and 24.
         hour = (int) (Math.random() * 7) + 18;
       } else {
         hour = Integer.parseInt(summary);
@@ -200,8 +215,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       calendar.set(Calendar.HOUR_OF_DAY, hour);
     }
     long alarmStartTime = calendar.getTimeInMillis();
-    Log.d(TAG, "Set final alarm hour to " + hour);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//    Log.d(TAG, "Set final alarm to " + calendar.getTime());
+//    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//        finalAlarmPengingIntent);
+    Log.d(TAG, "Set final alarm to " + new Date(alarmStartTime + alarmRepeatTime));
+    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmStartTime + alarmRepeatTime,
         finalAlarmPengingIntent);
   }
 
@@ -222,8 +240,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
       alarmRepeatTime = AlarmManager.INTERVAL_HOUR * Integer.parseInt(summary);
     }
     long alarmStartTime = new Date().getTime();
-    Log.d(TAG, "Set reminder repeat alarm to " + summary);
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//    Log.d(TAG, "Set reminder alarm to " + new Date(alarmRepeatTime));
+//    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, alarmRepeatTime,
+//        reminderAlarmPengingIntent);
+    Log.d(TAG, "Set reminder alarm to " + new Date(alarmStartTime + alarmRepeatTime));
+    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmStartTime + alarmRepeatTime,
         reminderAlarmPengingIntent);
   }
 
