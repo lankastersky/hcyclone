@@ -28,6 +28,22 @@ public final class Utils {
     this.context = context;
   }
 
+  public static Date get6PM(long time) {
+    // Today.
+    Calendar date = Calendar.getInstance();
+    date.setTimeInMillis(time);
+    if (BuildConfig.DEBUG) {
+      date.add(Calendar.SECOND, 30);
+    } else {
+      date.set(Calendar.HOUR_OF_DAY, 18);
+      // Reset minutes, seconds and millis.
+      date.set(Calendar.MINUTE, 0);
+      date.set(Calendar.SECOND, 0);
+      date.set(Calendar.MILLISECOND, 0);
+    }
+    return date.getTime();
+  }
+
   public static Date getMidnight(long time) {
     // Today.
     Calendar date = Calendar.getInstance();

@@ -103,6 +103,12 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
         .registerOnSharedPreferenceChangeListener(this);
   }
 
+  public void setAlarms() {
+    setServiceAlarm();
+    setInitialAlarm();
+    setFinalAlarm();
+  }
+
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (PreferencesService.PREF_KEY_INITIAL_ALARM_LIST.equals(key)) {
@@ -112,13 +118,13 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
     } else if (PreferencesService.PREF_KEY_REMINDER_ALARM_LIST.equals(key)) {
       setReminderAlarm();
     } else if (PreferencesService.PREF_KEY_SHOW_NOTIFICATION.equals(key)) {
-      Log.d(TAG, "Disable all notificatins");
-      if (!sharedPreferences.getBoolean(key, true)) {
-        alarmManager.cancel(initialAlarmPengingIntent);
-        alarmManager.cancel(finalAlarmPengingIntent);
-        stopReminderAlarm();
-      }
+      setAlarms();
     }
+  }
+
+  private boolean areAlarmsEnabled() {
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    return sharedPreferences.getBoolean(PreferencesService.PREF_KEY_SHOW_NOTIFICATION, true);
   }
 
   /**
@@ -151,9 +157,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
   public void setInitialAlarm() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
+    String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
     String summary = sharedPreferences.getString(
-        PreferencesService.PREF_KEY_INITIAL_ALARM_LIST, null);
-    if (context.getResources().getString(R.string.pref_time_never).equals(summary)) {
+        PreferencesService.PREF_KEY_INITIAL_ALARM_LIST, prefTimeRandom);
+    if (!areAlarmsEnabled() || prefTimeNever.equals(summary)) {
       Log.d(TAG, "Initial alarm disabled");
       alarmManager.cancel(initialAlarmPengingIntent);
       return;
@@ -188,9 +196,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
   public void setFinalAlarm() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
+    String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
     String summary = sharedPreferences.getString(
-        PreferencesService.PREF_KEY_FINAL_ALARM_LIST, null);
-    if (context.getResources().getString(R.string.pref_time_never).equals(summary)) {
+        PreferencesService.PREF_KEY_FINAL_ALARM_LIST, prefTimeRandom);
+    if (!areAlarmsEnabled() || prefTimeNever.equals(summary)) {
       Log.d(TAG, "Final alarm disabled");
       alarmManager.cancel(finalAlarmPengingIntent);
       return;
@@ -225,9 +235,11 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
   public void setReminderAlarm() {
     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
+    String prefTimeEveryHour = "1";
     String summary = sharedPreferences.getString(
-        PreferencesService.PREF_KEY_REMINDER_ALARM_LIST, null);
-    if (context.getResources().getString(R.string.pref_time_never).equals(summary)) {
+        PreferencesService.PREF_KEY_REMINDER_ALARM_LIST, prefTimeEveryHour);
+    if (!areAlarmsEnabled() || prefTimeNever.equals(summary)) {
       Log.d(TAG, "Reminder alarm disabled");
       stopReminderAlarm();
       return;

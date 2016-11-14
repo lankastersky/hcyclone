@@ -40,7 +40,7 @@ public final class NotificationService {
   public void showInitialAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
     if (!(challenge.getStatus() == Challenge.UNKNOWN || challenge.getStatus() == Challenge.SHOWN)) {
-      Log.d(TAG, "Ignore initial alarm notification as challenge not shown");
+      Log.d(TAG, "Ignore initial alarm notification as challenge is not shown");
       return;
     }
     Log.d(TAG, "Show initial alarm notification");
@@ -77,7 +77,7 @@ public final class NotificationService {
 
     NotificationCompat.Builder builder =
         new NotificationCompat.Builder(context)
-            .setSmallIcon(R.mipmap.ic_adb_black_24dp)
+            .setSmallIcon(getNotificationIcon())
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
@@ -107,5 +107,11 @@ public final class NotificationService {
     }
     builder.setSound(soundUri);
     notificationManager.notify(NOTIFICATION_ID, builder.build());
+  }
+
+  private static int getNotificationIcon() {
+    boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >=
+        android.os.Build.VERSION_CODES.LOLLIPOP);
+    return useWhiteIcon ? R.mipmap.ic_adb_black_24dp : R.mipmap.ic_adb_white_24dp;
   }
 }

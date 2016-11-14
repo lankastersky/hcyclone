@@ -11,7 +11,7 @@
     <string name="fragment_challenge_journal_entry">Задание из журнала</string>
     <string name="fragment_challenge_level">Сложность: %s</string>
     <string name="fragment_challenge_list">Выполненные задания</string>
-    <string name="fragment_challenge_list_empty_text">Пока нет выполненных заданий.</string>
+    <string name="fragment_challenge_list_empty_text">Пока нет выполненных заданий</string>
     <string name="fragment_challenge_status">Статус: %s</string>
     <string name="fragment_challenge_type">Тип : %s</string>
     <string name="fragment_help">Помощь</string>
@@ -28,7 +28,7 @@
     <string name="pref_reminder_show_notification">Показать уведомление</string>
     <string name="pref_reminder_vibrate">Вибросигнал</string>
     <string name="pref_ringtone_silent">Без звука</string>
-    <string name="notification_challenge_finish">Закончите ваше задание</string>
+    <string name="notification_challenge_finish">Закончите задание</string>
     <string name="notification_challenge_start">Доступно новое задание</string>
     <string name="pref_every_1_hour">Каждый час</string>
     <string name="pref_every_2_hours">Каждые 2 часа</string>
@@ -38,4 +38,5 @@
     <string name="pref_random_18_24">Случайно между 18:00 и 24:00</string>
     <string name="pref_random_6_12">Случайно между 6:00 и 12:00</string>
     <string name="fragment_settings">Настройки</string>
+    <string name="fragment_challenge_return_after_6pm">Завершите задание после 18:00</string>
 </resources>

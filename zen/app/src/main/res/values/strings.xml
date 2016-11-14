@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mastery of Stalking</string>
+    <string name="app_name">Art of Stalking</string>
     <string name="app_description">Becoming Awareness</string>
 
     <!-- Drawer -->
@@ -90,6 +90,7 @@
     <string name="fragment_challenge_current">Current Challenge</string>
     <string name="fragment_challenge_journal_entry">Journal Entry</string>
     <string name="fragment_challenge_accept">Accept</string>
+    <string name="fragment_challenge_return_after_6pm">Return after 6PM</string>
     <string name="fragment_challenge_finish">Finish</string>
     <string name="fragment_challenge_finished">Finished</string>
     <string name="fragment_challenge_declined">Declined</string>
@@ -105,22 +106,11 @@
 
     <!-- Fragment Challenge List -->
     <string name="fragment_challenge_list">Finished Challenges</string>
-    <string name="fragment_challenge_list_empty_text">There are no finished challenges yet.</string>
+    <string name="fragment_challenge_list_empty_text">There are no finished challenges yet</string>
 
     <!-- Help -->
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="fragment_help_text">Данное приложение предлагает набор практических упражнений по
-        мотивам книг Кастанеды и его последователей. Оно позволяет развивать такие навыки как
-        осознанность (алертность), отказ от чувства собственной важности, развитие чувствительности
-        и другие.\n\nКаждое утро становится доступно новое задание в разделе \"Задание\". Вы можете
-        начать его выполнять, нажав на кнопку \"Принять\", или игнорировать. Задание выполняется
-        в течение дня. Когда вы готовы завершить его, нажмите на кнопку \"Завершить\". Завершенные
-        задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет
-        считаться пропущенным.\n\nКаждое задание имеет уровень сложности. Постепенно будут даваться
-        все более сложные задания.\n\nЧтобы не забывать брать, выполнять и завершать задания, можно
-        использовать напоминания в разделе \"Настройки\".\n\nЕсли у вас есть предложения или
-        замечания, пишите нам через раздел \"Обратная связь\".\n\n\nСтудия \"Гиперборейский
-        циклон\", Версия 0.1.
+    <string name="fragment_help_text">"Данное приложение предлагает набор практических упражнений по мотивам книг Кастанеды и его последователей. Оно позволяет развивать такие навыки как осознанность (алертность), отказ от чувства собственной важности, развитие чувствительности и другие.\n\nКаждое утро вам доступно новое задание в разделе \"Задание\". Вы можете\n начать его выполнять, нажав на кнопку \"Принять\". Задание выполняется в течение дня. После шести вечера, если вы готовы завершить задание, нажмите на кнопку \"Завершить\". Завершенные задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет\n считаться пропущенным и не появится в журнале.\n\nКаждое задание имеет уровень сложности. Постепенно будут даваться все более сложные задания.\n\nДля того чтобы не забывать брать, выполнять и завершать задания, можно использовать напоминания в разделе \"Настройки\".\n\nЕсли у вас есть предложения или замечания, пишите авторам через раздел главного меню \"Обратная связь\".\n\n\nСтудия \"Гиперборейский циклон\", Версия 0.1."
     </string>
     <string name="fragment_help">Help</string>
 

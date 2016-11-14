@@ -1,8 +1,6 @@
 package com.hcyclone.zen;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
@@ -21,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
-
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener {
@@ -37,6 +34,9 @@ public class MainActivity extends AppCompatActivity
     protected void onReceiveResult(int resultCode, Bundle resultData) {
       super.onReceiveResult(resultCode, resultData);
       progressBar.setVisibility(View.GONE);
+      DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+      AlarmService.getInstance().setAlarms();
       switch (resultCode) {
         case FirebaseService.RESULT_CODE_OK:
           showCurrentChallenge();
@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
+    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     toggle.syncState();
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -86,7 +87,8 @@ public class MainActivity extends AppCompatActivity
     Intent intent = getIntent();
     if (intent.getExtras() != null
         && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
-      // Show current challenge when start from notification.
+      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+      Log.d(TAG, "Show current challenge when start from notification");
       Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
           ChallengeFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeFragment.class);

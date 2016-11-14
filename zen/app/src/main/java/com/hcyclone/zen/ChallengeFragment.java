@@ -76,9 +76,11 @@ public class ChallengeFragment extends Fragment {
   private void showChallengeData(View view) {
     ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
     ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
+    ((TextView) view.findViewById(R.id.quote)).setText(challenge.getQuote());
     if (!TextUtils.isEmpty(challenge.getQuote())) {
-      ((TextView) view.findViewById(R.id.quote)).setText(challenge.getQuote());
       view.findViewById(R.id.quote).setVisibility(View.VISIBLE);
+    } else {
+      view.findViewById(R.id.quote).setVisibility(View.GONE);
     }
 
     if (!TextUtils.isEmpty(challenge.getSource())) {
@@ -86,7 +88,10 @@ public class ChallengeFragment extends Fragment {
       ((TextView) view.findViewById(R.id.source)).setMovementMethod(
           LinkMovementMethod.getInstance());
       view.findViewById(R.id.source).setVisibility(View.VISIBLE);
+    } else {
+      view.findViewById(R.id.source).setVisibility(View.GONE);
     }
+
     ((TextView) view.findViewById(R.id.type)).setText(String.format(
         getString(R.string.fragment_challenge_type), localizedChallengeType(challenge.getType())));
     ((TextView) view.findViewById(R.id.level)).setText(String.format(
@@ -160,30 +165,19 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void updateChallengeButton() {
-    if (ChallengeModel.getInstance().getCurrentChallenge().getStatus() == Challenge.FINISHED
-        || ChallengeModel.getInstance().getCurrentChallenge().getStatus() == Challenge.DECLINED) {
-      // Todo: show comments if needed.
-      challengeButton.setEnabled(false);
-    } else {
-      challengeButton.setEnabled(true);
-    }
-    challengeButton.setText(getChallengeButtonText());
-  }
-
-  private String challengeStatusAsString(int status) {
-    String result = "";
+    int status = ChallengeModel.getInstance().getCurrentChallenge().getStatus();
     switch (status) {
-      case Challenge.FINISHED:
-        result = getString(R.string.fragment_challenge_finished);
+      case Challenge.ACCEPTED:
+        challengeButton.setEnabled(ChallengeModel.getInstance().isTimeToFinishCurrentChallenge());
         break;
+      case Challenge.FINISHED:
       case Challenge.DECLINED:
-        result = getString(R.string.fragment_challenge_declined);
+        challengeButton.setEnabled(false);
         break;
       default:
-        Log.d(TAG, "Wrong status to convert to string: " + status);
-        break;
+        challengeButton.setEnabled(true);
     }
-    return result;
+    challengeButton.setText(getChallengeButtonText());
   }
 
   private String getChallengeButtonText() {
@@ -194,7 +188,11 @@ public class ChallengeFragment extends Fragment {
         result = getString(R.string.fragment_challenge_accept);
         break;
       case Challenge.ACCEPTED:
-        result = getString(R.string.fragment_challenge_finish);
+        if (!ChallengeModel.getInstance().isTimeToFinishCurrentChallenge()) {
+          result = getString(R.string.fragment_challenge_return_after_6pm);
+        } else {
+          result = getString(R.string.fragment_challenge_finish);
+        }
         break;
       case Challenge.FINISHED:
         result = getString(R.string.fragment_challenge_finished);

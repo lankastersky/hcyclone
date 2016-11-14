@@ -15,14 +15,7 @@ public class App extends Application {
       enableStrictMode();
     }
     initSingletons();
-    setAlarms();
     registerActivityLifecycleCallbacks(new AppLifecycleManager(this));
-  }
-
-  private void setAlarms() {
-    AlarmService.getInstance().setServiceAlarm();
-    AlarmService.getInstance().setInitialAlarm();
-    AlarmService.getInstance().setFinalAlarm();
   }
 
   protected void initSingletons() {

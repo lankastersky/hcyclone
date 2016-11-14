@@ -2,7 +2,7 @@
 
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="@string/pref_time_random"
         android:entries="@array/pref_initial_reminder_list_titles"
         android:entryValues="@array/pref_initial_reminder_list_values"
         android:key="pref_initial_reminder_list"
@@ -12,7 +12,7 @@
         android:title="@string/pref_header_initial_reminder"/>
 
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="1"
         android:entries="@array/pref_constant_reminder_list_titles"
         android:entryValues="@array/pref_constant_reminder_list_values"
         android:key="pref_constant_reminder_list"
@@ -22,7 +22,7 @@
         android:title="@string/pref_header_constant_reminder"/>
 
     <ListPreference
-        android:defaultValue="-1"
+        android:defaultValue="@string/pref_time_random"
         android:entries="@array/pref_final_reminder_list_titles"
         android:entryValues="@array/pref_final_reminder_list_values"
         android:key="pref_final_reminder_list"
