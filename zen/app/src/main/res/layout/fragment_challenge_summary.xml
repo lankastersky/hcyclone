@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/challenge_summary_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:selectableItemBackground"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp">
+
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/challenge_summary_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?android:selectableItemBackground"
-        card_view:cardCornerRadius="2dp"
-        card_view:cardElevation="2dp">
+        android:orientation="vertical"
+        android:padding="@dimen/text_margin">
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <TextView
+            android:id="@+id/finishedTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/text_margin"
-            android:orientation="vertical">
+            android:fontFamily="@string/fontFamilyLight"
+            android:text="Nov 1, 2016 stub"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/finishedTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Nov 1, 2016"
-                android:textAppearance="?attr/textAppearanceListItem"/>
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyLight"
+            android:paddingTop="@dimen/title_margin"
+            android:text="Some title stub"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="20sp"
+        />
 
-            <TextView
-                android:id="@+id/content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="@dimen/title_margin"
-                android:text="Some title"
-                android:textAppearance="?attr/textAppearanceListItem"
-                android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyLight"
+            android:text="Some details stub"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="16sp"/>
 
-            <TextView
-                android:id="@+id/details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Some details"
-                android:textAppearance="?attr/textAppearanceListItem"/>
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
+</android.support.v7.widget.CardView>

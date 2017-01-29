@@ -6,7 +6,7 @@
     <!-- 144dp color version of app icon -->
     <item>
         <bitmap
-            android:src="@mipmap/logo"
+            android:src="@mipmap/splash"
             android:gravity="center"/>
     </item>
 </layer-list>

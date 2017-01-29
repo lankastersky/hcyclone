@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -63,13 +64,12 @@ public final class Utils {
   }
 
   public void sendFeedback(Context activityContext) {
-    Intent intent = new Intent(Intent.ACTION_SEND_MULTIPLE);
-    intent.setType("message/rfc822");
-    intent.putExtra(Intent.EXTRA_EMAIL, "lankastersky@gmail.com");
-    intent.putExtra(Intent.EXTRA_SUBJECT, "Zen feedback " + getVersionName()
+    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+        "mailto","lankastersky@gmail.com", null));
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Stalking feedback " + getVersionName()
         + " (" + getVersionCode() + ")");
-//    intent.putExtra(Intent.EXTRA_TEXT, message);
-    activityContext.startActivity(Intent.createChooser(intent, "Send bug report via email"));
+    activityContext.startActivity(Intent.createChooser(emailIntent,
+        activityContext.getString(R.string.feedback_send_email)));
   }
 
   private String getVersionName() {

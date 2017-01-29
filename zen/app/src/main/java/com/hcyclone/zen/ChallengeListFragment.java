@@ -60,6 +60,7 @@ public class ChallengeListFragment extends Fragment {
       recyclerView.setLayoutManager(new LinearLayoutManager(context));
       recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
           finishedChallenges, onListFragmentInteractionListener));
+      recyclerView.setNestedScrollingEnabled(false);
     }
     return view;
   }

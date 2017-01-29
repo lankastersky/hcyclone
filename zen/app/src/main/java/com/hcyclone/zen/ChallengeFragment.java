@@ -2,6 +2,7 @@ package com.hcyclone.zen;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -168,14 +169,22 @@ public class ChallengeFragment extends Fragment {
     int status = ChallengeModel.getInstance().getCurrentChallenge().getStatus();
     switch (status) {
       case Challenge.ACCEPTED:
-        challengeButton.setEnabled(ChallengeModel.getInstance().isTimeToFinishCurrentChallenge());
+        boolean enabled = ChallengeModel.getInstance().isTimeToFinishCurrentChallenge();
+        challengeButton.setEnabled(enabled);
+        challengeButton.setBackgroundColor(enabled
+            ? ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
+            : ContextCompat.getColor(getActivity(), R.color.colorPrimary));
         break;
       case Challenge.FINISHED:
       case Challenge.DECLINED:
         challengeButton.setEnabled(false);
+        challengeButton.setBackgroundColor(ContextCompat.getColor(
+            getActivity(), R.color.colorPrimary));
         break;
       default:
         challengeButton.setEnabled(true);
+        challengeButton.setBackgroundColor(ContextCompat.getColor(
+            getActivity(), R.color.colorPrimaryDark));
     }
     challengeButton.setText(getChallengeButtonText());
   }

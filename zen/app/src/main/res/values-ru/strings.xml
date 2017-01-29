@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Искусство сталкинга</string>
+    <string name="app_name">Сталкинг</string>
     <string name="app_description">Быть осознанным</string>
     <string name="challenge_level_easy">Легкая</string>
     <string name="challenge_type_sid">Остановка внутреннего диалога</string>
@@ -39,4 +39,5 @@
     <string name="pref_random_6_12">Случайно между 6:00 и 12:00</string>
     <string name="fragment_settings">Настройки</string>
     <string name="fragment_challenge_return_after_6pm">Завершите задание после 18:00</string>
+    <string name="feedback_send_email">Послать по почте</string>
 </resources>

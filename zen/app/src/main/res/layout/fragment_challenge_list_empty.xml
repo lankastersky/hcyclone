@@ -11,8 +11,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="100dp"
+        android:fontFamily="@string/fontFamilyLight"
         android:gravity="center"
-        android:textSize="18sp"
-        android:text="@string/fragment_challenge_list_empty_text"/>
+        android:text="@string/fragment_challenge_list_empty_text"
+        android:textSize="20sp"/>
 
 </LinearLayout>
