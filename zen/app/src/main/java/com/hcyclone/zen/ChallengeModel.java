@@ -35,6 +35,7 @@ public final class ChallengeModel {
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
+  // Map <challenge id, challenge>
   private final Map<String, Challenge> challengeMap = new HashMap<>();
   private Context context;
   private Gson gson;
@@ -84,7 +85,7 @@ public final class ChallengeModel {
 
   public void loadChallenges(List<Challenge> challenges) {
     for (Challenge challenge : challenges) {
-      challengeMap.put(challenge.id, challenge);
+      challengeMap.put(challenge.getId(), challenge);
     }
     restoreChallengeStatuses(challengeMap);
     restoreCurrentChallenge();
@@ -120,20 +121,47 @@ public final class ChallengeModel {
     storeCurrentChallenge();
   }
 
+  public boolean isTimeToFinishCurrentChallenge() {
+    Challenge challenge = getChallengesMap().get(currentChallengeId);
+    if (challenge.getStatus() == Challenge.ACCEPTED) {
+      Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
+      return timeToFinish.before(new Date());
+    }
+    return false;
+  }
+
   private void selectCurrentChallengeIfNeeded() {
     if (TextUtils.isEmpty(currentChallengeId)) {
       currentChallengeId = getNewChallengeId();
     } else {
-      if (isTimeToDeclineCurrentChallenge()) {
-        getChallengesMap().get(currentChallengeId).decline();
+      boolean newChallengeRequired = false;
+      Challenge challenge = getChallengesMap().get(currentChallengeId);
+      switch (challenge.getStatus()) {
+        case Challenge.UNKNOWN:
+          break;
+        case Challenge.SHOWN:
+          if (isCurrentChallengeTimeExpired()) {
+            challenge.decline();
+            newChallengeRequired = true;
+          }
+          break;
+        case Challenge.ACCEPTED:
+          if (isCurrentChallengeTimeExpired()) {
+            challenge.reset();
+            newChallengeRequired = true;
+          }
+          break;
+        case Challenge.FINISHED:
+        case Challenge.DECLINED:
+          if (isCurrentChallengeTimeExpired()) {
+            newChallengeRequired = true;
+          }
+          break;
+        default:
+          Log.e(TAG, "Wrong status of current challenge: " + currentChallengeId);
       }
-      if (isNewChallengeRequired()) {
+      if (newChallengeRequired) {
         currentChallengeId = getNewChallengeId();
-        Challenge challenge = getChallengesMap().get(currentChallengeId);
-        if (challenge.getStatus() != Challenge.UNKNOWN) {
-          // Challenge was shown before. Reset the status
-          challenge.setStatus(Challenge.UNKNOWN);
-        }
       }
     }
     storeChallengeStatuses();
@@ -147,48 +175,25 @@ public final class ChallengeModel {
     return timeToDecline.before(new Date());
   }
 
-  private boolean isTimeToDeclineCurrentChallenge() {
-    Challenge challenge = getChallengesMap().get(currentChallengeId);
-    if (challenge.getStatus() == Challenge.SHOWN
-        || challenge.getStatus() == Challenge.ACCEPTED) {
-      return isCurrentChallengeTimeExpired();
-    }
-    return false;
-  }
-
-  public boolean isTimeToFinishCurrentChallenge() {
-    Challenge challenge = getChallengesMap().get(currentChallengeId);
-    if (challenge.getStatus() == Challenge.SHOWN
-        || challenge.getStatus() == Challenge.ACCEPTED) {
-      Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
-      return timeToFinish.before(new Date());
-    }
-    return false;
-  }
-
-  private boolean isNewChallengeRequired() {
-    Challenge challenge = getChallengesMap().get(currentChallengeId);
-    if (challenge.getStatus() == Challenge.FINISHED
-        || challenge.getStatus() == Challenge.DECLINED) {
-      return isCurrentChallengeTimeExpired();
-    }
-    return false;
-  }
-
+  /**
+   * If there are nonaccepted challenges, get random challenge from them taking into account levels.
+   * Else if there are declined challenges, get random challenge from them.
+   * Else get random challenge from all and is not equal to previous one.
+   */
   @NonNull
-  // TODO: generate more difficult challenges with time.
   private String getNewChallengeId() {
     String challengeId;
     Challenge challenge;
     List<Challenge> nonacceptedChallenges = getChallengesMap(Challenge.UNKNOWN);
+    nonacceptedChallenges = filterNonacceptedChallengesByLevel(nonacceptedChallenges);
     if (nonacceptedChallenges.size() > 0) {
       challenge = getRandomChallenge(nonacceptedChallenges);
-      challengeId = challenge.id;
+      challengeId = challenge.getId();
     } else {
       List<Challenge> declinedChallenges = getChallengesMap(Challenge.DECLINED);
-      if (nonacceptedChallenges.size() > 0) {
+      if (declinedChallenges.size() > 0) {
         challenge = getRandomChallenge(declinedChallenges);
-        challengeId = challenge.id;
+        challengeId = challenge.getId();
       } else {
         // All challenges are finished. Return random old one.
         challenge = getRandomChallenge(getChallengesMap().values());
@@ -197,8 +202,9 @@ public final class ChallengeModel {
             challenge = getRandomChallenge(getChallengesMap().values());
           }
         }
-        challengeId = challenge.id;
+        challengeId = challenge.getId();
       }
+      challenge.reset();
     }
     return challengeId;
   }
@@ -215,6 +221,39 @@ public final class ChallengeModel {
       }
     }
     return result;
+  }
+
+  /**
+   * Low-level challenges are available from the beginning.
+   * Medium-level challenges are available when 1/3 of challenges is accepted.
+   * High-level challenges are available when 2/3 of challenges is accepted.
+   */
+  private List<Challenge> filterNonacceptedChallengesByLevel(
+      @NonNull Collection<Challenge> nonaccepted) {
+
+    Collection<Challenge> challenges = getChallengesMap().values();
+    double acceptedProportion = (challenges.size() - nonaccepted.size()) / challenges.size();
+    boolean acceptMedium = acceptedProportion >= 1D/3;
+    boolean acceptHigh = acceptedProportion >= 2D/3;
+
+    List<Challenge> filteredChallenges = new ArrayList<>();
+    for (Challenge challenge : nonaccepted) {
+      switch (challenge.getLevel()) {
+        case Challenge.LEVEL_LOW:
+          filteredChallenges.add(challenge);
+          break;
+        case Challenge.LEVEL_MEDIUM:
+          if (acceptMedium) {
+            filteredChallenges.add(challenge);
+          }
+          break;
+        case Challenge.LEVEL_HIGH:
+          if (acceptHigh) {
+            filteredChallenges.add(challenge);
+          }
+      }
+    }
+    return filteredChallenges;
   }
 
   @NonNull

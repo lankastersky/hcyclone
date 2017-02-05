@@ -2,11 +2,8 @@ package com.hcyclone.zen;
 
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 
 /** Determines global app lifecycle states.
  *
@@ -27,8 +24,6 @@ import android.util.Log;
  *
  * */
 public class AppLifecycleManager implements ActivityLifecycleCallbacks {
-
-  private static final String TAG = AppLifecycleManager.class.getSimpleName();
 
   /** Manages the state of opened vs closed activities, should be 0 or 1.
    * It will be 2 if this value is checked between activity B onStart() and

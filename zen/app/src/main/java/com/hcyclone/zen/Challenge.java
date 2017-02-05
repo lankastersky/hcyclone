@@ -18,9 +18,11 @@ public class Challenge {
   public static final String TYPE_STOP_INTERNAL_DIALOG = "SID";
 
   // Levels
-  public static final int LEVEL_EASY = 1;
+  public static final int LEVEL_LOW = 1;
+  public static final int LEVEL_MEDIUM = 2;
+  public static final int LEVEL_HIGH = 3;
 
-  public String id;
+  private String id;
   //public final String title;
   private String content;
   private String details;
@@ -123,5 +125,10 @@ public class Challenge {
         Log.e(Challenge.class.getSimpleName(), "Wrong status to decline: " + status);
         break;
     }
+  }
+
+  public void reset() {
+    status = UNKNOWN;
+    finishedTime = 0;
   }
 }

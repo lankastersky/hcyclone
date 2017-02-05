@@ -8,7 +8,8 @@ import android.util.Log;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public final class FirebaseService extends IntentService implements FirebaseAdapter.FirebaseAuthListener {
+public final class FirebaseService extends IntentService
+    implements FirebaseAdapter.FirebaseAuthListener {
 
   private static final String TAG = FirebaseService.class.getSimpleName();
 

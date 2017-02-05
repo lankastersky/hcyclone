@@ -174,10 +174,10 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onListFragmentInteraction(Challenge item) {
-    Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.id);
+    Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
     Intent intent = new Intent(this, ChallengeActivity.class);
     Bundle extras = new Bundle();
-    extras.putString(ChallengeFragment.CHALLENGE_ID, item.id);
+    extras.putString(ChallengeFragment.CHALLENGE_ID, item.getId());
     intent.putExtras(extras);
     startActivity(intent);
   }

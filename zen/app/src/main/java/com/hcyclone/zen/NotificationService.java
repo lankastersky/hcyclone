@@ -110,8 +110,8 @@ public final class NotificationService {
   }
 
   private static int getNotificationIcon() {
-    boolean useWhiteIcon = (android.os.Build.VERSION.SDK_INT >=
+    boolean useBlackIcon = (android.os.Build.VERSION.SDK_INT >=
         android.os.Build.VERSION_CODES.LOLLIPOP);
-    return useWhiteIcon ? R.mipmap.ic_adb_black_24dp : R.mipmap.ic_adb_white_24dp;
+    return useBlackIcon ? R.mipmap.ic_menu_challenge : R.mipmap.ic_menu_challenge_white;
   }
 }

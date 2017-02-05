@@ -6,7 +6,7 @@
     <!-- 144dp color version of app icon -->
     <item>
         <bitmap
-            android:src="@mipmap/splash"
+            android:src="@mipmap/play_launcher"
             android:gravity="center"/>
     </item>
 </layer-list>

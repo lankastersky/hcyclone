@@ -34,7 +34,7 @@ public final class Utils {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
     if (BuildConfig.DEBUG) {
-      date.add(Calendar.SECOND, 30);
+      date.add(Calendar.SECOND, 5);
     } else {
       date.set(Calendar.HOUR_OF_DAY, 18);
       // Reset minutes, seconds and millis.
@@ -50,7 +50,7 @@ public final class Utils {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
     if (BuildConfig.DEBUG) {
-      date.add(Calendar.SECOND, 30);
+      date.add(Calendar.SECOND, 10);
     } else {
       // Reset hour, minutes, seconds and millis.
       date.set(Calendar.HOUR_OF_DAY, 0);

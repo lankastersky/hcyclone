@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_challenge"
-            android:icon="@mipmap/ic_android_black_24dp"
+            android:icon="@mipmap/ic_menu_challenge"
             android:title="@string/navigation_drawer_challenge"/>
         <item
             android:id="@+id/nav_journal"
