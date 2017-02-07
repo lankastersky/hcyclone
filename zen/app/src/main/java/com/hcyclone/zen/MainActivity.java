@@ -27,8 +27,10 @@ public class MainActivity extends AppCompatActivity
   private static final String TAG = MainActivity.class.getSimpleName();
 
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
+  private static final String SELECTED_MENU_ITEM_ID_PARAM = "selectedMenuItemId";
 
   private Fragment currentFragment;
+  private int selectedMenuItemId;
   private ProgressBar progressBar;
   private ResultReceiver receiver = new ResultReceiver(new Handler()) {
     @Override
@@ -61,22 +63,23 @@ public class MainActivity extends AppCompatActivity
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
-    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
     toggle.syncState();
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-    Menu menu = navigationView.getMenu();
-    MenuItem menuItem = menu.findItem(R.id.nav_challenge);
-    menuItem.setChecked(true);
-
     progressBar = (ProgressBar) findViewById(R.id.progressBar);
-    progressBar.setVisibility(View.VISIBLE);
 
-    Intent intent = new Intent(this, FirebaseService.class);
-    intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);
-    startService(intent);
+    if (savedInstanceState == null) {
+      selectChallengeMenuItem();
+
+      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+      progressBar.setVisibility(View.VISIBLE);
+
+      Intent intent = new Intent(this, FirebaseService.class);
+      intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);
+      startService(intent);
+    }
   }
 
   @Override
@@ -92,6 +95,9 @@ public class MainActivity extends AppCompatActivity
     Intent intent = getIntent();
     if (intent.getExtras() != null
         && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
+
+      selectChallengeMenuItem();
+
       getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
       Log.d(TAG, "Show current challenge when start from notification");
       Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
@@ -112,35 +118,58 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    int id = item.getItemId();
+    selectedMenuItemId = item.getItemId();
+    selectMenuItem(selectedMenuItemId);
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.closeDrawer(GravityCompat.START);
+    return true;
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt(SELECTED_MENU_ITEM_ID_PARAM, selectedMenuItemId);
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    selectedMenuItemId = savedInstanceState.getInt(SELECTED_MENU_ITEM_ID_PARAM);
+    selectMenuItem(selectedMenuItemId);
+  }
+
+  private void selectChallengeMenuItem() {
+    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    Menu menu = navigationView.getMenu();
+    MenuItem menuItem = menu.findItem(R.id.nav_challenge);
+    menuItem.setChecked(true);
+    selectedMenuItemId = menuItem.getItemId();
+  }
+
+  private void selectMenuItem(int menuItemId) {
     FragmentManager fragmentManager = getSupportFragmentManager();
 
-    if (id == R.id.nav_challenge) {
+    if (menuItemId == R.id.nav_challenge) {
       Fragment newFragment = fragmentManager.findFragmentByTag(
           ChallengeFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeFragment.class);
-    } else if (id == R.id.nav_journal) {
+    } else if (menuItemId == R.id.nav_journal) {
       Fragment newFragment = fragmentManager.findFragmentByTag(
           ChallengeListFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeListFragment.class);
-    } else if (id == R.id.nav_settings) {
+    } else if (menuItemId == R.id.nav_settings) {
 //      Intent intent = new Intent(this, SettingsActivity.class);
 //      startActivity(intent);
       Fragment newFragment = fragmentManager.findFragmentByTag(
           SettingsFragment.class.getSimpleName());
       replaceFragment(newFragment, SettingsFragment.class);
-    } else if (id == R.id.nav_help) {
+    } else if (menuItemId == R.id.nav_help) {
       Fragment newFragment = fragmentManager.findFragmentByTag(
           HelpFragment.class.getSimpleName());
       replaceFragment(newFragment, HelpFragment.class);
-    } else if (id == R.id.nav_feedback) {
+    } else if (menuItemId == R.id.nav_feedback) {
       Utils.getInstance().sendFeedback(this);
     }
-
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-    drawer.closeDrawer(GravityCompat.START);
-
-    return true;
   }
 
   private void showCurrentChallenge() {
@@ -156,7 +185,9 @@ public class MainActivity extends AppCompatActivity
     }
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    fragmentTransaction.remove(currentFragment);
+    if (currentFragment != null) {
+      fragmentTransaction.remove(currentFragment);
+    }
     if (newFragment == null) {
       try {
         newFragment = (Fragment) clazz.newInstance();

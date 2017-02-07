@@ -2,6 +2,8 @@ package com.hcyclone.zen;
 
 import android.util.Log;
 
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.Date;
 
 public class Challenge {
@@ -111,6 +113,7 @@ public class Challenge {
         Log.e(Challenge.class.getSimpleName(), "Wrong status to update: " + status);
         break;
     }
+    Analytics.getInstance().sendChallengeUpdate(this);
   }
 
   public void decline() {
@@ -125,6 +128,7 @@ public class Challenge {
         Log.e(Challenge.class.getSimpleName(), "Wrong status to decline: " + status);
         break;
     }
+    Analytics.getInstance().sendChallengeUpdate(this);
   }
 
   public void reset() {

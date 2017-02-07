@@ -4,6 +4,11 @@
         android:angle="135"
         android:centerColor="#c99242"
         android:endColor="#966929"
-        android:startColor="#e0b77b"
+        android:startColor="#c99242"
         android:type="linear"/>
+<!-- backup
+        android:centerColor="#c99242"
+        android:endColor="#966929"
+        android:startColor="#e0b77b"
+-->
 </shape>

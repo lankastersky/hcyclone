@@ -24,6 +24,7 @@ public class App extends Application {
     NotificationService.getInstance().init(this);
     PreferencesService.getInstance().init(this);
     Utils.getInstance().init(this);
+    Analytics.getInstance().init(this);
   }
 
   private static void enableStrictMode() {
