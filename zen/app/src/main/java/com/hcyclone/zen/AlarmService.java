@@ -5,9 +5,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DatabaseUtils;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -49,7 +50,7 @@ when app runs in background during daily alarm; initial alarm; repeatable alarm;
 
 */
 
-public final class AlarmService implements SharedPreferences.OnSharedPreferenceChangeListener {
+public final class AlarmService implements OnSharedPreferenceChangeListener {
 
   private static final String TAG = AlarmService.class.getSimpleName();
 
@@ -62,14 +63,14 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
   private static final AlarmService instance = new AlarmService();
 
   private Context context;
+  private SharedPreferences sharedPreferences;
   private AlarmManager alarmManager;
   private PendingIntent serviceAlarmPengingIntent;
   private PendingIntent initialAlarmPengingIntent;
   private PendingIntent finalAlarmPengingIntent;
   private PendingIntent reminderAlarmPengingIntent;
 
-  private AlarmService() {
-  }
+  private AlarmService() {}
 
   public static AlarmService getInstance() {
     return instance;
@@ -77,6 +78,8 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
   public void init(@NonNull Context context) {
     this.context = context;
+    this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
     alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
     Intent serviceAlarmIntent = new Intent(context, AlarmReceiver.class);
@@ -111,19 +114,35 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
   @Override
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    String action = null;
+    String value = null;
+
     if (PreferencesService.PREF_KEY_INITIAL_ALARM_LIST.equals(key)) {
       setInitialAlarm();
+      String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
+      value = sharedPreferences.getString(key, prefTimeRandom);
+      action = Analytics.SETTINGS_UPDATE_INITIAL_ALARM;
     } else if (PreferencesService.PREF_KEY_FINAL_ALARM_LIST.equals(key)) {
       setFinalAlarm();
+      String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
+      value = sharedPreferences.getString(key, prefTimeRandom);
+      action = Analytics.SETTINGS_UPDATE_FINAL_ALARM;
     } else if (PreferencesService.PREF_KEY_REMINDER_ALARM_LIST.equals(key)) {
       setReminderAlarm();
+      String prefTimeEveryHour = "1";
+      value = sharedPreferences.getString(key, prefTimeEveryHour);
+      action = Analytics.SETTINGS_UPDATE_REMINDER_ALARM;
     } else if (PreferencesService.PREF_KEY_SHOW_NOTIFICATION.equals(key)) {
       setAlarms();
+      value = String.valueOf(areAlarmsEnabled());
+      action = Analytics.SETTINGS_UPDATE_SHOW_NOTIFICATION;
+    }
+    if (!TextUtils.isEmpty(action) && !TextUtils.isEmpty(value)) {
+      Analytics.getInstance().sendSettingsUpdate(action, value);
     }
   }
 
   private boolean areAlarmsEnabled() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     return sharedPreferences.getBoolean(PreferencesService.PREF_KEY_SHOW_NOTIFICATION, true);
   }
 
@@ -156,7 +175,6 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
   }
 
   public void setInitialAlarm() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
     String summary = sharedPreferences.getString(
@@ -169,7 +187,7 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
     Calendar calendar = Calendar.getInstance();
     long alarmRepeatTime;
-    int hour = 0;
+    int hour;
     if (BuildConfig.DEBUG) {
       alarmRepeatTime = 5_000;
       //calendar.add(Calendar.SECOND, 1);
@@ -195,7 +213,6 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
   }
 
   public void setFinalAlarm() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
     String summary = sharedPreferences.getString(
@@ -208,7 +225,7 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
 
     Calendar calendar = Calendar.getInstance();
     long alarmRepeatTime;
-    int hour = 0;
+    int hour;
     if (BuildConfig.DEBUG) {
       alarmRepeatTime = 5_000;
       //calendar.add(Calendar.SECOND, 1);
@@ -234,7 +251,6 @@ public final class AlarmService implements SharedPreferences.OnSharedPreferenceC
   }
 
   public void setReminderAlarm() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeEveryHour = "1";
     String summary = sharedPreferences.getString(

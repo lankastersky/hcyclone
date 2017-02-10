@@ -19,7 +19,7 @@ public final class PreferencesService {
   public static final String PREF_KEY_NOTIFICATION_VIBRATE = "notification_vibrate";
 
   private SharedPreferences sharedPreferences;
-  private Context context;
+//  private Context context;
 
   private PreferencesService() {
   }
@@ -30,7 +30,26 @@ public final class PreferencesService {
 
   public void init(@NonNull Context context) {
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    this.context = context;
+//    this.context = context;
+  }
+
+  /**
+   * Binds a preference's summary to its value. More specifically, when the
+   * preference's value is changed, its summary (line of text below the
+   * preference title) is updated to reflect the value. The summary is also
+   * immediately updated upon calling this method. The exact display format is
+   * dependent on the type of preference.
+   *
+   * @see #bindPreferenceSummaryToValueListener
+   */
+  public void bindPreferenceSummaryToValue(@NonNull Preference preference) {
+    // Set the listener to watch for value changes.
+    preference.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener);
+
+    // Trigger the listener immediately with the preference's
+    // current value.
+    bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
+        sharedPreferences.getString(preference.getKey(), ""));
   }
 
   /**
@@ -55,7 +74,7 @@ public final class PreferencesService {
             index >= 0
                 ? listPreference.getEntries()[index]
                 : null);
-        // TODO: fixe ringtone.
+        // TODO: fix ringtone.
 //      } else if (preference.getKey().equals(PREF_KEY_NOTIFICATION_RINGTONE)) {
 //        if (TextUtils.isEmpty(stringValue)) {
 //          // Empty values correspond to 'silent' (no ringtone).
@@ -97,24 +116,4 @@ public final class PreferencesService {
       return true;
     }
   };
-
-  /**
-   * Binds a preference's summary to its value. More specifically, when the
-   * preference's value is changed, its summary (line of text below the
-   * preference title) is updated to reflect the value. The summary is also
-   * immediately updated upon calling this method. The exact display format is
-   * dependent on the type of preference.
-   *
-   * @see #bindPreferenceSummaryToValueListener
-   */
-  public void bindPreferenceSummaryToValue(@NonNull Preference preference) {
-    // Set the listener to watch for value changes.
-    preference.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener);
-
-    // Trigger the listener immediately with the preference's
-    // current value.
-    bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-        sharedPreferences.getString(preference.getKey(), ""));
-  }
-
 }

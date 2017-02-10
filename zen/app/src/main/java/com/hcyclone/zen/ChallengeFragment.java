@@ -83,8 +83,8 @@ public class ChallengeFragment extends Fragment {
       view.findViewById(R.id.quote).setVisibility(View.GONE);
     }
 
-    if (!TextUtils.isEmpty(challenge.getSource())) {
-      ((TextView) view.findViewById(R.id.source)).setText(Html.fromHtml(challenge.getSource()));
+    if (!TextUtils.isEmpty(challenge.getSourceAsHtml())) {
+      ((TextView) view.findViewById(R.id.source)).setText(Html.fromHtml(challenge.getSourceAsHtml()));
       ((TextView) view.findViewById(R.id.source)).setMovementMethod(
           LinkMovementMethod.getInstance());
       view.findViewById(R.id.source).setVisibility(View.VISIBLE);
@@ -93,7 +93,7 @@ public class ChallengeFragment extends Fragment {
     }
 
     ((TextView) view.findViewById(R.id.type)).setText(String.format(
-        getString(R.string.fragment_challenge_type), localizedChallengeType(challenge.getType())));
+        getString(R.string.fragment_challenge_type), challenge.getType()));
     ((TextView) view.findViewById(R.id.level)).setText(String.format(
         getString(R.string.fragment_challenge_level),
         localizedChallengeLevel(challenge.getLevel())));
@@ -105,18 +105,6 @@ public class ChallengeFragment extends Fragment {
     if (!showFinishedChallenge) {
       updateChallengeButton();
     }
-  }
-
-  private String localizedChallengeType(String type) {
-    String result = "";
-    switch (type) {
-      case Challenge.TYPE_STOP_INTERNAL_DIALOG:
-        result = getString(R.string.challenge_type_sid);
-        break;
-      default:
-        break;
-    }
-    return result;
   }
 
   private String localizedChallengeLevel(int level) {

@@ -26,12 +26,13 @@ public final class ChallengeModel {
   private static final String TAG = ChallengeModel.class.getSimpleName();
   private static final ChallengeModel instance = new ChallengeModel();
 
-  //public static final Map<String, Challenge> ITEM_MAP = new HashMap<>();
-  //private static final int COUNT = 25;
+  private static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
+
   private static final String KEY_CHALLENGE_STATUSES = "challenge_statuses";
   private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
   private static final String CURRENT_CHALLENGE_ID_KEY = "current_challenge_id";
   private static final String CURRENT_CHALLENGE_KEY = "current_challenge";
+  private SharedPreferences sharedPreferences;
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
@@ -40,15 +41,7 @@ public final class ChallengeModel {
   private Context context;
   private Gson gson;
 
-//  static {
-//    // Add some sample items.
-//    for (int i = 1; i <= COUNT; i++) {
-//      addItem(createDummyItem(i));
-//    }
-//  }
-
-  private ChallengeModel() {
-  }
+  private ChallengeModel() {}
 
   public static ChallengeModel getInstance() {
     return instance;
@@ -56,6 +49,7 @@ public final class ChallengeModel {
 
   public void init(@NonNull Context context) {
     this.context = context;
+    sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     gson = new Gson();
   }
 
@@ -109,7 +103,6 @@ public final class ChallengeModel {
   }
 
   public Challenge getSerializedCurrentChallenge() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String currentChallengeString = sharedPreferences.getString(CURRENT_CHALLENGE_KEY, null);
     return gson.fromJson(currentChallengeString, Challenge.class);
   }
@@ -268,7 +261,6 @@ public final class ChallengeModel {
   }
 
   private void storeCurrentChallenge() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, currentChallengeShownTime)
         .apply();
     sharedPreferences.edit().putString(CURRENT_CHALLENGE_ID_KEY, currentChallengeId).apply();
@@ -278,7 +270,6 @@ public final class ChallengeModel {
   }
 
   private void restoreCurrentChallenge() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     currentChallengeShownTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
     currentChallengeId = sharedPreferences.getString(CURRENT_CHALLENGE_ID_KEY, null);
   }
@@ -290,12 +281,10 @@ public final class ChallengeModel {
           challenge.getFinishedTime()));
     }
     String statusesString = gson.toJson(statuses);
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     sharedPreferences.edit().putString(KEY_CHALLENGE_STATUSES, statusesString).apply();
   }
 
   private void restoreChallengeStatuses(Map<String, Challenge> challengeMap) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     String statusesString = sharedPreferences.getString(KEY_CHALLENGE_STATUSES, null);
     if (!TextUtils.isEmpty(statusesString)) {
       List<ChallengeStatus> statuses = gson.fromJson(statusesString,
@@ -307,22 +296,4 @@ public final class ChallengeModel {
       }
     }
   }
-
-//  private static void addItem(Challenge item) {
-//    ITEM_MAP.put(item.id, item);
-//  }
-//
-//  private static Challenge createDummyItem(int position) {
-//    return new Challenge(String.valueOf(position), "Challenge " + position, makeDetails(position));
-//  }
-//
-//  private static String makeDetails(int position) {
-//    StringBuilder builder = new StringBuilder();
-//    builder.append("Details about Challenge: ").append(position);
-//    for (int i = 0; i < position; i++) {
-//      builder.append("\nMore details information here.");
-//    }
-//    return builder.toString();
-//  }
-
 }

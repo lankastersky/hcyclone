@@ -1,5 +1,6 @@
 package com.hcyclone.zen;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.analytics.Tracker;
@@ -16,22 +17,19 @@ public class Challenge {
   public static final int FINISHED = 3;
   public static final int DECLINED = 4;
 
-  // Types
-  public static final String TYPE_STOP_INTERNAL_DIALOG = "SID";
-
   // Levels
   public static final int LEVEL_LOW = 1;
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
 
   private String id;
-  //public final String title;
   private String content;
   private String details;
-  private String type;
   private int level;
-  private String source;
   private String quote;
+  private String source;
+  private String type;
+  private String url;
 
   private int status;
   private long finishedTime;
@@ -41,13 +39,14 @@ public class Challenge {
   }
 
   public Challenge(String id, String content, String details, String type, long level,
-                   String source, String quote) {
+                   String source, String url, String quote) {
     this.id = id;
     this.content = content;
     this.details = details;
     this.type = type;
     this.level = (int) level;
     this.source = source;
+    this.url = url;
     this.quote = quote;
     this.status = UNKNOWN;
   }
@@ -80,8 +79,11 @@ public class Challenge {
     return level;
   }
 
-  public String getSource() {
-    return source;
+  public String getSourceAsHtml() {
+    if (!TextUtils.isEmpty(source) && !TextUtils.isEmpty(url)) {
+      return String.format("<a href='%s'>%s</a>", url, source);
+    }
+    return "";
   }
 
   public String getQuote() {

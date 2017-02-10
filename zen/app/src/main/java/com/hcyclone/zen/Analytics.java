@@ -2,8 +2,6 @@ package com.hcyclone.zen;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -14,8 +12,13 @@ import com.google.android.gms.analytics.Tracker;
  */
 public class Analytics {
 
-  @VisibleForTesting
-  static Analytics instance = new Analytics();
+  public static final String SETTINGS_UPDATE_INITIAL_ALARM = "Initial alarm";
+  public static final String SETTINGS_UPDATE_FINAL_ALARM = "Final alarm";
+  public static final String SETTINGS_UPDATE_REMINDER_ALARM = "Reminder alarm";
+  public static final String SETTINGS_UPDATE_SHOW_NOTIFICATION = "Show notification";
+  public static final String SETTINGS_UPDATE_NOTIFICATION_VIBRATE = "Notification vibrate";
+
+  private static Analytics instance = new Analytics();
 
   private Tracker tracker;
 
@@ -52,6 +55,14 @@ public class Analytics {
         .setCategory("Challenge Update")
         .setAction(action)
         .setLabel(challenge.getId())
+        .build());
+  }
+
+  public void sendSettingsUpdate(@NonNull String action, String value) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory("Settings Update")
+        .setAction(action)
+        .setLabel(value)
         .build());
   }
 }
