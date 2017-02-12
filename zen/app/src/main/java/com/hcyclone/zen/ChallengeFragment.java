@@ -41,8 +41,6 @@ public class ChallengeFragment extends Fragment {
     }
     if (!TextUtils.isEmpty(challengeId)) {
       showFinishedChallenge = true;
-    } else {
-      challengeId = ChallengeModel.getInstance().getCurrentChallenge().getId();
     }
   }
 
@@ -58,6 +56,9 @@ public class ChallengeFragment extends Fragment {
   @Override
   public void onStart() {
     super.onStart();
+    if (!showFinishedChallenge) {
+      challengeId = ChallengeModel.getInstance().getCurrentChallenge().getId();
+    }
     updateChallengeIfNeeded(getView());
   }
 

@@ -33,10 +33,6 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
-        <activity
-            android:name=".SettingsActivity">
-        </activity>
-
         <receiver android:name="AlarmReceiver">
         </receiver>
 

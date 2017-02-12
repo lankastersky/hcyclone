@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Сталкинг</string>
     <string name="app_description">Быть осознанным</string>
-    <string name="challenge_level_low">Низка</string>
+    <string name="challenge_level_low">Низкая</string>
     <string name="challenge_type_sid">Остановка внутреннего диалога</string>
     <string name="fragment_challenge_accept">Начать</string>
     <string name="fragment_challenge_current">Текущее задание</string>
@@ -21,11 +21,11 @@
     <string name="navigation_drawer_help">Помощь</string>
     <string name="navigation_drawer_journal">Журнал</string>
     <string name="navigation_drawer_settings">Настройки</string>
-    <string name="pref_header_constant_reminder">Напоминание о задании</string>
-    <string name="pref_header_final_reminder">Напоминание начать задание</string>
-    <string name="pref_header_initial_reminder">Напоминание завершить задание</string>
+    <string name="pref_header_constant_reminder">Напомнить о задании</string>
+    <string name="pref_header_final_reminder">Напомнить закончить задание</string>
+    <string name="pref_header_initial_reminder">Напомнить начать задание</string>
     <string name="pref_reminder_ringtone">Мелодия</string>
-    <string name="pref_reminder_show_notification">Показать уведомление</string>
+    <string name="pref_reminder_show_notification">Напоминания</string>
     <string name="pref_reminder_vibrate">Вибросигнал</string>
     <string name="pref_ringtone_silent">Без звука</string>
     <string name="notification_challenge_finish">Закончите задание</string>
@@ -42,4 +42,7 @@
     <string name="feedback_send_email">Послать по почте</string>
     <string name="challenge_level_high">Высокая</string>
     <string name="challenge_level_medium">Средняя</string>
+    <string name="navigation_drawer_close">Закрыть меню</string>
+    <string name="navigation_drawer_open">Открыть меню</string>
+    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"</string>
 </resources>
