@@ -1,5 +1,6 @@
 package com.hcyclone.zen;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 public class ChallengeFragment extends Fragment {
@@ -141,6 +143,7 @@ public class ChallengeFragment extends Fragment {
           case Challenge.ACCEPTED:
             ChallengeModel.getInstance().setCurrentChallengeFinished();
             AlarmService.getInstance().stopReminderAlarm();
+            showRateDialog();
             break;
           default:
             Log.e(TAG, "Wrong challenge status: "
@@ -152,6 +155,26 @@ public class ChallengeFragment extends Fragment {
     updateChallengeButton();
   }
 
+  private void showRateDialog() {
+    final Dialog rankDialog = new Dialog(getContext(), R.style.AlertDialogCustom);
+    rankDialog.setContentView(R.layout.rank_dialog);
+    rankDialog.setCancelable(false);
+
+    final RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
+    ratingBar.setRating(0);
+
+    Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+    updateButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        double i = ratingBar.getRating();
+        // TODO: save rank.
+        rankDialog.dismiss();
+      }
+    });
+    rankDialog.show();
+  }
+
   private void updateChallengeButton() {
     int status = ChallengeModel.getInstance().getCurrentChallenge().getStatus();
     switch (status) {
@@ -160,13 +183,13 @@ public class ChallengeFragment extends Fragment {
         challengeButton.setEnabled(enabled);
         challengeButton.setBackgroundColor(enabled
             ? ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
-            : ContextCompat.getColor(getActivity(), R.color.colorPrimary));
+            : ContextCompat.getColor(getActivity(), R.color.colorPrimaryDisabled));
         break;
       case Challenge.FINISHED:
       case Challenge.DECLINED:
         challengeButton.setEnabled(false);
         challengeButton.setBackgroundColor(ContextCompat.getColor(
-            getActivity(), R.color.colorPrimary));
+            getActivity(), R.color.colorPrimaryDisabled));
         break;
       default:
         challengeButton.setEnabled(true);

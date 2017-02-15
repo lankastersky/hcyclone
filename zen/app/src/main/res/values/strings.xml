@@ -122,4 +122,8 @@
     <!-- Feedback -->
     <string name="feedback_send_email">Send email</string>
 
+    <!-- Rank dialog -->
+    <string name="rank_dialog_title">Estimate your level of consciousness</string>
+    <string name="rank_dialog_rate">Rate</string>
+
 </resources>
