@@ -47,7 +47,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
     if (PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE.equals(key)) {
       String value = String.valueOf(sharedPreferences.getBoolean(key, true));
-      Analytics.getInstance().sendSettingsUpdate(Analytics.SETTINGS_UPDATE_NOTIFICATION_VIBRATE,
+      Analytics.getInstance().sendSettings(Analytics.SETTINGS_UPDATE_NOTIFICATION_VIBRATE,
           value);
     }
   }

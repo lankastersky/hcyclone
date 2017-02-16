@@ -17,28 +17,15 @@
         android:textSize="20sp"/>
 
     <RatingBar
-        android:id="@+id/dialog_ratingbar"
+        android:id="@+id/rank_dialog_ratingbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:clickable="true"
         android:isIndicator="false"
         android:numStars="4"
-        android:paddingBottom="@dimen/text_margin"
         android:rating="2"
         android:stepSize="1.0"
         android:theme="@style/RatingBar"/>
-
-    <Button
-        android:id="@+id/rank_dialog_button"
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/colorPrimaryDark"
-        android:focusable="false"
-        android:fontFamily="@string/fontFamilyMedium"
-        android:text="@string/rank_dialog_rate"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
 
 </LinearLayout>

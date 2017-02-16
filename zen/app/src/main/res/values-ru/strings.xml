@@ -44,7 +44,7 @@
     <string name="challenge_level_medium">Средняя</string>
     <string name="navigation_drawer_close">Закрыть меню</string>
     <string name="navigation_drawer_open">Открыть меню</string>
-    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"</string>
     <string name="rank_dialog_title">Оцените свой уровень осознанности</string>
     <string name="rank_dialog_rate">Оценить</string>
+    <string name="fragment_help_version">Студия \"Гиперборейский циклон\"\nВерсия 0.1</string>
 </resources>

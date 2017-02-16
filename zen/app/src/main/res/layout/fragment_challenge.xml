@@ -80,34 +80,37 @@
                 android:text="@string/fragment_challenge_type"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="14sp"/>
+                android:textSize="16sp"/>
 
-            <RelativeLayout
+            <TextView
+                android:id="@+id/level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/fontFamilyLight"
+                android:paddingBottom="@dimen/text_margin"
+                android:text="@string/fragment_challenge_level"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp"/>
+
+            <RatingBar
+                android:id="@+id/rating_bar"
+                style="@style/CustomRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:isIndicator="true"
+                android:numStars="4"
+                android:rating="2.0"
+                android:stepSize="1.0"/>
+
+            <include
+                android:id="@+id/rank_dialog"
+                layout="@layout/rank_dialog"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
-                <TextView
-                    android:id="@+id/level"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@string/fontFamilyLight"
-                    android:text="@string/fragment_challenge_level"
-                    android:textAppearance="?attr/textAppearanceListItem"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:layout_width="wrap_content"
-                    android:textSize="14sp"/>
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="@style/CustomRatingBar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:numStars="4"
-                    android:layout_alignParentEnd="true"
-                    android:stepSize="1.0"
-                    android:rating="2.0"
-                    android:isIndicator="true" />
-
-            </RelativeLayout>
             <Button
                 android:id="@+id/accept_button"
                 android:layout_width="match_parent"

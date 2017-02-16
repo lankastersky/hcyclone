@@ -1,6 +1,5 @@
 package com.hcyclone.zen;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,7 +21,9 @@ public class ChallengeFragment extends Fragment {
 
   private String challengeId;
   private Button challengeButton;
-  private boolean showFinishedChallenge;
+  private boolean showFromJournal;
+  private View rankDialog;
+  private RatingBar ratingBar;
 
   public ChallengeFragment() {
   }
@@ -42,7 +43,7 @@ public class ChallengeFragment extends Fragment {
       challengeId = getArguments().getString(CHALLENGE_ID);
     }
     if (!TextUtils.isEmpty(challengeId)) {
-      showFinishedChallenge = true;
+      showFromJournal = true;
     }
   }
 
@@ -51,21 +52,23 @@ public class ChallengeFragment extends Fragment {
                            Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_challenge, container, false);
-    showChallenge(view);
+    createUI(view);
     return view;
   }
 
   @Override
   public void onStart() {
     super.onStart();
-    if (!showFinishedChallenge) {
+    if (!showFromJournal) {
       challengeId = ChallengeModel.getInstance().getCurrentChallenge().getId();
     }
-    updateChallengeIfNeeded(getView());
+    updateUI();
   }
 
-  private void showChallenge(View view) {
-    if (!showFinishedChallenge) {
+  private void createUI(View view) {
+    ratingBar = (RatingBar) view.findViewById(R.id.rating_bar);
+    rankDialog = view.findViewById(R.id.rank_dialog);
+    if (!showFromJournal) {
       // Show current challenge.
       getActivity().setTitle(getString(R.string.fragment_challenge_current));
       createChallengeButton(view);
@@ -75,7 +78,17 @@ public class ChallengeFragment extends Fragment {
     }
   }
 
-  private void showChallengeData(View view) {
+  private void updateUI() {
+    ChallengeModel.getInstance().setCurrentChallengeShown();
+    showChallengeData();
+    updateRatingBar();
+    if (!showFromJournal) {
+      updateChallengeButton();
+    }
+  }
+
+  private void showChallengeData() {
+    View view = getView();
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
     ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
     ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
@@ -87,7 +100,8 @@ public class ChallengeFragment extends Fragment {
     }
 
     if (!TextUtils.isEmpty(challenge.getSourceAsHtml())) {
-      ((TextView) view.findViewById(R.id.source)).setText(Html.fromHtml(challenge.getSourceAsHtml()));
+      ((TextView) view.findViewById(R.id.source)).setText(
+          Html.fromHtml(challenge.getSourceAsHtml()));
       ((TextView) view.findViewById(R.id.source)).setMovementMethod(
           LinkMovementMethod.getInstance());
       view.findViewById(R.id.source).setVisibility(View.VISIBLE);
@@ -100,14 +114,8 @@ public class ChallengeFragment extends Fragment {
     ((TextView) view.findViewById(R.id.level)).setText(String.format(
         getString(R.string.fragment_challenge_level),
         localizedChallengeLevel(challenge.getLevel())));
-  }
 
-  private void updateChallengeIfNeeded(View view) {
-    ChallengeModel.getInstance().setCurrentChallengeShown();
-    showChallengeData(view);
-    if (!showFinishedChallenge) {
-      updateChallengeButton();
-    }
+    ratingBar.setRating(challenge.getRating());
   }
 
   private String localizedChallengeLevel(int level) {
@@ -134,8 +142,8 @@ public class ChallengeFragment extends Fragment {
     challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Log.d(TAG, "challengeButton clicked");
-        switch (ChallengeModel.getInstance().getCurrentChallenge().getStatus()) {
+        Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+        switch (challenge.getStatus()) {
           case Challenge.SHOWN:
             ChallengeModel.getInstance().setCurrentChallengeAccepted();
             AlarmService.getInstance().setReminderAlarm();
@@ -143,56 +151,65 @@ public class ChallengeFragment extends Fragment {
           case Challenge.ACCEPTED:
             ChallengeModel.getInstance().setCurrentChallengeFinished();
             AlarmService.getInstance().stopReminderAlarm();
-            showRateDialog();
+            rankDialog.setVisibility(View.GONE);
+            rate();
             break;
           default:
-            Log.e(TAG, "Wrong challenge status: "
-                + ChallengeModel.getInstance().getCurrentChallenge().getStatus());
+            Log.e(TAG, "Wrong challenge status: " + challenge.getStatus());
         }
         updateChallengeButton();
+        updateRatingBar();
       }
     });
-    updateChallengeButton();
   }
 
-  private void showRateDialog() {
-    final Dialog rankDialog = new Dialog(getContext(), R.style.AlertDialogCustom);
-    rankDialog.setContentView(R.layout.rank_dialog);
-    rankDialog.setCancelable(false);
-
-    final RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.dialog_ratingbar);
+  private void showRankView() {
+    rankDialog.setVisibility(View.VISIBLE);
+    RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.rank_dialog_ratingbar);
     ratingBar.setRating(0);
+  }
 
-    Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
-    updateButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        double i = ratingBar.getRating();
-        // TODO: save rank.
-        rankDialog.dismiss();
-      }
-    });
-    rankDialog.show();
+  private void rate() {
+    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+    RatingBar ratingBar = (RatingBar)rankDialog.findViewById(R.id.rank_dialog_ratingbar);
+    challenge.setRating(ratingBar.getRating());
+    Analytics.getInstance().sendChallengeRating(challenge);
+  }
+
+  private void updateRatingBar() {
+    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+    int status = challenge.getStatus();
+    switch (status) {
+      case Challenge.FINISHED:
+        ratingBar.setVisibility(View.VISIBLE);
+        ratingBar.setRating(challenge.getRating());
+        break;
+      default:
+        ratingBar.setVisibility(View.GONE);
+        break;
+    }
   }
 
   private void updateChallengeButton() {
-    int status = ChallengeModel.getInstance().getCurrentChallenge().getStatus();
-    switch (status) {
+    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+    switch (challenge.getStatus()) {
       case Challenge.ACCEPTED:
         boolean enabled = ChallengeModel.getInstance().isTimeToFinishCurrentChallenge();
-        challengeButton.setEnabled(enabled);
-        challengeButton.setBackgroundColor(enabled
-            ? ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
-            : ContextCompat.getColor(getActivity(), R.color.colorPrimaryDisabled));
+          challengeButton.setEnabled(enabled);
+          challengeButton.setBackgroundColor(enabled
+              ? ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
+              : ContextCompat.getColor(getActivity(), R.color.colorPrimaryDisabled));
+        if (enabled) {
+          showRankView();
+        }
         break;
       case Challenge.FINISHED:
       case Challenge.DECLINED:
-        challengeButton.setEnabled(false);
-        challengeButton.setBackgroundColor(ContextCompat.getColor(
-            getActivity(), R.color.colorPrimaryDisabled));
+        challengeButton.setVisibility(View.GONE);
         break;
       default:
         challengeButton.setEnabled(true);
+        challengeButton.setVisibility(View.VISIBLE);
         challengeButton.setBackgroundColor(ContextCompat.getColor(
             getActivity(), R.color.colorPrimaryDark));
     }
@@ -201,7 +218,8 @@ public class ChallengeFragment extends Fragment {
 
   private String getChallengeButtonText() {
     String result = "";
-    switch (ChallengeModel.getInstance().getCurrentChallenge().getStatus()) {
+    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+    switch (challenge.getStatus()) {
       case Challenge.UNKNOWN:
       case Challenge.SHOWN:
         result = getString(R.string.fragment_challenge_accept);
@@ -217,8 +235,7 @@ public class ChallengeFragment extends Fragment {
         result = getString(R.string.fragment_challenge_declined);
         break;
       default:
-        Log.e(TAG, "Wrong status to show on button: "
-            + ChallengeModel.getInstance().getCurrentChallenge().getStatus());
+        Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;
     }
     return result;

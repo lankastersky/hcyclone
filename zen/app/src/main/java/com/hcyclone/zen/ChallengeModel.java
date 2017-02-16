@@ -226,8 +226,8 @@ public final class ChallengeModel {
 
     Collection<Challenge> challenges = getChallengesMap().values();
     double acceptedProportion = (challenges.size() - nonaccepted.size()) / challenges.size();
-    boolean acceptMedium = acceptedProportion >= 1D/3;
-    boolean acceptHigh = acceptedProportion >= 2D/3;
+    boolean acceptMedium = acceptedProportion >= 1D / 3;
+    boolean acceptHigh = acceptedProportion >= 2D / 3;
 
     List<Challenge> filteredChallenges = new ArrayList<>();
     for (Challenge challenge : nonaccepted) {

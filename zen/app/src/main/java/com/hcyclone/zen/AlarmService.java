@@ -138,7 +138,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
       action = Analytics.SETTINGS_UPDATE_SHOW_NOTIFICATION;
     }
     if (!TextUtils.isEmpty(action) && !TextUtils.isEmpty(value)) {
-      Analytics.getInstance().sendSettingsUpdate(action, value);
+      Analytics.getInstance().sendSettings(action, value);
     }
   }
 

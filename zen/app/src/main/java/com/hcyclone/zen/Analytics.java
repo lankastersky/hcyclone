@@ -33,7 +33,7 @@ public class Analytics {
     tracker = analytics.newTracker(R.xml.global_tracker);
   }
 
-  public void sendChallengeUpdate(@NonNull Challenge challenge) {
+  public void sendChallengeStatus(@NonNull Challenge challenge) {
     String action;
     switch (challenge.getStatus()) {
       case Challenge.SHOWN:
@@ -52,13 +52,22 @@ public class Analytics {
         return;
     }
     tracker.send(new HitBuilders.EventBuilder()
-        .setCategory("Challenge Update")
+        .setCategory("Challenge Status Update")
         .setAction(action)
         .setLabel(challenge.getId())
         .build());
   }
 
-  public void sendSettingsUpdate(@NonNull String action, String value) {
+  public void sendChallengeRating(@NonNull Challenge challenge) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory("Challenge Rating Update")
+        .setAction("rated")
+        .setLabel(challenge.getId())
+        .setValue((long) challenge.getRating())
+        .build());
+  }
+
+  public void sendSettings(@NonNull String action, String value) {
     tracker.send(new HitBuilders.EventBuilder()
         .setCategory("Settings Update")
         .setAction(action)

@@ -3,8 +3,6 @@ package com.hcyclone.zen;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.analytics.Tracker;
-
 import java.util.Date;
 
 public class Challenge {
@@ -30,13 +28,10 @@ public class Challenge {
   private String source;
   private String type;
   private String url;
+  private float rating;
 
   private int status;
   private long finishedTime;
-
-  public Challenge() {
-    this.status = UNKNOWN;
-  }
 
   public Challenge(String id, String content, String details, String type, long level,
                    String source, String url, String quote) {
@@ -94,6 +89,14 @@ public class Challenge {
     return finishedTime;
   }
 
+  public float getRating() {
+    return rating;
+  }
+
+  public void setRating(float rating) {
+    this.rating = rating;
+  }
+
   public void setFinishedTime(long finishedTime) {
     this.finishedTime = finishedTime;
   }
@@ -115,7 +118,7 @@ public class Challenge {
         Log.e(Challenge.class.getSimpleName(), "Wrong status to update: " + status);
         break;
     }
-    Analytics.getInstance().sendChallengeUpdate(this);
+    Analytics.getInstance().sendChallengeStatus(this);
   }
 
   public void decline() {
@@ -130,7 +133,7 @@ public class Challenge {
         Log.e(Challenge.class.getSimpleName(), "Wrong status to decline: " + status);
         break;
     }
-    Analytics.getInstance().sendChallengeUpdate(this);
+    Analytics.getInstance().sendChallengeStatus(this);
   }
 
   public void reset() {
