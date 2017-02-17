@@ -72,7 +72,7 @@ public final class FirebaseService extends IntentService
 
         Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
         if (challenge.getStatus() == Challenge.ACCEPTED) {
-          AlarmService.getInstance().setReminderAlarm();
+          AlarmService.getInstance().setDailyAlarm();
         }
 
         if (receiver != null) {

@@ -11,10 +11,10 @@ public class App extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
-    if (BuildConfig.DEBUG) {
+    initSingletons();
+    if (Utils.getInstance().isDebug()) {
       enableStrictMode();
     }
-    initSingletons();
     registerActivityLifecycleCallbacks(new AppLifecycleManager(this));
   }
 

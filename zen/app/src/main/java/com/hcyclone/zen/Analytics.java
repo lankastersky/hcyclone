@@ -14,7 +14,7 @@ public class Analytics {
 
   public static final String SETTINGS_UPDATE_INITIAL_ALARM = "Initial alarm";
   public static final String SETTINGS_UPDATE_FINAL_ALARM = "Final alarm";
-  public static final String SETTINGS_UPDATE_REMINDER_ALARM = "Reminder alarm";
+  public static final String SETTINGS_UPDATE_DAILY_ALARM = "Reminder alarm";
   public static final String SETTINGS_UPDATE_SHOW_NOTIFICATION = "Show notification";
   public static final String SETTINGS_UPDATE_NOTIFICATION_VIBRATE = "Notification vibrate";
 

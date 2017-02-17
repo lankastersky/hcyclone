@@ -22,6 +22,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   private static final NotificationService instance = new NotificationService();
 
   private static final int NOTIFICATION_ID = 1;
+  private static final int LIGHT_TIME_MS = 3000;
 
   private NotificationManager notificationManager;
   private Context context;
@@ -75,10 +76,14 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
         challenge.getContent());
   }
 
-  public void showReminderAlarmNotification() {
+  public void showDailyAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    if (challenge != null) {
+      Log.e(TAG, "Ignore daily alarm notification as challenge is null");
+      return;
+    }
     if (challenge.getStatus() != Challenge.ACCEPTED) {
-      Log.d(TAG, "Ignore reminder alarm notification as challenge not accepted");
+      Log.d(TAG, "Ignore daily alarm notification as challenge not accepted");
       return;
     }
     Log.d(TAG, "Show reminder alarm notification");
@@ -96,7 +101,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-            .setLights(Color.RED, 3000, 3000)
+            .setLights(Color.RED, LIGHT_TIME_MS, LIGHT_TIME_MS)
             .setAutoCancel(true);
     Intent resultIntent = new Intent(context, MainActivity.class);
     resultIntent.putExtra(MainActivity.INTENT_PARAM_START_FROM_NOTIFICATION, true);

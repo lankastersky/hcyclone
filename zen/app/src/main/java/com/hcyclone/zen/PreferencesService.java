@@ -13,7 +13,7 @@ public final class PreferencesService {
 
   public static final String PREF_KEY_SHOW_NOTIFICATION = "pref_show_notification";
   public static final String PREF_KEY_INITIAL_ALARM_LIST = "pref_initial_reminder_list";
-  public static final String PREF_KEY_REMINDER_ALARM_LIST = "pref_constant_reminder_list";
+  public static final String PREF_KEY_DAILY_ALARM_LIST = "pref_constant_reminder_list";
   public static final String PREF_KEY_FINAL_ALARM_LIST = "pref_final_reminder_list";
   public static final String PREF_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
   public static final String PREF_KEY_NOTIFICATION_VIBRATE = "notification_vibrate";

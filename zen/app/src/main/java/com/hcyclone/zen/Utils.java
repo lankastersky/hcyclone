@@ -29,11 +29,19 @@ public final class Utils {
     this.context = context;
   }
 
-  public static Date get6PM(long time) {
+  public boolean isDebug() {
+    return BuildConfig.DEBUG && false;
+  }
+
+  public long getDebugAlarmRepeatTime() {
+    return 5_000;
+  }
+
+  public Date get6PM(long time) {
     // Today.
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
-    if (BuildConfig.DEBUG) {
+    if (isDebug()) {
       date.add(Calendar.SECOND, 5);
     } else {
       date.set(Calendar.HOUR_OF_DAY, 18);
@@ -45,11 +53,11 @@ public final class Utils {
     return date.getTime();
   }
 
-  public static Date getMidnight(long time) {
+  public Date getMidnight(long time) {
     // Today.
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
-    if (BuildConfig.DEBUG) {
+    if (isDebug()) {
       date.add(Calendar.SECOND, 15);
     } else {
       // Reset hour, minutes, seconds and millis.

@@ -117,7 +117,7 @@ public final class ChallengeModel {
   public boolean isTimeToFinishCurrentChallenge() {
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
-      Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
+      Date timeToFinish = Utils.getInstance().get6PM(currentChallengeShownTime);
       return timeToFinish.before(new Date());
     }
     return false;
@@ -164,7 +164,7 @@ public final class ChallengeModel {
 
   // Challenge expires at midnight of next day.
   private boolean isCurrentChallengeTimeExpired() {
-    Date timeToDecline = Utils.getMidnight(currentChallengeShownTime);
+    Date timeToDecline = Utils.getInstance().getMidnight(currentChallengeShownTime);
     return timeToDecline.before(new Date());
   }
 

@@ -29,7 +29,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_INITIAL_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
-        PreferencesService.PREF_KEY_REMINDER_ALARM_LIST));
+        PreferencesService.PREF_KEY_DAILY_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
   }

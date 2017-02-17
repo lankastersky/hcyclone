@@ -146,11 +146,11 @@ public class ChallengeFragment extends Fragment {
         switch (challenge.getStatus()) {
           case Challenge.SHOWN:
             ChallengeModel.getInstance().setCurrentChallengeAccepted();
-            AlarmService.getInstance().setReminderAlarm();
+            AlarmService.getInstance().setDailyAlarm();
             break;
           case Challenge.ACCEPTED:
             ChallengeModel.getInstance().setCurrentChallengeFinished();
-            AlarmService.getInstance().stopReminderAlarm();
+            AlarmService.getInstance().stopDailyAlarm();
             rankDialog.setVisibility(View.GONE);
             rate();
             break;

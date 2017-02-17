@@ -31,10 +31,10 @@ public final class AlarmReceiver extends BroadcastReceiver {
         NotificationService.getInstance().showFinalAlarmNotification();
         // Restart alarm to make it random.
         AlarmService.getInstance().setFinalAlarm();
-        AlarmService.getInstance().stopReminderAlarm();
+        AlarmService.getInstance().stopDailyAlarm();
         break;
-      case AlarmService.ALARM_CODE_REMINDER:
-        NotificationService.getInstance().showReminderAlarmNotification();
+      case AlarmService.ALARM_CODE_DAILY:
+        NotificationService.getInstance().showDailyAlarmNotification();
         break;
     }
   }
