@@ -139,5 +139,6 @@ public class Challenge {
   public void reset() {
     status = UNKNOWN;
     finishedTime = 0;
+    rating = 0;
   }
 }

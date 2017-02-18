@@ -2,10 +2,10 @@ package com.hcyclone.zen;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import android.util.Log;
@@ -38,7 +38,6 @@ public final class ChallengeModel {
   private long currentChallengeShownTime;
   // Map <challenge id, challenge>
   private final Map<String, Challenge> challengeMap = new HashMap<>();
-  private Context context;
   private Gson gson;
 
   private ChallengeModel() {}
@@ -48,8 +47,7 @@ public final class ChallengeModel {
   }
 
   public void init(@NonNull Context context) {
-    this.context = context;
-    sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+     sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     gson = new Gson();
   }
 
@@ -86,6 +84,10 @@ public final class ChallengeModel {
     selectCurrentChallengeIfNeeded();
   }
 
+  public long getCurrentChallengeShownTime() {
+    return currentChallengeShownTime;
+  }
+
   public void setCurrentChallengeShown() {
     if (getCurrentChallenge().getStatus() != Challenge.UNKNOWN) {
       return;
@@ -114,13 +116,47 @@ public final class ChallengeModel {
     storeCurrentChallenge();
   }
 
+  /**
+   * Challenge is ready to be finished today after 6pm.
+   */
   public boolean isTimeToFinishCurrentChallenge() {
+    boolean result = false;
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
       Date timeToFinish = Utils.getInstance().get6PM(currentChallengeShownTime);
-      return timeToFinish.before(new Date());
+      Calendar date = Calendar.getInstance();
+      date.setTimeInMillis(currentChallengeShownTime);
+//      Date now = new Date();
+      // If is taken < 6pm, wait for 6pm.
+//      if (date.get(Calendar.HOUR_OF_DAY) < 18) {
+        result = timeToFinish.before(new Date());
+//      } else {
+//        // Wait for 6pm of next day.
+//        timeToFinish = Utils.getInstance().getNextDay(timeToFinish);
+//        result = timeToFinish.before(now);
+//      }
     }
-    return false;
+    Log.d(TAG, "isTimeToFinishCurrentChallenge: " + result);
+    return result;
+  }
+
+  /** Challenge expires at midnight of this day. */
+  private boolean isCurrentChallengeTimeExpired() {
+    boolean result;
+    Date timeToDecline = Utils.getInstance().getMidnight(currentChallengeShownTime);
+    Calendar date = Calendar.getInstance();
+    date.setTimeInMillis(currentChallengeShownTime);
+    Date now = new Date();
+    // If is taken < 6pm, wait for midnight.
+//    if (date.get(Calendar.HOUR_OF_DAY) < 18) {
+      result = timeToDecline.before(now);
+//    } else {
+//      // Wait for the next midnight.
+//      timeToDecline = Utils.getInstance().getNextDay(timeToDecline);
+//      result = timeToDecline.before(now);
+//    }
+    Log.d(TAG, "isCurrentChallengeTimeExpired: " + result);
+    return result;
   }
 
   private void selectCurrentChallengeIfNeeded() {
@@ -160,12 +196,6 @@ public final class ChallengeModel {
     storeChallengeStatuses();
     storeCurrentChallenge();
     Log.d(TAG, "Current challenge id:" + currentChallengeId);
-  }
-
-  // Challenge expires at midnight of next day.
-  private boolean isCurrentChallengeTimeExpired() {
-    Date timeToDecline = Utils.getInstance().getMidnight(currentChallengeShownTime);
-    return timeToDecline.before(new Date());
   }
 
   /**

@@ -47,4 +47,6 @@
     <string name="rank_dialog_title">Оцените свой уровень осознанности</string>
     <string name="rank_dialog_rate">Оценить</string>
     <string name="fragment_help_version">Студия \"Гиперборейский циклон\"\nВерсия 0.1</string>
+    <string name="fragment_challenge_can_start_task_before_6p_only">Взять задание можно до 18 часов
+    </string>
 </resources>

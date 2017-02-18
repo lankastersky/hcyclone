@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.util.Calendar;
+
 public class ChallengeFragment extends Fragment {
 
   private static final String TAG = ChallengeFragment.class.getSimpleName();
@@ -138,7 +140,6 @@ public class ChallengeFragment extends Fragment {
 
   private void createChallengeButton(View view) {
     challengeButton = (Button) view.findViewById(R.id.accept_button);
-    challengeButton.setVisibility(View.VISIBLE);
     challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -193,12 +194,33 @@ public class ChallengeFragment extends Fragment {
   private void updateChallengeButton() {
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
     switch (challenge.getStatus()) {
+      case Challenge.SHOWN:
+        Calendar date = Calendar.getInstance();
+        date.setTimeInMillis(ChallengeModel.getInstance().getCurrentChallengeShownTime());
+        challengeButton.setVisibility(View.VISIBLE);
+        if (date.get(Calendar.HOUR_OF_DAY) >= 18) {
+          challengeButton.setEnabled(false);
+          challengeButton.setBackgroundColor(ContextCompat.getColor(
+              getActivity(), R.color.colorPrimaryDisabled));
+          challengeButton.setText(getString(
+              R.string.fragment_challenge_can_start_task_before_6p_only));
+        } else {
+          challengeButton.setEnabled(true);
+          challengeButton.setBackgroundColor(ContextCompat.getColor(
+              getActivity(), R.color.colorPrimaryDark));
+          challengeButton.setText(getString(R.string.fragment_challenge_accept));
+        }
+        break;
       case Challenge.ACCEPTED:
         boolean enabled = ChallengeModel.getInstance().isTimeToFinishCurrentChallenge();
           challengeButton.setEnabled(enabled);
+        challengeButton.setVisibility(View.VISIBLE);
           challengeButton.setBackgroundColor(enabled
               ? ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark)
               : ContextCompat.getColor(getActivity(), R.color.colorPrimaryDisabled));
+        challengeButton.setText(enabled
+            ? getString(R.string.fragment_challenge_finish)
+            : getString(R.string.fragment_challenge_return_after_6pm));
         if (enabled) {
           showRankView();
         }
@@ -208,36 +230,34 @@ public class ChallengeFragment extends Fragment {
         challengeButton.setVisibility(View.GONE);
         break;
       default:
-        challengeButton.setEnabled(true);
-        challengeButton.setVisibility(View.VISIBLE);
-        challengeButton.setBackgroundColor(ContextCompat.getColor(
-            getActivity(), R.color.colorPrimaryDark));
-    }
-    challengeButton.setText(getChallengeButtonText());
-  }
-
-  private String getChallengeButtonText() {
-    String result = "";
-    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-    switch (challenge.getStatus()) {
-      case Challenge.UNKNOWN:
-      case Challenge.SHOWN:
-        result = getString(R.string.fragment_challenge_accept);
-        break;
-      case Challenge.ACCEPTED:
-          result = challengeButton.isEnabled() ? getString(R.string.fragment_challenge_finish)
-              : getString(R.string.fragment_challenge_return_after_6pm);
-        break;
-      case Challenge.FINISHED:
-        result = getString(R.string.fragment_challenge_finished);
-        break;
-      case Challenge.DECLINED:
-        result = getString(R.string.fragment_challenge_declined);
-        break;
-      default:
         Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
         break;
     }
-    return result;
+//    challengeButton.setText(getChallengeButtonText());
   }
+
+//  private String getChallengeButtonText() {
+//    String result = "";
+//    Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
+//    switch (challenge.getStatus()) {
+//      case Challenge.UNKNOWN:
+//      case Challenge.SHOWN:
+//        result = getString(R.string.fragment_challenge_accept);
+//        break;
+//      case Challenge.ACCEPTED:
+//          result = challengeButton.isEnabled() ? getString(R.string.fragment_challenge_finish)
+//              : getString(R.string.fragment_challenge_return_after_6pm);
+//        break;
+//      case Challenge.FINISHED:
+//        result = getString(R.string.fragment_challenge_finished);
+//        break;
+//      case Challenge.DECLINED:
+//        result = getString(R.string.fragment_challenge_declined);
+//        break;
+//      default:
+//        Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
+//        break;
+//    }
+//    return result;
+//  }
 }

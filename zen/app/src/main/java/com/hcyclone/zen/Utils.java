@@ -30,11 +30,19 @@ public final class Utils {
   }
 
   public boolean isDebug() {
-    return BuildConfig.DEBUG && false;
+    return BuildConfig.DEBUG;
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 5_000;
+    return 10_000;
+  }
+
+  public Date getNextDay(Date date) {
+    if (isDebug()) {
+      return new Date(date.getTime() + 10_000);
+    } else {
+      return new Date(date.getTime() + 24 * 60 * 60 * 1000);
+    }
   }
 
   public Date get6PM(long time) {
@@ -58,7 +66,7 @@ public final class Utils {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
     if (isDebug()) {
-      date.add(Calendar.SECOND, 15);
+      date.add(Calendar.SECOND, 10);
     } else {
       // Reset hour, minutes, seconds and millis.
       date.set(Calendar.HOUR_OF_DAY, 0);
