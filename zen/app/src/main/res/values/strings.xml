@@ -127,4 +127,8 @@
     <string name="rank_dialog_title">Estimate your level of consciousness</string>
     <string name="rank_dialog_rate">Rate</string>
 
+    <!-- Alert dialog -->
+    <string name="dialog_title_next_level_available">Next level is available</string>
+    <string name="dialog_text_next_level_available">"Challenges of %s level of difficulty are available now."</string>
+
 </resources>

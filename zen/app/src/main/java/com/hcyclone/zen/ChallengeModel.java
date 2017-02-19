@@ -1,7 +1,6 @@
 package com.hcyclone.zen;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -18,27 +17,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 public final class ChallengeModel {
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
   private static final ChallengeModel instance = new ChallengeModel();
 
-  private static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
-
-  private static final String KEY_CHALLENGE_STATUSES = "challenge_statuses";
-  private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
-  private static final String CURRENT_CHALLENGE_ID_KEY = "current_challenge_id";
-  private static final String CURRENT_CHALLENGE_KEY = "current_challenge";
-  private SharedPreferences sharedPreferences;
-
   private String currentChallengeId;
   private long currentChallengeShownTime;
+  private int level;
   // Map <challenge id, challenge>
   private final Map<String, Challenge> challengeMap = new HashMap<>();
-  private Gson gson;
+  private ChallengeArchiver challengeArchiver;
 
   private ChallengeModel() {}
 
@@ -47,8 +36,7 @@ public final class ChallengeModel {
   }
 
   public void init(@NonNull Context context) {
-     sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    gson = new Gson();
+    challengeArchiver = new ChallengeArchiver(context);
   }
 
   public Challenge getCurrentChallenge() {
@@ -79,13 +67,14 @@ public final class ChallengeModel {
     for (Challenge challenge : challenges) {
       challengeMap.put(challenge.getId(), challenge);
     }
-    restoreChallengeStatuses(challengeMap);
-    restoreCurrentChallenge();
-    selectCurrentChallengeIfNeeded();
-  }
-
-  public long getCurrentChallengeShownTime() {
-    return currentChallengeShownTime;
+    challengeArchiver.restoreChallengeData(challengeMap);
+    Challenge challenge = challengeArchiver.restoreCurrentChallenge();
+    if (challenge != null) {
+      currentChallengeId = challenge.getId();
+    }
+    currentChallengeShownTime = challengeArchiver.restoreCurrentChallengeShownTime();
+    level = challengeArchiver.restoreLevel();
+    selectChallengeIfNeeded();
   }
 
   public void setCurrentChallengeShown() {
@@ -105,21 +94,28 @@ public final class ChallengeModel {
   }
 
   public Challenge getSerializedCurrentChallenge() {
-    String currentChallengeString = sharedPreferences.getString(CURRENT_CHALLENGE_KEY, null);
-    return gson.fromJson(currentChallengeString, Challenge.class);
+    return challengeArchiver.restoreCurrentChallenge();
   }
 
   private void updateCurrentChallenge() {
     Log.d(TAG, "updateCurrentChallenge");
     getCurrentChallenge().updateStatus();
-    storeChallengeStatuses();
-    storeCurrentChallenge();
+    challengeArchiver.storeChallengeData(challengeMap);
+    challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
+    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
+    challengeArchiver.storeLevel(level);
+  }
+
+  public boolean isTimeToAcceptChallenge() {
+    Calendar date = Calendar.getInstance();
+    date.setTimeInMillis(currentChallengeShownTime);
+    return  (date.get(Calendar.HOUR_OF_DAY) < 18);
   }
 
   /**
    * Challenge is ready to be finished today after 6pm.
    */
-  public boolean isTimeToFinishCurrentChallenge() {
+  public boolean isTimeToFinishChallenge() {
     boolean result = false;
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
@@ -136,12 +132,24 @@ public final class ChallengeModel {
 //        result = timeToFinish.before(now);
 //      }
     }
-    Log.d(TAG, "isTimeToFinishCurrentChallenge: " + result);
+    Log.d(TAG, "isTimeToFinishChallenge: " + result);
     return result;
   }
 
+  public int isLevelUp() {
+    Challenge challenge = getCurrentChallenge();
+    if (challenge.getLevel() == Challenge.LEVEL_MEDIUM && level == Challenge.LEVEL_LOW) {
+      level = Challenge.LEVEL_MEDIUM;
+      challengeArchiver.storeLevel(level);
+    } else if (challenge.getLevel() == Challenge.LEVEL_HIGH && level == Challenge.LEVEL_MEDIUM) {
+      level = Challenge.LEVEL_HIGH;
+      challengeArchiver.storeLevel(level);
+    }
+    return level;
+  }
+
   /** Challenge expires at midnight of this day. */
-  private boolean isCurrentChallengeTimeExpired() {
+  private boolean isChallengeTimeExpired() {
     boolean result;
     Date timeToDecline = Utils.getInstance().getMidnight(currentChallengeShownTime);
     Calendar date = Calendar.getInstance();
@@ -155,11 +163,11 @@ public final class ChallengeModel {
 //      timeToDecline = Utils.getInstance().getNextDay(timeToDecline);
 //      result = timeToDecline.before(now);
 //    }
-    Log.d(TAG, "isCurrentChallengeTimeExpired: " + result);
+    Log.d(TAG, "isChallengeTimeExpired: " + result);
     return result;
   }
 
-  private void selectCurrentChallengeIfNeeded() {
+  private void selectChallengeIfNeeded() {
     if (TextUtils.isEmpty(currentChallengeId)) {
       currentChallengeId = getNewChallengeId();
     } else {
@@ -169,20 +177,20 @@ public final class ChallengeModel {
         case Challenge.UNKNOWN:
           break;
         case Challenge.SHOWN:
-          if (isCurrentChallengeTimeExpired()) {
+          if (isChallengeTimeExpired()) {
             challenge.decline();
             newChallengeRequired = true;
           }
           break;
         case Challenge.ACCEPTED:
-          if (isCurrentChallengeTimeExpired()) {
+          if (isChallengeTimeExpired()) {
             challenge.reset();
             newChallengeRequired = true;
           }
           break;
         case Challenge.FINISHED:
         case Challenge.DECLINED:
-          if (isCurrentChallengeTimeExpired()) {
+          if (isChallengeTimeExpired()) {
             newChallengeRequired = true;
           }
           break;
@@ -193,8 +201,9 @@ public final class ChallengeModel {
         currentChallengeId = getNewChallengeId();
       }
     }
-    storeChallengeStatuses();
-    storeCurrentChallenge();
+    challengeArchiver.storeChallengeData(challengeMap);
+    challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
+    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
     Log.d(TAG, "Current challenge id:" + currentChallengeId);
   }
 
@@ -288,42 +297,5 @@ public final class ChallengeModel {
       }
     }
     return challenges;
-  }
-
-  private void storeCurrentChallenge() {
-    sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, currentChallengeShownTime)
-        .apply();
-    sharedPreferences.edit().putString(CURRENT_CHALLENGE_ID_KEY, currentChallengeId).apply();
-
-    String currentChallengeString = gson.toJson(getCurrentChallenge());
-    sharedPreferences.edit().putString(CURRENT_CHALLENGE_KEY, currentChallengeString).apply();
-  }
-
-  private void restoreCurrentChallenge() {
-    currentChallengeShownTime = sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
-    currentChallengeId = sharedPreferences.getString(CURRENT_CHALLENGE_ID_KEY, null);
-  }
-
-  private void storeChallengeStatuses() {
-    List<ChallengeStatus> statuses = new ArrayList<>();
-    for (Challenge challenge : challengeMap.values()) {
-      statuses.add(new ChallengeStatus(challenge.getId(), challenge.getStatus(),
-          challenge.getFinishedTime()));
-    }
-    String statusesString = gson.toJson(statuses);
-    sharedPreferences.edit().putString(KEY_CHALLENGE_STATUSES, statusesString).apply();
-  }
-
-  private void restoreChallengeStatuses(Map<String, Challenge> challengeMap) {
-    String statusesString = sharedPreferences.getString(KEY_CHALLENGE_STATUSES, null);
-    if (!TextUtils.isEmpty(statusesString)) {
-      List<ChallengeStatus> statuses = gson.fromJson(statusesString,
-          new TypeToken<List<ChallengeStatus>>(){}.getType());
-      for (ChallengeStatus challengeStatus : statuses) {
-        Challenge challenge = challengeMap.get(challengeStatus.id);
-        challenge.setStatus(challengeStatus.status);
-        challenge.setFinishedTime(challengeStatus.finishedTime);
-      }
-    }
   }
 }
