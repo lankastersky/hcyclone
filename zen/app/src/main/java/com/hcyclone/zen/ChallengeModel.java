@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import java.util.Calendar;
 import java.util.Date;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

@@ -1,15 +1,13 @@
 package com.hcyclone.zen;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +26,7 @@ public class ChallengeFragment extends Fragment {
   private View rankDialog;
   private RatingBar ratingBar;
 
-  public ChallengeFragment() {
-  }
+  public ChallengeFragment() {}
 
   public static ChallengeFragment newInstance(String challengeId) {
     ChallengeFragment fragment = new ChallengeFragment();
@@ -63,9 +60,18 @@ public class ChallengeFragment extends Fragment {
   public void onStart() {
     super.onStart();
     if (!showFromJournal) {
-      challengeId = ChallengeModel.getInstance().getCurrentChallenge().getId();
+      Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+      if (challenge != null) {
+        challengeId = challenge.getId();
+      } else {
+        Log.e(TAG, "No current challenge id");
+      }
     }
     updateUI();
+    // TODO: find better way to scroll to the top.
+    NestedScrollView scrollView = (NestedScrollView) getActivity().getWindow().getDecorView()
+        .findViewById(R.id.nested_scroll_view);
+    scrollView.fullScroll(View.FOCUS_UP);
   }
 
   private void createUI(View view) {

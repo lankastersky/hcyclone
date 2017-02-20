@@ -1,8 +1,6 @@
 package com.hcyclone.zen;
 
 import android.text.TextUtils;
-import android.util.Log;
-
 import java.util.Date;
 
 public class Challenge {

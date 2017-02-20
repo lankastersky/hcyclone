@@ -13,7 +13,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
 
 public final class NotificationService implements OnSharedPreferenceChangeListener {
 
@@ -112,6 +111,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
             resultIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
+//    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
     builder.setContentIntent(resultPendingIntent);
     if (sharedPreferences.getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, false)) {
       builder.setVibrate(new long[] { 0, 50, 200, 50, 200, 50 });

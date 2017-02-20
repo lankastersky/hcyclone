@@ -3,7 +3,6 @@ package com.hcyclone.zen;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
-import android.util.Log;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

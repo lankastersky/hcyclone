@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -18,8 +17,7 @@ public final class Utils {
 
   private Context context;
 
-  private Utils() {
-  }
+  private Utils() {}
 
   public static Utils getInstance() {
     return instance;
@@ -34,15 +32,7 @@ public final class Utils {
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 10_000;
-  }
-
-  public Date getNextDay(Date date) {
-    if (isDebug()) {
-      return new Date(date.getTime() + 10_000);
-    } else {
-      return new Date(date.getTime() + 24 * 60 * 60 * 1000);
-    }
+    return 5_000;
   }
 
   public Date get6PM(long time) {
