@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Сталкинг</string>
+    <string name="app_name">Magic Path</string>
     <string name="app_description">Быть осознанным</string>
     <string name="challenge_level_low">низкая</string>
     <string name="challenge_type_sid">Остановка внутреннего диалога</string>

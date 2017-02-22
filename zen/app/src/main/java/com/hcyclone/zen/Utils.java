@@ -2,6 +2,7 @@ package com.hcyclone.zen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -72,10 +73,16 @@ public final class Utils {
   public void sendFeedback(Context activityContext) {
     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
         "mailto","lankastersky@gmail.com", null));
-    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Stalking feedback " + getVersionName()
-        + " (" + getVersionCode() + ")");
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getApplicationName(activityContext) + " feedback "
+        + getVersionName() + " (" + getVersionCode() + ")");
     activityContext.startActivity(Intent.createChooser(emailIntent,
         activityContext.getString(R.string.feedback_send_email)));
+  }
+
+  public static String getApplicationName(Context context) {
+    ApplicationInfo applicationInfo = context.getApplicationInfo();
+    int stringId = applicationInfo.labelRes;
+    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
   private String getVersionName() {

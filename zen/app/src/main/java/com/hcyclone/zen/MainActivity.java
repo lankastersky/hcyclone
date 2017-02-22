@@ -102,10 +102,6 @@ public class MainActivity extends AppCompatActivity
       Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
           ChallengeFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeFragment.class);
-
-//      NestedScrollView scrollView = (NestedScrollView) getWindow().getDecorView()
-//          .findViewById(R.id.nested_scroll_view);
-//      scrollView.fullScroll(View.FOCUS_UP);
     }
   }
 
