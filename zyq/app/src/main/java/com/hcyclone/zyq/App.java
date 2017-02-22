@@ -17,7 +17,6 @@ public class App extends Application {
   }
 
   protected void initSingletons() {
-    PreferencesService.getInstance().init(this);
     Utils.getInstance().init(this);
     Analytics.getInstance().init(this);
   }
