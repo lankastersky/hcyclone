@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fontFamilyMedium" translatable="false">sans-serif</string>
+    <string name="fontFamilyRegular" translatable="false">sans-serif</string>
+    <string name="fontFamilyLight" translatable="false">sans-serif-light</string>
+    <string name="fontFamilyCondensed" translatable="false">sans-serif-condensed</string>
+</resources>

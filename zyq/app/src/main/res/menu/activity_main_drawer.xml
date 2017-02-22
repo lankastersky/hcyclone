@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_practice"
+            android:icon="@mipmap/ic_menu_practice"
+            android:title="@string/navigation_drawer_practice"/>
+        <item
+            android:id="@+id/nav_exercises"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="@string/navigation_drawer_exercises"/>
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/navigation_drawer_settings"/>
+        <item
+            android:id="@+id/nav_help"
+            android:icon="@mipmap/ic_help_black_24dp"
+            android:title="@string/navigation_drawer_help"/>
+    </group>
+
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@mipmap/ic_feedback_black_24dp"
+                android:title="@string/navigation_drawer_feedback"/>
+
+</menu>

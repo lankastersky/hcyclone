@@ -1,0 +1,38 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+    defaultConfig {
+        applicationId "com.hcyclone.zyq"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "0.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    productFlavors {
+    }
+}
+
+def uiVersion = "25.1.1"
+def gmsVersion = "10.0.1"
+
+dependencies {
+    compile "com.android.support:preference-v7:${uiVersion}"
+    compile "com.android.support:design:${uiVersion}"
+    compile "com.android.support:support-v4:${uiVersion}"
+    compile "com.android.support:support-vector-drawable:${uiVersion}"
+    compile "com.google.android.gms:play-services-analytics:${gmsVersion}"
+}

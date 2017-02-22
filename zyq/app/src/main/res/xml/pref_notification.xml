@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="pref_show_notification"
+        android:title="@string/pref_reminder_show_notification"/>
+
+    <!-- NOTE: This preference will be enabled only when the checkbox above is checked. -->
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:dependency="pref_show_notification"
+        android:key="notification_vibrate"
+        android:title="@string/pref_reminder_vibrate"/>
+
+</PreferenceScreen>

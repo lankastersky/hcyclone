@@ -1,0 +1,12 @@
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+    <!-- The background color, preferably the same as your normal theme -->
+    <item android:drawable="@android:color/white"/>
+    <!-- 144dp color version of app icon -->
+    <item>
+        <bitmap
+            android:src="@mipmap/play_launcher"
+            android:gravity="center"/>
+    </item>
+</layer-list>
