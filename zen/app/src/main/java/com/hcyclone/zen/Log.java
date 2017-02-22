@@ -48,6 +48,7 @@ public class Log {
   }
 
   private static boolean isLog() {
-    return Utils.getInstance().isDebug();
+//    return Utils.getInstance().isDebug();
+    return true;
   }
 }

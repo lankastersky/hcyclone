@@ -74,4 +74,12 @@ public class Analytics {
         .setLabel(value)
         .build());
   }
+
+  public void sendLevelUp(int value) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory("Level Up")
+        .setAction("Level Up")
+        .setLabel(String.valueOf(value))
+        .build());
+  }
 }

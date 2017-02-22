@@ -71,7 +71,9 @@ public class ChallengeFragment extends Fragment {
     // TODO: find better way to scroll to the top.
     NestedScrollView scrollView = (NestedScrollView) getActivity().getWindow().getDecorView()
         .findViewById(R.id.nested_scroll_view);
-    scrollView.fullScroll(View.FOCUS_UP);
+    if (scrollView != null) {
+      scrollView.fullScroll(View.FOCUS_UP);
+    }
   }
 
   private void createUI(View view) {
@@ -120,6 +122,8 @@ public class ChallengeFragment extends Fragment {
     });
 
     dialog.show();
+
+    Analytics.getInstance().sendLevelUp(level);
   }
 
   private void showChallengeData() {
