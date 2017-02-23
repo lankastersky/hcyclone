@@ -41,6 +41,10 @@ public class ChallengeArchiver {
   }
 
   public void storeCurrentChallenge(Challenge challenge) {
+    if (challenge == null) {
+      Log.e(TAG, "Failed to store current challenge because it's null");
+      return;
+    }
     String currentChallengeString = gson.toJson(challenge);
     sharedPreferences.edit().putString(KEY_CURRENT_CHALLENGE, currentChallengeString).apply();
   }

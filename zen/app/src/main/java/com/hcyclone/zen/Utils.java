@@ -33,7 +33,14 @@ public final class Utils {
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 5_000;
+    return 10_000;
+  }
+
+  public boolean isTimeLess6pm(Calendar date) {
+    if (isDebug()) {
+      return true;
+    }
+    return date.get(Calendar.HOUR_OF_DAY) < 18;
   }
 
   public Date get6PM(long time) {

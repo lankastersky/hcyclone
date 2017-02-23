@@ -54,6 +54,10 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
 
   public void showInitialAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    if (challenge == null) {
+      Log.e(TAG, "Ignore initial alarm notification as challenge is null");
+      return;
+    }
     if (!(challenge.getStatus() == Challenge.UNKNOWN || challenge.getStatus() == Challenge.SHOWN)) {
       Log.d(TAG, "Ignore initial alarm notification as challenge is not shown");
       return;
@@ -65,6 +69,10 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
 
   public void showFinalAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    if (challenge == null) {
+      Log.e(TAG, "Ignore final alarm notification as challenge is null");
+      return;
+    }
     if (challenge.getStatus() != Challenge.ACCEPTED) {
       // Show notification only for accepted challenge.
       Log.d(TAG, "Ignore final alarm notification as challenge not accepted");
@@ -77,7 +85,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
 
   public void showDailyAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
-    if (challenge != null) {
+    if (challenge == null) {
       Log.e(TAG, "Ignore daily alarm notification as challenge is null");
       return;
     }
@@ -111,7 +119,6 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
             resultIntent,
             PendingIntent.FLAG_UPDATE_CURRENT
         );
-//    resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
     builder.setContentIntent(resultPendingIntent);
     if (sharedPreferences.getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, false)) {
       builder.setVibrate(new long[] { 0, 50, 200, 50, 200, 50 });

@@ -107,7 +107,7 @@ public final class ChallengeModel {
   public boolean isTimeToAcceptChallenge() {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(currentChallengeShownTime);
-    return  (date.get(Calendar.HOUR_OF_DAY) < 18);
+    return Utils.getInstance().isTimeLess6pm(date);
   }
 
   /**
