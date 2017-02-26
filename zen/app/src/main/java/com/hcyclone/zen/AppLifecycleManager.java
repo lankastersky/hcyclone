@@ -3,7 +3,10 @@ package com.hcyclone.zen;
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 
 /** Determines global app lifecycle states.
  *
@@ -25,6 +28,10 @@ import android.os.Bundle;
  * */
 public class AppLifecycleManager implements ActivityLifecycleCallbacks {
 
+  private static final String KEY_FIRST_START = "first_start";
+
+  private static final AppLifecycleManager instance = new AppLifecycleManager();
+
   /** Manages the state of opened vs closed activities, should be 0 or 1.
    * It will be 2 if this value is checked between activity B onStart() and
    * activity A onStop().
@@ -33,17 +40,14 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
    */
   private static int visibleActivityCount = 0;
 
-  /** Manages the state of opened vs closed activities, should be 0 or 1
-   * because only one can be in foreground at a time. It will be 2 if this
-   * value is checked between activity B onResume() and activity A onPause().
-   */
-  private static int foregroundActivityCount = 0;
-
   private Context context;
 
-  /** Returns true if app has foreground */
-  public static boolean isAppInForeground() {
-    return foregroundActivityCount > 0;
+  public static AppLifecycleManager getInstance() {
+    return instance;
+  }
+
+  public void init(@NonNull Context context) {
+    this.context = context;
   }
 
   /** Returns true if any activity of app is visible (or device is sleep when
@@ -52,23 +56,22 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
     return visibleActivityCount > 0;
   }
 
-  public AppLifecycleManager(Context context) {
-    this.context = context;
+  public boolean isFirstStart() {
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    boolean firstStart = sharedPreferences.getBoolean(KEY_FIRST_START, true);
+    if (firstStart) {
+      sharedPreferences.edit().putBoolean(KEY_FIRST_START, false).apply();
+    }
+    return firstStart;
   }
 
-  public void onActivityCreated(Activity activity, Bundle bundle) {
-  }
+  public void onActivityCreated(Activity activity, Bundle bundle) {}
 
-  public void onActivityDestroyed(Activity activity) {
-  }
+  public void onActivityDestroyed(Activity activity) {}
 
-  public void onActivityResumed(Activity activity) {
-    foregroundActivityCount++;
-  }
+  public void onActivityResumed(Activity activity) {}
 
-  public void onActivityPaused(Activity activity) {
-    foregroundActivityCount--;
-  }
+  public void onActivityPaused(Activity activity) {}
 
 
   public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
@@ -76,26 +79,9 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
 
   public void onActivityStarted(Activity activity) {
     visibleActivityCount++;
-
-//    if (visibleActivityCount == 1) {
-//      // Don't receive notifications if app is started.
-//      Log.d(TAG, "Disable alarm receiver");
-//      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
-//      context.getPackageManager().setComponentEnabledSetting(receiver,
-//          PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-//          PackageManager.DONT_KILL_APP);
-//    }
   }
 
   public void onActivityStopped(Activity activity) {
     visibleActivityCount--;
-
-//    if (visibleActivityCount == 0) {
-//      Log.d(TAG, "Enable alarm receiver");
-//      ComponentName receiver = new ComponentName(context, AlarmReceiver.class);
-//      context.getPackageManager().setComponentEnabledSetting(receiver,
-//          PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-//          PackageManager.DONT_KILL_APP);
-//    }
   }
 }

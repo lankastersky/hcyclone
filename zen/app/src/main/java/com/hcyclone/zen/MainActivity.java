@@ -35,13 +35,21 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onReceiveResult(int resultCode, Bundle resultData) {
       super.onReceiveResult(resultCode, resultData);
+
       progressBar.setVisibility(View.GONE);
       DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
       drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
       AlarmService.getInstance().setAlarms();
+
+      ChallengeModel.getInstance().loadChallenges();
+
       switch (resultCode) {
         case FirebaseService.RESULT_CODE_OK:
-          showCurrentChallenge();
+          //if (AppLifecycleManager.isAppVisible()) {
+            //showCurrentChallenge();
+          //}
+          ((ChallengeFragment) currentFragment).refresh();
           break;
         case FirebaseService.RESULT_CODE_ERROR:
           // TODO: show error.
@@ -78,7 +86,10 @@ public class MainActivity extends AppCompatActivity
       Intent intent = new Intent(this, FirebaseService.class);
       intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);
       startService(intent);
+    } else {
+      ChallengeModel.getInstance().loadChallenges();
     }
+    showCurrentChallenge();
   }
 
   @Override
@@ -91,14 +102,11 @@ public class MainActivity extends AppCompatActivity
   protected void onStart() {
     super.onStart();
 
-    Intent intent = getIntent();
-    if (intent.getExtras() != null
-        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
+    if (isStartFromNotification()) {
+      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
 
       selectChallengeMenuItem();
 
-      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
-      Log.d(TAG, "Show current challenge when start from notification");
       Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
           ChallengeFragment.class.getSimpleName());
       replaceFragment(newFragment, ChallengeFragment.class);
@@ -137,6 +145,15 @@ public class MainActivity extends AppCompatActivity
     selectMenuItem(selectedMenuItemId);
   }
 
+  private boolean isStartFromNotification() {
+    Intent intent = getIntent();
+    if (intent.getExtras() != null
+        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
+      return true;
+    }
+    return false;
+  }
+
   private void selectChallengeMenuItem() {
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     Menu menu = navigationView.getMenu();
@@ -171,13 +188,13 @@ public class MainActivity extends AppCompatActivity
 
   private void showCurrentChallenge() {
     currentFragment = new ChallengeFragment();
-    // TODO: don't call commitAllowingStateLoss().
     getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-        currentFragment, ChallengeFragment.class.getSimpleName()).commitAllowingStateLoss();
+        currentFragment, ChallengeFragment.class.getSimpleName()).commit();
+//        .commitAllowingStateLoss();
   }
 
   private void replaceFragment(Fragment newFragment, Class clazz) {
-    if (newFragment == currentFragment) {
+    if (newFragment == currentFragment && newFragment != null) {
       return;
     }
     FragmentManager fragmentManager = getSupportFragmentManager();

@@ -165,14 +165,12 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
   }
 
   /**
-   * Service alarm is fired between 3-5am every day.
+   * Service alarm is fired every night.
    */
   public void setServiceAlarm() {
-    // Random hour between 3 and 4.
-    int hoursToAdd = (int) (Math.random() * 2) + 3;
-    // Add random minutes to hours.
-    int minutesToAdd = (int) (Math.random() * 60);
-    long alarmTime = getAlarmTime(hoursToAdd, minutesToAdd);
+    // Random hour between 0 and 12.
+    int hoursToAdd = (int) (Math.random() * 12);
+    long alarmTime = getAlarmTime(hoursToAdd);
     Log.d(TAG, "Set service alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, serviceAlarmPendingIntent);
   }
@@ -193,7 +191,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     int hoursToAdd;
     if (context.getResources().getString(R.string.pref_time_random).equals(settingsHours)) {
       // Random hour between 6 and 12.
-      hoursToAdd = (int) (Math.random() * 7) + 6;
+      hoursToAdd = (int) (Math.random() * 6) + 6;
     } else {
       hoursToAdd = Integer.parseInt(settingsHours);
     }
@@ -218,7 +216,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     int hoursToAdd;
     if (context.getResources().getString(R.string.pref_time_random).equals(settingsHours)) {
       // Random hour between 18 and 24.
-      hoursToAdd = (int) (Math.random() * 7) + 18;
+      hoursToAdd = (int) (Math.random() * 6) + 18;
     } else {
       hoursToAdd = Integer.parseInt(settingsHours);
     }

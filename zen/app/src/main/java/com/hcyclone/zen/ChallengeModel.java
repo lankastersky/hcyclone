@@ -61,10 +61,28 @@ public final class ChallengeModel {
     return challengeMap;
   }
 
-  public void loadChallenges(List<Challenge> challenges) {
+  public void loadChallenges() {
+    Log.d(TAG, "Load challenges");
+    if (challengeMap.isEmpty()) {
+      List<Challenge> challenges = challengeArchiver.restoreChallenges();
+      for (Challenge challenge : challenges) {
+        challengeMap.put(challenge.getId(), challenge);
+      }
+    }
+    restoreState();
+  }
+
+  public void saveChallenges(List<Challenge> challenges) {
+    Log.d(TAG, "Save challenges");
+    challengeMap.clear();
     for (Challenge challenge : challenges) {
       challengeMap.put(challenge.getId(), challenge);
     }
+    challengeArchiver.storeChallenges(challenges);
+    restoreState();
+  }
+
+  private void restoreState() {
     challengeArchiver.restoreChallengeData(challengeMap);
     Challenge challenge = challengeArchiver.restoreCurrentChallenge();
     if (challenge != null) {

@@ -59,14 +59,21 @@ public class ChallengeFragment extends Fragment {
   @Override
   public void onStart() {
     super.onStart();
-    if (!showFromJournal) {
-      Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
-      if (challenge != null) {
-        challengeId = challenge.getId();
-      } else {
-        Log.e(TAG, "No current challenge id");
-      }
+    refresh();
+  }
+
+  public void refresh() {
+    Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
+    if (challenge == null) {
+      Log.e(TAG, "No current challenge");
+      return;
     }
+
+    if (!showFromJournal) {
+      // ChallengeId can be changed while fragment is not started.
+      challengeId = challenge.getId();
+    }
+
     updateUI();
     // TODO: find better way to scroll to the top.
     NestedScrollView scrollView = (NestedScrollView) getActivity().getWindow().getDecorView()

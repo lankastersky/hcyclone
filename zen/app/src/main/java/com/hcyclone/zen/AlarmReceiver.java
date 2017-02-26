@@ -14,9 +14,7 @@ public final class AlarmReceiver extends BroadcastReceiver {
     Log.d(TAG, "Alarm received with id: " + alarmId);
     switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
-        if (!AppLifecycleManager.isAppVisible()) {
           context.startService(new Intent(context, FirebaseService.class));
-        }
         // Restart alarm to make it random.
         AlarmService.getInstance().setServiceAlarm();
         break;

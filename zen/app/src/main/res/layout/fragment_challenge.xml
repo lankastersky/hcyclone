@@ -32,7 +32,6 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyMedium"
                 android:paddingBottom="@dimen/text_margin"
-                android:text="Content Stub"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textSize="20sp"
             />
@@ -44,7 +43,6 @@
                 android:autoLink="web"
                 android:fontFamily="@string/fontFamilyMedium"
                 android:paddingBottom="@dimen/text_margin"
-                android:text="Details Stub"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textSize="16sp"/>
 
@@ -55,11 +53,8 @@
                 android:fontFamily="@string/fontFamilyLight"
                 android:paddingBottom="@dimen/text_margin"
                 android:paddingStart="@dimen/text_margin"
-                android:text="Он указал на высокий вытянутый валун, стоявший вертикально прямо перед нами.\n - Взгляни на тень этого валуна. Тень - это валун, но она - не валун."
                 android:textAppearance="?attr/textAppearanceListItem"
-
-                android:textSize="14sp"
-                android:visibility="gone"/>
+                android:textSize="14sp"/>
 
             <TextView
                 android:id="@+id/source"
@@ -67,17 +62,14 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyMedium"
                 android:paddingBottom="@dimen/text_margin"
-                android:text="koshka-idet-vverh-ili-vniz-platie-zolotoe-ili-chernoe"
                 android:textAppearance="?attr/textAppearanceListItem"
-                android:textSize="16sp"
-                android:visibility="gone"/>
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyLight"
-                android:text="@string/fragment_challenge_type"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp"/>
@@ -88,7 +80,6 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyLight"
                 android:paddingBottom="@dimen/text_margin"
-                android:text="@string/fragment_challenge_level"
                 android:textAppearance="?attr/textAppearanceListItem"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="16sp"/>
@@ -102,7 +93,8 @@
                 android:isIndicator="true"
                 android:numStars="4"
                 android:rating="2.0"
-                android:stepSize="1.0"/>
+                android:stepSize="1.0"
+                android:visibility="gone"/>
 
             <include
                 android:id="@+id/rank_dialog"

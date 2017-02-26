@@ -22,8 +22,8 @@ public class ChallengeArchiver {
   private static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
 
   private static final String KEY_CHALLENGE_DATA = "challenge_data";
+  private static final String KEY_CHALLENGES = "challenges";
   private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
-  //private static final String KEY_CURRENT_CHALLENGE_ID = "current_challenge_id";
   private static final String KEY_CURRENT_CHALLENGE = "current_challenge";
   private static final String KEY_CURRENT_LEVEL = "current_challenge_level";
 
@@ -56,7 +56,6 @@ public class ChallengeArchiver {
 
   public long restoreCurrentChallengeShownTime() {
     return sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
-//    currentChallengeId = sharedPreferences.getString(KEY_CURRENT_CHALLENGE_ID, null);
   }
 
   public void storeLevel(int level) {
@@ -91,5 +90,21 @@ public class ChallengeArchiver {
         challenge.setRating(challengeData.rating);
       }
     }
+  }
+
+  public void storeChallenges(List<Challenge> challenges) {
+    String dataString = gson.toJson(challenges);
+    sharedPreferences.edit().putString(KEY_CHALLENGES, dataString).apply();
+  }
+
+  public List<Challenge> restoreChallenges() {
+    List<Challenge> challenges = new ArrayList<>();
+    String dataString = sharedPreferences.getString(KEY_CHALLENGES, null);
+
+    if (!TextUtils.isEmpty(dataString)) {
+      challenges = gson.fromJson(dataString,
+          new TypeToken<List<Challenge>>(){}.getType());
+    }
+    return challenges;
   }
 }

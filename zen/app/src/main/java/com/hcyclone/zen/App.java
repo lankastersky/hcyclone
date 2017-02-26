@@ -14,7 +14,7 @@ public class App extends Application {
     if (Utils.getInstance().isDebug()) {
       enableStrictMode();
     }
-    registerActivityLifecycleCallbacks(new AppLifecycleManager(this));
+    registerActivityLifecycleCallbacks(AppLifecycleManager.getInstance());
   }
 
   protected void initSingletons() {
@@ -24,6 +24,7 @@ public class App extends Application {
     PreferencesService.getInstance().init(this);
     Utils.getInstance().init(this);
     Analytics.getInstance().init(this);
+    AppLifecycleManager.getInstance().init(this);
   }
 
   private static void enableStrictMode() {

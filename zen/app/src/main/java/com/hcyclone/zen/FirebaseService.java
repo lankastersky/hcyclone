@@ -7,6 +7,7 @@ import android.os.ResultReceiver;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+// TODO: reimplement using Firebase JobDispatcher.
 public final class FirebaseService extends IntentService
     implements FirebaseAdapter.FirebaseAuthListener {
 
@@ -34,6 +35,7 @@ public final class FirebaseService extends IntentService
       loadChallenges();
     }
     try {
+      // Prevent service to be stopped before challenges were loaded.
       countDownLatch.await();
     } catch (InterruptedException exception) {
       Log.e(TAG, exception.toString());
@@ -67,13 +69,8 @@ public final class FirebaseService extends IntentService
       @Override
       public void onChallenges(List<Challenge> challenges) {
         Log.d(TAG, "Challenges loaded");
-        ChallengeModel.getInstance().loadChallenges(challenges);
-
-        Challenge challenge = ChallengeModel.getInstance().getCurrentChallenge();
-        if (challenge.getStatus() == Challenge.ACCEPTED) {
-          AlarmService.getInstance().setDailyAlarm();
-        }
-
+        ChallengeModel.getInstance().init(FirebaseService.this);
+        ChallengeModel.getInstance().saveChallenges(challenges);
         if (receiver != null) {
           receiver.send(RESULT_CODE_OK, null);
         }
