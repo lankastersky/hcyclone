@@ -246,7 +246,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     }
     long alarmStartTime = new Date().getTime();
     Log.d(TAG, "Set daily alarm to " + new Date(alarmStartTime + hoursToAdd));
-    alarmManager.set(AlarmManager.RTC_WAKEUP, alarmStartTime + hoursToAdd,
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, hoursToAdd,
         dailyAlarmPendingIntent);
   }
 
