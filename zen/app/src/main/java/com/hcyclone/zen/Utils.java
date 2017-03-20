@@ -33,7 +33,11 @@ public final class Utils {
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 10_000;
+    return 30_000;
+  }
+
+  public long getDebugDailyAlarmTime() {
+    return 15_000;
   }
 
   public boolean isTimeLess6pm(Calendar date) {
