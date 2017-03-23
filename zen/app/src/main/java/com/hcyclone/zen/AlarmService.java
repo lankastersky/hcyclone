@@ -59,6 +59,12 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
   public static final int ALARM_CODE_FINAL = 3;
   public static final int ALARM_CODE_DAILY = 4;
 
+  private static final int SERVICE_ALARM_START_H = 0;
+  // Initial alarm should start after service alarm finished.
+  // Otherwise initial notification could show old current challenge.
+  private static final int INITIAL_ALARM_START_H = 6;
+  private static final int FINAL_ALARM_START_H = 18;
+
   private static final AlarmService instance = new AlarmService();
 
   private Context context;
@@ -164,20 +170,16 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     return alarmTime;
   }
 
-  /**
-   * Service alarm is fired every night.
-   */
+  /** Service alarm is fired every night. */
   public void setServiceAlarm() {
-    // Random hour between 0 and 12.
-    int hoursToAdd = (int) (Math.random() * 12);
-    long alarmTime = getAlarmTime(hoursToAdd);
+    // Random hour between 0 and 6.
+    int hours = (int) (Math.random() * 6) + SERVICE_ALARM_START_H;
+    long alarmTime = getAlarmTime(hours);
     Log.d(TAG, "Set service alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, serviceAlarmPendingIntent);
   }
 
-  /**
-   * Is fired every day between 6 and 12.
-   */
+  /** Is fired every day between 6 and 12. */
   public void setInitialAlarm() {
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
@@ -188,21 +190,19 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
       alarmManager.cancel(initialAlarmPendingIntent);
       return;
     }
-    int hoursToAdd;
+    int hours;
     if (context.getResources().getString(R.string.pref_time_random).equals(settingsHours)) {
       // Random hour between 6 and 12.
-      hoursToAdd = (int) (Math.random() * 6) + 6;
+      hours = (int) (Math.random() * 6) + INITIAL_ALARM_START_H;
     } else {
-      hoursToAdd = Integer.parseInt(settingsHours);
+      hours = Integer.parseInt(settingsHours);
     }
-    long alarmTime = getAlarmTime(hoursToAdd);
+    long alarmTime = getAlarmTime(hours);
     Log.d(TAG, "Set initial alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, initialAlarmPendingIntent);
   }
 
-  /**
-   * Is fired every day between 18 and 24.
-   */
+  /** Is fired every day between 18 and 24. */
   public void setFinalAlarm() {
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeRandom = context.getResources().getString(R.string.pref_time_random);
@@ -213,21 +213,19 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
       alarmManager.cancel(finalAlarmPendingIntent);
       return;
     }
-    int hoursToAdd;
+    int hours;
     if (context.getResources().getString(R.string.pref_time_random).equals(settingsHours)) {
       // Random hour between 18 and 24.
-      hoursToAdd = (int) (Math.random() * 6) + 18;
+      hours = (int) (Math.random() * 6) + FINAL_ALARM_START_H;
     } else {
-      hoursToAdd = Integer.parseInt(settingsHours);
+      hours = Integer.parseInt(settingsHours);
     }
-    long alarmTime = getAlarmTime(hoursToAdd);
+    long alarmTime = getAlarmTime(hours);
     Log.d(TAG, "Set final alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, finalAlarmPendingIntent);
   }
 
-  /**
-   * Is fired every {@code dailyAlarmHours} during the day while challenge is started.
-   */
+  /** Is fired every {@code dailyAlarmHours} during the day while challenge is started. */
   public void setDailyAlarm() {
     String prefTimeNever = context.getResources().getString(R.string.pref_time_never);
     String prefTimeEveryHour = "1";
@@ -240,13 +238,13 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     }
     long hoursToAdd;
     if (Utils.getInstance().isDebug()) {
-      hoursToAdd = Utils.getInstance().getDebugAlarmRepeatTime();
+      hoursToAdd = Utils.getInstance().getDebugDailyAlarmTime();
     } else {
       hoursToAdd = AlarmManager.INTERVAL_HOUR * Integer.parseInt(settingsHours);
     }
     long alarmStartTime = new Date().getTime();
     Log.d(TAG, "Set daily alarm to " + new Date(alarmStartTime + hoursToAdd));
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime, hoursToAdd,
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime + hoursToAdd, hoursToAdd,
         dailyAlarmPendingIntent);
   }
 

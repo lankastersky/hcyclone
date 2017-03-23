@@ -220,7 +220,8 @@ public final class ChallengeModel {
     challengeArchiver.storeChallengeData(challengeMap);
     challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
     challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
-    Log.d(TAG, "Current challenge id:" + currentChallengeId);
+    Log.d(TAG, "Current challenge id:" + currentChallengeId + ": "
+            + getCurrentChallenge().getContent());
   }
 
   /**
