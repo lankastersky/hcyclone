@@ -93,7 +93,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
       Log.d(TAG, "Ignore daily alarm notification as challenge not accepted");
       return;
     }
-    Log.d(TAG, "Show reminder alarm notification");
+    Log.d(TAG, "Show daily alarm notification");
     showNotification(challenge.getContent(), challenge.getDetails());
   }
 
