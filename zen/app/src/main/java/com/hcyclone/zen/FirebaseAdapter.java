@@ -2,22 +2,21 @@ package com.hcyclone.zen;
 
 import android.support.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.List;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
-
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.DataSnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible for Firebase connection and handling Firebase database reference.
@@ -30,7 +29,7 @@ public class FirebaseAdapter {
   static {
     FirebaseDatabase firebaseConfig = FirebaseDatabase.getInstance();
     firebaseConfig.setPersistenceEnabled(true);
-    firebaseConfig.setLogLevel(Logger.Level.INFO);
+    firebaseConfig.setLogLevel(Logger.Level.WARN);
   }
 
   /**

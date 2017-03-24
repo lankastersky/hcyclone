@@ -24,6 +24,12 @@ public final class Utils {
     return instance;
   }
 
+  public static String getApplicationName(Context context) {
+    ApplicationInfo applicationInfo = context.getApplicationInfo();
+    int stringId = applicationInfo.labelRes;
+    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+  }
+
   public void init(@NonNull Context context) {
     this.context = context;
   }
@@ -33,11 +39,11 @@ public final class Utils {
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 30_000;
+    return 2000_000;
   }
 
   public long getDebugDailyAlarmTime() {
-    return 15_000;
+    return 1000_000;
   }
 
   public boolean isTimeLess6pm(Calendar date) {
@@ -88,12 +94,6 @@ public final class Utils {
         + getVersionName() + " (" + getVersionCode() + ")");
     activityContext.startActivity(Intent.createChooser(emailIntent,
         activityContext.getString(R.string.feedback_send_email)));
-  }
-
-  public static String getApplicationName(Context context) {
-    ApplicationInfo applicationInfo = context.getApplicationInfo();
-    int stringId = applicationInfo.labelRes;
-    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
   private String getVersionName() {

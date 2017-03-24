@@ -19,44 +19,24 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.lang.ref.WeakReference;
+
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener {
 
-  private static final String TAG = MainActivity.class.getSimpleName();
-
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
+  private static final String TAG = MainActivity.class.getSimpleName();
   private static final String SELECTED_MENU_ITEM_ID_PARAM = "selectedMenuItemId";
+  private static final String CURRENT_FRAGMENT_TAG_PARAM = "currentFragmentTag";
 
-  private Fragment currentFragment;
+  private String currentFragmentTag;
   private int selectedMenuItemId;
   private ProgressBar progressBar;
-  private ResultReceiver receiver = new ResultReceiver(new Handler()) {
-    @Override
-    protected void onReceiveResult(int resultCode, Bundle resultData) {
-      super.onReceiveResult(resultCode, resultData);
 
-      progressBar.setVisibility(View.GONE);
-      DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-      drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-
-      AlarmService.getInstance().setAlarms();
-
-      ChallengeModel.getInstance().loadChallenges();
-
-      switch (resultCode) {
-        case FirebaseService.RESULT_CODE_OK:
-          //if (AppLifecycleManager.isAppVisible()) {
-            //showCurrentChallenge();
-          //}
-          ((ChallengeFragment) currentFragment).refresh();
-          break;
-        case FirebaseService.RESULT_CODE_ERROR:
-          // TODO: show error.
-          break;
-      }
-    }
-  };
+  private static String getFragmentTag(Fragment fragment) {
+    return fragment.getClass().getSimpleName();
+  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -84,12 +64,13 @@ public class MainActivity extends AppCompatActivity
       progressBar.setVisibility(View.VISIBLE);
 
       Intent intent = new Intent(this, FirebaseService.class);
-      intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER, receiver);
+      intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
+          new ChallengesResultReceiver(new Handler(), this));
       startService(intent);
     } else {
       ChallengeModel.getInstance().loadChallenges();
     }
-    showCurrentChallenge();
+    replaceFragment(ChallengeFragment.class);
   }
 
   @Override
@@ -104,12 +85,8 @@ public class MainActivity extends AppCompatActivity
 
     if (isStartFromNotification()) {
       getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
-
       selectChallengeMenuItem();
-
-      Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
-          ChallengeFragment.class.getSimpleName());
-      replaceFragment(newFragment, ChallengeFragment.class);
+      replaceFragment(ChallengeFragment.class);
     }
   }
 
@@ -136,22 +113,31 @@ public class MainActivity extends AppCompatActivity
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     outState.putInt(SELECTED_MENU_ITEM_ID_PARAM, selectedMenuItemId);
+    outState.putString(CURRENT_FRAGMENT_TAG_PARAM, currentFragmentTag);
   }
 
   @Override
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
+    currentFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_PARAM);
     selectedMenuItemId = savedInstanceState.getInt(SELECTED_MENU_ITEM_ID_PARAM);
     selectMenuItem(selectedMenuItemId);
   }
 
+  @Override
+  public void onListFragmentInteraction(Challenge item) {
+    Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
+    Intent intent = new Intent(this, ChallengeActivity.class);
+    Bundle extras = new Bundle();
+    extras.putString(ChallengeFragment.CHALLENGE_ID, item.getId());
+    intent.putExtras(extras);
+    startActivity(intent);
+  }
+
   private boolean isStartFromNotification() {
     Intent intent = getIntent();
-    if (intent.getExtras() != null
-        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION)) {
-      return true;
-    }
-    return false;
+    return intent.getExtras() != null
+        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION);
   }
 
   private void selectChallengeMenuItem() {
@@ -163,67 +149,87 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void selectMenuItem(int menuItemId) {
-    FragmentManager fragmentManager = getSupportFragmentManager();
-
-    if (menuItemId == R.id.nav_challenge) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          ChallengeFragment.class.getSimpleName());
-      replaceFragment(newFragment, ChallengeFragment.class);
-    } else if (menuItemId == R.id.nav_journal) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          ChallengeListFragment.class.getSimpleName());
-      replaceFragment(newFragment, ChallengeListFragment.class);
-    } else if (menuItemId == R.id.nav_settings) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          SettingsFragment.class.getSimpleName());
-      replaceFragment(newFragment, SettingsFragment.class);
-    } else if (menuItemId == R.id.nav_help) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          HelpFragment.class.getSimpleName());
-      replaceFragment(newFragment, HelpFragment.class);
-    } else if (menuItemId == R.id.nav_feedback) {
-      Utils.getInstance().sendFeedback(this);
+    switch (menuItemId) {
+      case R.id.nav_challenge:
+        replaceFragment(ChallengeFragment.class);
+        break;
+      case R.id.nav_journal:
+        replaceFragment(ChallengeListFragment.class);
+        break;
+      case R.id.nav_settings:
+        replaceFragment(SettingsFragment.class);
+        break;
+      case R.id.nav_help:
+        replaceFragment(HelpFragment.class);
+        break;
+      case R.id.nav_feedback:
+        Utils.getInstance().sendFeedback(this);
+        break;
+      default:
+        Log.d(TAG, "Wrong menu item " + menuItemId);
     }
   }
 
-  private void showCurrentChallenge() {
-    currentFragment = new ChallengeFragment();
-    getSupportFragmentManager().beginTransaction().add(R.id.content_container,
-        currentFragment, ChallengeFragment.class.getSimpleName()).commit();
-//        .commitAllowingStateLoss();
-  }
-
-  private void replaceFragment(Fragment newFragment, Class clazz) {
-    if (newFragment == currentFragment && newFragment != null) {
+  private void replaceFragment(Class<? extends Fragment> clazz) {
+    // TODO: optimize.
+    if (clazz.getSimpleName().equals(currentFragmentTag)) {
       return;
     }
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (currentFragment != null) {
-      fragmentTransaction.remove(currentFragment);
+    Fragment newFragment;
+    try {
+      newFragment = clazz.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      Log.d(TAG, e.toString());
+      return;
     }
-    if (newFragment == null) {
-      try {
-        newFragment = (Fragment) clazz.newInstance();
-      } catch (InstantiationException | IllegalAccessException e) {
-        Log.d(TAG, e.toString());
-      }
-      fragmentTransaction.add(R.id.content_container,
-          newFragment, clazz.getSimpleName()).commit();
-    } else {
-      fragmentTransaction.replace(R.id.content_container,
-          newFragment, clazz.getSimpleName()).commit();
-    }
-    currentFragment = newFragment;
+    fragmentTransaction.replace(R.id.content_container, newFragment,
+        getFragmentTag(newFragment)).commit();
+    currentFragmentTag = getFragmentTag(newFragment);
   }
 
-  @Override
-  public void onListFragmentInteraction(Challenge item) {
-    Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
-    Intent intent = new Intent(this, ChallengeActivity.class);
-    Bundle extras = new Bundle();
-    extras.putString(ChallengeFragment.CHALLENGE_ID, item.getId());
-    intent.putExtras(extras);
-    startActivity(intent);
+  private Fragment getCurrentFragment() {
+    return (getSupportFragmentManager().findFragmentByTag(currentFragmentTag));
+  }
+
+  private void onChallengesLoaded(int resultCode) {
+    progressBar.setVisibility(View.GONE);
+    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+
+    AlarmService.getInstance().setAlarms();
+
+    ChallengeModel.getInstance().loadChallenges();
+
+    switch (resultCode) {
+      case FirebaseService.RESULT_CODE_OK:
+        //if (AppLifecycleManager.isAppVisible()) {
+        //showCurrentChallenge();
+        //}
+        ((ChallengeFragment) getCurrentFragment()).refresh();
+        break;
+      case FirebaseService.RESULT_CODE_ERROR:
+        // TODO: show error.
+        break;
+    }
+  }
+
+  private static class ChallengesResultReceiver extends ResultReceiver {
+
+    private final WeakReference<MainActivity> mainActivityRef;
+
+    private ChallengesResultReceiver(Handler handler, MainActivity mainActivity) {
+      super(handler);
+      mainActivityRef = new WeakReference<>(mainActivity);
+    }
+
+    @Override
+    protected void onReceiveResult(int resultCode, Bundle resultData) {
+      super.onReceiveResult(resultCode, resultData);
+      if (mainActivityRef.get() != null) {
+        mainActivityRef.get().onChallengesLoaded(resultCode);
+      }
+    }
   }
 }

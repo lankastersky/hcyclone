@@ -21,8 +21,13 @@ public class ChallengeActivity extends AppCompatActivity {
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
-    fragmentTransaction.add(R.id.content_container, challengeFragment).commit();
+    if (fragmentManager.findFragmentByTag(ChallengeFragment.TAG) == null) {
+      ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
+      fragmentTransaction.add(R.id.content_container, challengeFragment, ChallengeFragment.TAG)
+          .commit();
+    } else {
+      Log.d(ChallengeActivity.class.getSimpleName(), "Challenge Fragment is already created");
+    }
   }
 
   private void setupActionBar() {

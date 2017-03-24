@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class ChallengeFragment extends Fragment {
 
-  private static final String TAG = ChallengeFragment.class.getSimpleName();
+  public static final String TAG = ChallengeFragment.class.getSimpleName();
   public static final String CHALLENGE_ID = "challengeId";
 
   private String challengeId;
@@ -25,8 +25,6 @@ public class ChallengeFragment extends Fragment {
   private boolean showFromJournal;
   private View rankDialog;
   private RatingBar ratingBar;
-
-  public ChallengeFragment() {}
 
   public static ChallengeFragment newInstance(String challengeId) {
     ChallengeFragment fragment = new ChallengeFragment();
