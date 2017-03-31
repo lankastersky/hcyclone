@@ -17,6 +17,5 @@ public class HelpFragment extends Fragment {
 
     getActivity().setTitle(getString(R.string.fragment_help));
     return inflater.inflate(R.layout.fragment_help, container, false);
-    // TODO: add version from resources.
   }
 }

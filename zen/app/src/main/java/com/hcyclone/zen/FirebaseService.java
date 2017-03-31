@@ -7,16 +7,13 @@ import android.os.ResultReceiver;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-// TODO: reimplement using Firebase JobDispatcher.
 public final class FirebaseService extends IntentService
     implements FirebaseAdapter.FirebaseAuthListener {
-
-  private static final String TAG = FirebaseService.class.getSimpleName();
 
   public static final String INTENT_KEY_RECEIVER = "INTENT_KEY_RECEIVER";
   public static final int RESULT_CODE_OK = 0;
   public static final int RESULT_CODE_ERROR = 1;
-
+  private static final String TAG = FirebaseService.class.getSimpleName();
   private CountDownLatch countDownLatch;
   private ResultReceiver receiver;
 

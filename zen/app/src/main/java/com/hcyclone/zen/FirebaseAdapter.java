@@ -65,18 +65,6 @@ public class FirebaseAdapter {
     authenticate();
   }
 
-  /**
-   * Signs out from the server and clears listeners.
-   */
-  // TODO: delete if not needed.
-  public void signOut() {
-    Log.d(TAG, "Sign out");
-    FirebaseAuth.getInstance().signOut();
-    FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
-    authStateListener = null;
-    firebaseAuth = null;
-  }
-
   public boolean isSignedIn() {
     return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
   }

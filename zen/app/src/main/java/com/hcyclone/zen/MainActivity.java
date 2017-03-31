@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void replaceFragment(Class<? extends Fragment> clazz) {
-    // TODO: optimize.
     if (clazz.getSimpleName().equals(currentFragmentTag)) {
       return;
     }
