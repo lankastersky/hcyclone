@@ -51,14 +51,12 @@ when app runs in background during daily alarm; initial alarm; repeatable alarm;
 
 public final class AlarmService implements OnSharedPreferenceChangeListener {
 
-  private static final String TAG = AlarmService.class.getSimpleName();
-
   public static final String PARAM_ID = "alarm_id";
   public static final int ALARM_CODE_SERVICE = 1;
   public static final int ALARM_CODE_INITIAL = 2;
   public static final int ALARM_CODE_FINAL = 3;
   public static final int ALARM_CODE_DAILY = 4;
-
+  private static final String TAG = AlarmService.class.getSimpleName();
   private static final int SERVICE_ALARM_START_H = 0;
   // Initial alarm should start after service alarm finished.
   // Otherwise initial notification could show old current challenge.
@@ -79,6 +77,26 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
 
   public static AlarmService getInstance() {
     return instance;
+  }
+
+  private static long getAlarmTime(int hoursToAddToMidnight, boolean today) {
+    Calendar calendar = Calendar.getInstance();
+    long alarmTime;
+    if (Utils.getInstance().isDebug()) {
+      alarmTime = calendar.getTimeInMillis() + Utils.getInstance().getDebugAlarmRepeatTime();
+    } else {
+      Date midnight = Utils.getInstance().getNextMidnight(calendar.getTimeInMillis());
+      calendar.setTime(midnight);
+      calendar.set(Calendar.HOUR_OF_DAY, hoursToAddToMidnight);
+      if (today) {
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        if (calendar.before(Calendar.getInstance())) {
+          calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+      }
+      alarmTime = calendar.getTimeInMillis();
+    }
+    return alarmTime;
   }
 
   public void init(@NonNull Context context) {
@@ -151,30 +169,11 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     return sharedPreferences.getBoolean(PreferencesService.PREF_KEY_SHOW_NOTIFICATION, true);
   }
 
-  private static long getAlarmTime(int hoursToAddToMidnight) {
-    return getAlarmTime(hoursToAddToMidnight, 0);
-  }
-
-  private static long getAlarmTime(int hoursToAddToMidnight, int minutesToAddToMidnight) {
-    Calendar calendar = Calendar.getInstance();
-    long alarmTime;
-    if (Utils.getInstance().isDebug()) {
-      alarmTime = calendar.getTimeInMillis() + Utils.getInstance().getDebugAlarmRepeatTime();
-    } else {
-      Date midnight = Utils.getInstance().getMidnight(calendar.getTimeInMillis());
-      calendar.setTime(midnight);
-      calendar.set(Calendar.HOUR_OF_DAY, hoursToAddToMidnight);
-      calendar.add(Calendar.MINUTE, minutesToAddToMidnight);
-      alarmTime = calendar.getTimeInMillis();
-    }
-    return alarmTime;
-  }
-
   /** Service alarm is fired every night. */
   public void setServiceAlarm() {
     // Random hour between 0 and 6.
     int hours = (int) (Math.random() * 6) + SERVICE_ALARM_START_H;
-    long alarmTime = getAlarmTime(hours);
+    long alarmTime = getAlarmTime(hours, /* today */ false);
     Log.d(TAG, "Set service alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, serviceAlarmPendingIntent);
   }
@@ -197,7 +196,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     } else {
       hours = Integer.parseInt(settingsHours);
     }
-    long alarmTime = getAlarmTime(hours);
+    long alarmTime = getAlarmTime(hours, /* today */ true);
     Log.d(TAG, "Set initial alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, initialAlarmPendingIntent);
   }
@@ -220,7 +219,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     } else {
       hours = Integer.parseInt(settingsHours);
     }
-    long alarmTime = getAlarmTime(hours);
+    long alarmTime = getAlarmTime(hours, /* today */ true);
     Log.d(TAG, "Set final alarm to " + new Date(alarmTime));
     alarmManager.set(AlarmManager.RTC_WAKEUP, alarmTime, finalAlarmPendingIntent);
   }
@@ -236,15 +235,15 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
       stopDailyAlarm();
       return;
     }
-    long hoursToAdd;
+    long msToAdd;
     if (Utils.getInstance().isDebug()) {
-      hoursToAdd = Utils.getInstance().getDebugDailyAlarmTime();
+      msToAdd = Utils.getInstance().getDebugDailyAlarmTime();
     } else {
-      hoursToAdd = AlarmManager.INTERVAL_HOUR * Integer.parseInt(settingsHours);
+      msToAdd = AlarmManager.INTERVAL_HOUR * Integer.parseInt(settingsHours);
     }
     long alarmStartTime = new Date().getTime();
-    Log.d(TAG, "Set daily alarm to " + new Date(alarmStartTime + hoursToAdd));
-    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime + hoursToAdd, hoursToAdd,
+    Log.d(TAG, "Set daily alarm to " + new Date(alarmStartTime + msToAdd));
+    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime + msToAdd, msToAdd,
         dailyAlarmPendingIntent);
   }
 

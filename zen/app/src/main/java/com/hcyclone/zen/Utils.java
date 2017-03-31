@@ -39,11 +39,11 @@ public final class Utils {
   }
 
   public long getDebugAlarmRepeatTime() {
-    return 2000_000;
+    return 10_000;
   }
 
   public long getDebugDailyAlarmTime() {
-    return 1000_000;
+    return 50_000;
   }
 
   public boolean isTimeLess6pm(Calendar date) {
@@ -69,7 +69,7 @@ public final class Utils {
     return date.getTime();
   }
 
-  public Date getMidnight(long time) {
+  public Date getNextMidnight(long time) {
     // Today.
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);

@@ -4,13 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +18,11 @@ public final class ChallengeModel {
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
   private static final ChallengeModel instance = new ChallengeModel();
-
+  // Map <challenge id, challenge>
+  private final Map<String, Challenge> challengeMap = new HashMap<>();
   private String currentChallengeId;
   private long currentChallengeShownTime;
   private int level;
-  // Map <challenge id, challenge>
-  private final Map<String, Challenge> challengeMap = new HashMap<>();
   private ChallengeArchiver challengeArchiver;
 
   private ChallengeModel() {}
@@ -167,7 +165,7 @@ public final class ChallengeModel {
   /** Challenge expires at midnight of this day. */
   private boolean isChallengeTimeExpired() {
     boolean result;
-    Date timeToDecline = Utils.getInstance().getMidnight(currentChallengeShownTime);
+    Date timeToDecline = Utils.getInstance().getNextMidnight(currentChallengeShownTime);
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(currentChallengeShownTime);
     Date now = new Date();
