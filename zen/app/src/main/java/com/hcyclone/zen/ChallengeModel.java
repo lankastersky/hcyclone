@@ -223,7 +223,7 @@ public final class ChallengeModel {
   }
 
   /**
-   * If there are nonaccepted challenges, get random challenge from them taking into account levels.
+   * If there are nonfinished challenges, get random challenge from them taking into account levels.
    * Else if there are declined challenges, get random challenge from them.
    * Else get random challenge from all and is not equal to previous one.
    */
@@ -231,10 +231,12 @@ public final class ChallengeModel {
   private String getNewChallengeId() {
     String challengeId;
     Challenge challenge;
-    List<Challenge> nonacceptedChallenges = getChallengesMap(Challenge.UNKNOWN);
-    nonacceptedChallenges = filterNonacceptedChallengesByLevel(nonacceptedChallenges);
-    if (nonacceptedChallenges.size() > 0) {
-      challenge = getRandomChallenge(nonacceptedChallenges);
+    List<Challenge> nonfinishedChallenges = getChallengesMap(Challenge.UNKNOWN);
+    nonfinishedChallenges.addAll(getChallengesMap(Challenge.ACCEPTED));
+    nonfinishedChallenges.addAll(getChallengesMap(Challenge.SHOWN));
+    nonfinishedChallenges = filterNonfinishedChallengesByLevel(nonfinishedChallenges);
+    if (nonfinishedChallenges.size() > 0) {
+      challenge = getRandomChallenge(nonfinishedChallenges);
       challengeId = challenge.getId();
     } else {
       List<Challenge> declinedChallenges = getChallengesMap(Challenge.DECLINED);
@@ -272,19 +274,22 @@ public final class ChallengeModel {
 
   /**
    * Low-level challenges are available from the beginning.
-   * Medium-level challenges are available when 1/3 of challenges is accepted.
-   * High-level challenges are available when 2/3 of challenges is accepted.
+   * Medium-level challenges are available when 1/3 of challenges are finished.
+   * High-level challenges are available when 2/3 of challenges are finished.
    */
-  private List<Challenge> filterNonacceptedChallengesByLevel(
-      @NonNull Collection<Challenge> nonaccepted) {
+  private List<Challenge> filterNonfinishedChallengesByLevel(
+      @NonNull Collection<Challenge> nonfinished) {
 
     Collection<Challenge> challenges = getChallengesMap().values();
-    double acceptedProportion = (challenges.size() - nonaccepted.size()) / challenges.size();
-    boolean acceptMedium = acceptedProportion >= 1D / 3;
-    boolean acceptHigh = acceptedProportion >= 2D / 3;
+    if (challenges.isEmpty()) {
+      return new ArrayList<>();
+    }
+    double finishedProportion = (challenges.size() - nonfinished.size()) / challenges.size();
+    boolean acceptMedium = finishedProportion >= 1D / 3;
+    boolean acceptHigh = finishedProportion >= 2D / 3;
 
     List<Challenge> filteredChallenges = new ArrayList<>();
-    for (Challenge challenge : nonaccepted) {
+    for (Challenge challenge : nonfinished) {
       switch (challenge.getLevel()) {
         case Challenge.LEVEL_LOW:
           filteredChallenges.add(challenge);
