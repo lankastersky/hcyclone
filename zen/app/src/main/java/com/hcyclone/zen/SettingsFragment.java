@@ -1,13 +1,19 @@
 package com.hcyclone.zen;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SettingsFragment extends PreferenceFragmentCompat {
+import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+
+public class SettingsFragment extends PreferenceFragmentCompat
+    implements OnSharedPreferenceChangeListener {
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = super.onCreateView(inflater, container, savedInstanceState);
@@ -24,8 +30,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     // updated to reflect the new value, per the Android Design
     // guidelines.
     PreferencesService preferencesService = PreferencesService.getInstance();
-//    preferencesService.bindPreferenceSummaryToValue(findPreference(
-//        PreferencesService.PREF_KEY_NOTIFICATION_RINGTONE));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_INITIAL_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
@@ -42,5 +46,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
       return true;
     }
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    PreferenceManager.getDefaultSharedPreferences(getActivity())
+        .registerOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    PreferenceManager.getDefaultSharedPreferences(getActivity())
+        .unregisterOnSharedPreferenceChangeListener(this);
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    AppLifecycleManager.getInstance().requestBackup();
   }
 }

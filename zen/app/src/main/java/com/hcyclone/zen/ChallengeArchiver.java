@@ -17,18 +17,16 @@ import java.util.Map;
  */
 public class ChallengeArchiver {
 
+  public static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
   private static final String TAG = ChallengeArchiver.class.getSimpleName();
-
-  private static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
-
   private static final String KEY_CHALLENGE_DATA = "challenge_data";
   private static final String KEY_CHALLENGES = "challenges";
   private static final String KEY_CURRENT_CHALLENGE_SHOWN_TIME = "current_challenge_shown_time";
   private static final String KEY_CURRENT_CHALLENGE = "current_challenge";
   private static final String KEY_CURRENT_LEVEL = "current_challenge_level";
 
-  private Gson gson;
-  private SharedPreferences sharedPreferences;
+  private final Gson gson;
+  private final SharedPreferences sharedPreferences;
 
   public ChallengeArchiver(@NonNull Context context) {
     sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
@@ -47,11 +45,13 @@ public class ChallengeArchiver {
     }
     String currentChallengeString = gson.toJson(challenge);
     sharedPreferences.edit().putString(KEY_CURRENT_CHALLENGE, currentChallengeString).apply();
+    requestBackup();
   }
 
   public void storeCurrentChallengeShownTime(long shownTime) {
     sharedPreferences.edit().putLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, shownTime)
         .apply();
+    requestBackup();
   }
 
   public long restoreCurrentChallengeShownTime() {
@@ -60,6 +60,7 @@ public class ChallengeArchiver {
 
   public void storeLevel(int level) {
     sharedPreferences.edit().putInt(KEY_CURRENT_LEVEL, level).apply();
+    requestBackup();
   }
 
   public int restoreLevel() {
@@ -74,6 +75,7 @@ public class ChallengeArchiver {
     }
     String dataString = gson.toJson(data);
     sharedPreferences.edit().putString(KEY_CHALLENGE_DATA, dataString).apply();
+    requestBackup();
   }
 
   public void restoreChallengeData(Map<String, Challenge> challengeMap) {
@@ -95,6 +97,7 @@ public class ChallengeArchiver {
   public void storeChallenges(List<Challenge> challenges) {
     String dataString = gson.toJson(challenges);
     sharedPreferences.edit().putString(KEY_CHALLENGES, dataString).apply();
+    requestBackup();
   }
 
   public List<Challenge> restoreChallenges() {
@@ -106,5 +109,9 @@ public class ChallengeArchiver {
           new TypeToken<List<Challenge>>(){}.getType());
     }
     return challenges;
+  }
+
+  private void requestBackup() {
+    AppLifecycleManager.getInstance().requestBackup();
   }
 }

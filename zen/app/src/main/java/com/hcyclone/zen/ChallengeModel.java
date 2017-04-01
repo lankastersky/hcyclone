@@ -18,8 +18,9 @@ public final class ChallengeModel {
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
   private static final ChallengeModel instance = new ChallengeModel();
-  // Map <challenge id, challenge>
+
   private final Map<String, Challenge> challengeMap = new HashMap<>();
+
   private String currentChallengeId;
   private long currentChallengeShownTime;
   private int level;

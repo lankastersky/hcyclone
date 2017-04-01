@@ -2,10 +2,9 @@ package com.hcyclone.zen;
 
 import android.app.Activity;
 import android.app.Application.ActivityLifecycleCallbacks;
+import android.app.backup.BackupManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 /** Determines global app lifecycle states.
@@ -28,8 +27,6 @@ import android.support.annotation.NonNull;
  * */
 public class AppLifecycleManager implements ActivityLifecycleCallbacks {
 
-  private static final String KEY_FIRST_START = "first_start";
-
   private static final AppLifecycleManager instance = new AppLifecycleManager();
 
   /** Manages the state of opened vs closed activities, should be 0 or 1.
@@ -46,23 +43,14 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
     return instance;
   }
 
-  public void init(@NonNull Context context) {
-    this.context = context;
-  }
-
   /** Returns true if any activity of app is visible (or device is sleep when
    * an activity was visible) */
   public static boolean isAppVisible() {
     return visibleActivityCount > 0;
   }
 
-  public boolean isFirstStart() {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    boolean firstStart = sharedPreferences.getBoolean(KEY_FIRST_START, true);
-    if (firstStart) {
-      sharedPreferences.edit().putBoolean(KEY_FIRST_START, false).apply();
-    }
-    return firstStart;
+  public void init(@NonNull Context context) {
+    this.context = context;
   }
 
   public void onActivityCreated(Activity activity, Bundle bundle) {}
@@ -83,5 +71,10 @@ public class AppLifecycleManager implements ActivityLifecycleCallbacks {
 
   public void onActivityStopped(Activity activity) {
     visibleActivityCount--;
+  }
+
+  public void requestBackup() {
+    BackupManager bm = new BackupManager(context);
+    bm.dataChanged();
   }
 }

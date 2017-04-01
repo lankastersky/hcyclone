@@ -7,16 +7,19 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- todo: test backup -->
     <application
         android:name=".App"
         android:allowBackup="true"
+        android:backupAgent="BackupAgent"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
         <meta-data android:name="android.max_aspect" android:value="2.1"/>
+        <meta-data android:name="com.google.android.backup.api_key"
+                   android:value="AEdPqrEAAAAImGX0I65C3fjyLljJxmxs1iBTmPmVTcWBAwg75w"/>
 
         <activity
             android:name=".MainActivity"
