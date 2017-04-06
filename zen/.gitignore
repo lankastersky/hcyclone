@@ -1,4 +1,5 @@
 *.iml
+*.apk
 .gradle
 .idea
 /local.properties
@@ -7,3 +8,5 @@
 /captures
 .externalNativeBuild
 app/src/main/res/values/strings_const.xml
+app/build/
+
