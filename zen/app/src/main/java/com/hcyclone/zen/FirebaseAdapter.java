@@ -1,5 +1,6 @@
 package com.hcyclone.zen;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,7 +38,6 @@ public class FirebaseAdapter {
    */
   private FirebaseAuth firebaseAuth;
   private FirebaseAuthListener firebaseAuthListener;
-  private FirebaseAuth.AuthStateListener authStateListener;
 
   public static FirebaseAdapter getInstance() {
     return instance;
@@ -46,7 +46,7 @@ public class FirebaseAdapter {
   /**
    * Signs in to the server if firebase is enabled.
    */
-  public void signIn(FirebaseAuthListener listener) {
+  public void signIn(FirebaseAuthListener listener, Context context) {
     Log.d(TAG, "Sign in");
     firebaseAuthListener = listener;
     FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -62,16 +62,16 @@ public class FirebaseAdapter {
       }
     };
     FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
-    authenticate();
+    authenticate(context);
   }
 
   public boolean isSignedIn() {
     return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
   }
 
-  private void authenticate() {
-    String firebaseUsername = "stalker@hcyclone.com";
-    String firebasePassword = "stalking";
+  private void authenticate(Context context) {
+    String firebaseUsername = context.getString(R.string.firebase_login);
+    String firebasePassword = context.getString(R.string.firebase_password);
     Log.d(TAG, "signInWithEmailAndPassword");
     FirebaseAuth auth = FirebaseAuth.getInstance();
     auth.signInWithEmailAndPassword(firebaseUsername, firebasePassword)

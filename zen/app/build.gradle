@@ -5,7 +5,7 @@ android {
         infinitetrivia {
             keyAlias 'infinitetrivia'
             keyPassword 'android'
-            storeFile file('~/.android/release.keystore.jks')
+            storeFile file('~/.android/lank-release-key.jks')
             storePassword 'android'
         }
     }
@@ -15,8 +15,8 @@ android {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.1"
+        versionCode 3
+        versionName "0.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.infinitetrivia

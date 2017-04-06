@@ -27,7 +27,7 @@ public final class FirebaseService extends IntentService
     countDownLatch = new CountDownLatch(1);
     if (!FirebaseAdapter.getInstance().isSignedIn()) {
       Log.d(TAG, "Sign in to Firebase");
-      FirebaseAdapter.getInstance().signIn(this);
+      FirebaseAdapter.getInstance().signIn(this, this);
     } else {
       loadChallenges();
     }

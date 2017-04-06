@@ -35,7 +35,7 @@ public final class Utils {
   }
 
   public boolean isDebug() {
-    return BuildConfig.DEBUG && false;
+    return BuildConfig.DEBUG;
   }
 
   public long getDebugAlarmRepeatTime() {
@@ -96,7 +96,7 @@ public final class Utils {
         activityContext.getString(R.string.feedback_send_email)));
   }
 
-  private String getVersionName() {
+  public String getVersionName() {
     try {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {

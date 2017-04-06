@@ -87,6 +87,10 @@ public class ChallengeArchiver {
 
       for (ChallengeData challengeData : data) {
         Challenge challenge = challengeMap.get(challengeData.id);
+        if (challenge == null) {
+          Log.e(TAG, "Failed to fine challenge " + challengeData.id);
+          continue;
+        }
         challenge.setStatus(challengeData.status);
         challenge.setFinishedTime(challengeData.finishedTime);
         challenge.setRating(challengeData.rating);
