@@ -1,5 +1,6 @@
 package com.hcyclone.zen;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -7,6 +8,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -123,5 +127,23 @@ public final class Utils {
         Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+  }
+
+  public Dialog buildDialog(String title, String text, Context context) {
+    final Dialog dialog = new Dialog(context, R.style.AlertDialogCustom);
+    dialog.setContentView(R.layout.alert_dialog);
+    TextView titleView = (TextView) dialog.findViewById(R.id.alert_dialog_title);
+    titleView.setText(title);
+    TextView textView = (TextView) dialog.findViewById(R.id.alert_dialog_text);
+    textView.setText(text);
+
+    Button updateButton = (Button) dialog.findViewById(R.id.alert_dialog_button);
+    updateButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        dialog.dismiss();
+      }
+    });
+    return dialog;
   }
 }

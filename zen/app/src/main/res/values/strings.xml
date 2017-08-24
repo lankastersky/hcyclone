@@ -127,7 +127,15 @@
     <string name="rank_dialog_rate">Rate</string>
 
     <!-- Alert dialog -->
+    <!-- Level up -->
     <string name="dialog_title_next_level_available">Next level is available</string>
-    <string name="dialog_text_next_level_available">"Challenges of %s level of difficulty are available now."</string>
+    <string name="dialog_text_next_level_available">Challenges of %s level of difficulty are
+        available.
+    </string>
+
+    <!-- Firebase error -->
+    <string name="dialog_title_something_wrong">Something is wrong</string>
+    <string name="dialog_text_failed_to_connect">Failed to connect to the server. Try again later.
+    </string>
 
 </resources>

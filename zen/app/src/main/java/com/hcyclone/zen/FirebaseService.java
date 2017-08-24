@@ -47,7 +47,9 @@ public final class FirebaseService extends IntentService
   @Override
   public void onAuthError(Exception exception) {
     Log.e(TAG, exception.toString());
-    receiver.send(RESULT_CODE_ERROR, null);
+    if (receiver != null) {
+      receiver.send(RESULT_CODE_ERROR, null);
+    }
     countDownLatch.countDown();
   }
 

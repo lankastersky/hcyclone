@@ -1,6 +1,5 @@
 package com.hcyclone.zen;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -110,23 +109,9 @@ public class ChallengeFragment extends Fragment {
     }
     int level = ChallengeModel.getInstance().getLevel();
 
-    final Dialog dialog = new Dialog(getContext(), R.style.AlertDialogCustom);
-    dialog.setContentView(R.layout.alert_dialog);
-    TextView titleView = (TextView) dialog.findViewById(R.id.alert_dialog_title);
-    titleView.setText(getString(R.string.dialog_title_next_level_available));
-    TextView textView = (TextView) dialog.findViewById(R.id.alert_dialog_text);
-    textView.setText(String.format(getString(R.string.dialog_text_next_level_available),
-        localizedChallengeLevel(level)));
-
-    Button updateButton = (Button) dialog.findViewById(R.id.alert_dialog_button);
-    updateButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        dialog.dismiss();
-      }
-    });
-
-    dialog.show();
+    Utils.getInstance().buildDialog(getString(R.string.dialog_title_next_level_available),
+        String.format(getString(R.string.dialog_text_next_level_available),
+            localizedChallengeLevel(level)), getContext()).show();
 
     Analytics.getInstance().sendLevelUp(level);
   }

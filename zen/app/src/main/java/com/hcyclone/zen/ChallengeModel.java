@@ -236,8 +236,8 @@ public final class ChallengeModel {
    */
   @NonNull
   private String getNewChallengeId() {
-    String challengeId;
-    Challenge challenge;
+    String challengeId = "";
+    Challenge challenge = null;
     List<Challenge> nonfinishedChallenges = getChallengesMap(Challenge.UNKNOWN);
     nonfinishedChallenges.addAll(getChallengesMap(Challenge.ACCEPTED));
     nonfinishedChallenges.addAll(getChallengesMap(Challenge.SHOWN));
@@ -250,7 +250,7 @@ public final class ChallengeModel {
       if (declinedChallenges.size() > 0) {
         challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
-      } else {
+      } else if (!getChallengesMap().isEmpty()) {
         // All challenges are finished. Return random old one.
         challenge = getRandomChallenge(getChallengesMap().values());
         if (getCurrentChallenge() != null) {
@@ -260,7 +260,9 @@ public final class ChallengeModel {
         }
         challengeId = challenge.getId();
       }
-      challenge.reset();
+      if (challenge != null) {
+        challenge.reset();
+      }
     }
     return challengeId;
   }

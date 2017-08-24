@@ -197,19 +197,21 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
-    AlarmService.getInstance().setAlarms();
-
-    ChallengeModel.getInstance().loadChallenges();
-
     switch (resultCode) {
       case FirebaseService.RESULT_CODE_OK:
         //if (AppLifecycleManager.isAppVisible()) {
         //showCurrentChallenge();
         //}
-        ((ChallengeFragment) getCurrentFragment()).refresh();
+        AlarmService.getInstance().setAlarms();
+        ChallengeModel.getInstance().loadChallenges();
+        ChallengeFragment fragment = (ChallengeFragment) getCurrentFragment();
+        if (fragment != null) {
+          fragment.refresh();
+        }
         break;
       case FirebaseService.RESULT_CODE_ERROR:
-        // TODO: show error.
+        Utils.getInstance().buildDialog(getString(R.string.dialog_title_something_wrong),
+            getString(R.string.dialog_text_failed_to_connect), this).show();
         break;
     }
   }
