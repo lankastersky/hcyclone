@@ -105,10 +105,10 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void showLevelUpIfNeeded() {
-    int level = ChallengeModel.getInstance().isLevelUp();
-    if (level == Challenge.LEVEL_LOW) {
+    if (!ChallengeModel.getInstance().checkLevelUp()) {
       return;
     }
+    int level = ChallengeModel.getInstance().getLevel();
 
     final Dialog dialog = new Dialog(getContext(), R.style.AlertDialogCustom);
     dialog.setContentView(R.layout.alert_dialog);

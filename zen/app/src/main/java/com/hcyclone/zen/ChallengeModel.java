@@ -151,16 +151,22 @@ public final class ChallengeModel {
     return result;
   }
 
-  public int isLevelUp() {
+  public boolean checkLevelUp() {
     Challenge challenge = getCurrentChallenge();
-    if (challenge.getLevel() == Challenge.LEVEL_MEDIUM && level == Challenge.LEVEL_LOW) {
-      level = Challenge.LEVEL_MEDIUM;
-      challengeArchiver.storeLevel(level);
-    } else if (challenge.getLevel() == Challenge.LEVEL_HIGH && level == Challenge.LEVEL_MEDIUM) {
-      level = Challenge.LEVEL_HIGH;
-      challengeArchiver.storeLevel(level);
+    if (challenge.getLevel() > getLevel()) {
+      setLevel(challenge.getLevel());
+      challengeArchiver.storeLevel(getLevel());
+      return true;
     }
+    return false;
+  }
+
+  public int getLevel() {
     return level;
+  }
+
+  private void setLevel(int level) {
+    this.level = level;
   }
 
   /** Challenge expires at midnight of this day. */
