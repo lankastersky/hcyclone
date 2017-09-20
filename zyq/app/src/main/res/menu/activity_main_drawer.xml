@@ -3,9 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_practice"
+            android:id="@+id/nav_level_1"
             android:icon="@mipmap/ic_menu_practice"
-            android:title="@string/navigation_drawer_practice"/>
+            android:title="@string/navigation_drawer_level_1"/>
+        <item
+            android:id="@+id/nav_level_2"
+            android:icon="@mipmap/ic_menu_practice"
+            android:title="@string/navigation_drawer_level_2"/>
+        <item
+            android:id="@+id/nav_level_3"
+            android:icon="@mipmap/ic_menu_practice"
+            android:title="@string/navigation_drawer_level_3"/>
         <item
             android:id="@+id/nav_exercises"
             android:icon="@drawable/ic_menu_gallery"

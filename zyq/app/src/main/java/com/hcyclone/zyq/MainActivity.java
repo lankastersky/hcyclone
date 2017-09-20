@@ -2,8 +2,6 @@ package com.hcyclone.zyq;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -16,8 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ProgressBar;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {
@@ -53,7 +49,7 @@ public class MainActivity extends AppCompatActivity
   private void selectMenuItemPractice() {
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     Menu menu = navigationView.getMenu();
-    MenuItem menuItem = menu.findItem(R.id.nav_practice);
+    MenuItem menuItem = menu.findItem(R.id.nav_level_1);
     menuItem.setChecked(true);
     onNavigationItemSelected(menuItem);
   }
@@ -98,25 +94,33 @@ public class MainActivity extends AppCompatActivity
 
   private void selectMenuItem(int menuItemId) {
     FragmentManager fragmentManager = getSupportFragmentManager();
-
-    if (menuItemId == R.id.nav_practice) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          PracticeFragment.class.getSimpleName());
-      replaceFragment(newFragment, PracticeFragment.class);
-    } else if (menuItemId == R.id.nav_exercises) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          ExercisesFragment.class.getSimpleName());
-      replaceFragment(newFragment, ExercisesFragment.class);
-    } else if (menuItemId == R.id.nav_settings) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          SettingsFragment.class.getSimpleName());
-      replaceFragment(newFragment, SettingsFragment.class);
-    } else if (menuItemId == R.id.nav_help) {
-      Fragment newFragment = fragmentManager.findFragmentByTag(
-          HelpFragment.class.getSimpleName());
-      replaceFragment(newFragment, HelpFragment.class);
-    } else if (menuItemId == R.id.nav_feedback) {
-      Utils.getInstance().sendFeedback(this);
+    Fragment newFragment;
+    switch (menuItemId) {
+      case R.id.nav_level_1:
+      case R.id.nav_level_2:
+      case R.id.nav_level_3:
+        newFragment = fragmentManager.findFragmentByTag(
+            PracticeFragment.class.getSimpleName());
+        replaceFragment(newFragment, PracticeFragment.class);
+        break;
+      case R.id.nav_exercises:
+        newFragment = fragmentManager.findFragmentByTag(
+            ExercisesFragment.class.getSimpleName());
+        replaceFragment(newFragment, ExercisesFragment.class);
+        break;
+      case R.id.nav_settings:
+        newFragment = fragmentManager.findFragmentByTag(
+            SettingsFragment.class.getSimpleName());
+        replaceFragment(newFragment, SettingsFragment.class);
+        break;
+      case R.id.nav_help:
+        newFragment = fragmentManager.findFragmentByTag(
+            HelpFragment.class.getSimpleName());
+        replaceFragment(newFragment, HelpFragment.class);
+        break;
+      case R.id.nav_feedback:
+        Utils.getInstance().sendFeedback(this);
+        break;
     }
   }
 
