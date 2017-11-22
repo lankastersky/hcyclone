@@ -33,6 +33,8 @@ dependencies {
     compile "com.android.support:preference-v7:${uiVersion}"
     compile "com.android.support:design:${uiVersion}"
     compile "com.android.support:support-v4:${uiVersion}"
+    compile "com.android.support:recyclerview-v7:${uiVersion}"
+    compile "com.android.support:cardview-v7:${uiVersion}"
     compile "com.android.support:support-vector-drawable:${uiVersion}"
     compile "com.google.android.gms:play-services-analytics:${gmsVersion}"
 }
