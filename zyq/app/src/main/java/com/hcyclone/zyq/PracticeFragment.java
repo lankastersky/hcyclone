@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class PracticeFragment extends Fragment {
+
   private static final String TAG = PracticeFragment.class.getSimpleName();
 
   @Override
@@ -26,19 +27,19 @@ public class PracticeFragment extends Fragment {
 
     setHasOptionsMenu(true);
 
-    Button warmup = (Button) view.findViewById(R.id.warmup_button);
+    Button warmup = view.findViewById(R.id.warmup_button);
     warmup.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Toast.makeText(getActivity(), "warmup", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "warmup", Toast.LENGTH_SHORT).show();
       }
     });
 
-    Button practice = (Button) view.findViewById(R.id.practice_button);
+    Button practice = view.findViewById(R.id.practice_button);
     practice.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Toast.makeText(getActivity(), "practice", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), "practice", Toast.LENGTH_SHORT).show();
       }
     });
 
@@ -68,7 +69,7 @@ public class PracticeFragment extends Fragment {
             .add(R.id.content_container, PracticeDescriptionFragment.class.newInstance())
             .addToBackStack(PracticeDescriptionFragment.TAG)
             .commit();
-      } catch (java.lang.InstantiationException|IllegalAccessException e) {
+      } catch (java.lang.InstantiationException | IllegalAccessException e) {
         e.printStackTrace();
       }
       return true;

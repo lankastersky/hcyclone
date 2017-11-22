@@ -9,12 +9,12 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 4
         versionName "0.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -38,8 +38,8 @@ android {
     }
 }
 
-def uiVersion = "25.3.1"
-def gmsVersion = "11.0.2"
+def uiVersion = "26.1.0"
+def gmsVersion = "11.6.0"
 
 dependencies {
     compile "com.android.support:preference-v7:${uiVersion}"
