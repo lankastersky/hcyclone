@@ -51,7 +51,7 @@ public class ChallengeRecyclerViewAdapter
     holder.view.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        if (null != listener) {
+        if (listener != null) {
           // Notify the active callbacks interface (the activity, if the
           // fragment is attached to one) that an item has been selected.
           listener.onListFragmentInteraction(holder.item);
@@ -65,7 +65,8 @@ public class ChallengeRecyclerViewAdapter
     return values.size();
   }
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
+  public static class ViewHolder extends RecyclerView.ViewHolder {
+
     public final View view;
     public final TextView contentView;
     public final TextView detailsView;
