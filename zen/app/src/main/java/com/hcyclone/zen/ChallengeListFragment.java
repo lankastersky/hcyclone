@@ -21,9 +21,6 @@ public class ChallengeListFragment extends Fragment {
 
   private OnListFragmentInteractionListener onListFragmentInteractionListener;
 
-  public ChallengeListFragment() {
-  }
-
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);

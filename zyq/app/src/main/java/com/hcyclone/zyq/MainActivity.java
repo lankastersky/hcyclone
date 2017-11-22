@@ -29,16 +29,16 @@ public class MainActivity extends AppCompatActivity
     setTheme(R.style.AppTheme_NoActionBar);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
     toggle.syncState();
 
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
     if (savedInstanceState == null) {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void selectMenuItemPractice() {
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    NavigationView navigationView = findViewById(R.id.nav_view);
     Menu menu = navigationView.getMenu();
     MenuItem menuItem = menu.findItem(R.id.nav_level_1);
     menuItem.setChecked(true);
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
     } else {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     selectedMenuItemId = item.getItemId();
     selectMenuItem(selectedMenuItemId);
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
   }
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(newFragment, HelpFragment.class);
         break;
       case R.id.nav_feedback:
-        Utils.getInstance().sendFeedback(this);
+        Utils.sendFeedback(this);
         break;
     }
   }

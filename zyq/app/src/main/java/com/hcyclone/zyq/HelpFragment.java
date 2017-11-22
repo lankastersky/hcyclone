@@ -8,9 +8,6 @@ import android.view.ViewGroup;
 
 public class HelpFragment extends Fragment {
 
-  public HelpFragment() {
-  }
-
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {

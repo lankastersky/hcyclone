@@ -11,13 +11,12 @@ public class App extends Application {
   public void onCreate() {
     super.onCreate();
     initSingletons();
-    if (Utils.getInstance().isDebug()) {
+    if (Utils.isDebug()) {
       enableStrictMode();
     }
   }
 
   protected void initSingletons() {
-    Utils.getInstance().init(this);
     Analytics.getInstance().init(this);
   }
 

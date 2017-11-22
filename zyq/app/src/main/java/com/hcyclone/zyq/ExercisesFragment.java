@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class ExercisesFragment extends Fragment {
+
   private static final String TAG = ExercisesFragment.class.getSimpleName();
 
   @Override

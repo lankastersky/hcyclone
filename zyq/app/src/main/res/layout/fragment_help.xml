@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.hcyclone.zen.HelpFragment">
+    tools:context="com.hcyclone.zyq.HelpFragment">
 
     <TextView
         android:layout_width="wrap_content"

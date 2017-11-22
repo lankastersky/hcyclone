@@ -59,22 +59,29 @@ public class PracticeFragment extends Fragment {
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement
     if (id == R.id.action_description) {
-//      Toast.makeText(getActivity(), "description", Toast.LENGTH_SHORT).show();
-      FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-      FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-      try {
-        fragmentTransaction
-            .add(R.id.content_container, PracticeDescriptionFragment.class.newInstance())
-            .addToBackStack(PracticeDescriptionFragment.TAG)
-            .commit();
-      } catch (java.lang.InstantiationException | IllegalAccessException e) {
-        e.printStackTrace();
-      }
+      showDescription();
       return true;
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  private void showDescription() {
+    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    try {
+      if (fragmentManager.findFragmentByTag(PracticeDescriptionFragment.TAG) == null) {
+        fragmentTransaction
+            .replace(
+                ((ViewGroup)getView().getParent()).getId(),
+                PracticeDescriptionFragment.class.newInstance(),
+                PracticeDescriptionFragment.TAG)
+            .addToBackStack(PracticeDescriptionFragment.TAG)
+            .commit();
+      }
+    } catch (java.lang.InstantiationException | IllegalAccessException e) {
+      Log.e(TAG, "Failed to show practice description", e);
+    }
   }
 }
