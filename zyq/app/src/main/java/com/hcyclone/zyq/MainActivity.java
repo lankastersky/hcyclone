@@ -139,11 +139,25 @@ public class MainActivity extends AppCompatActivity
       } catch (InstantiationException | IllegalAccessException e) {
         Log.d(TAG, e.toString());
       }
-      fragmentTransaction.add(R.id.content_container,
-          newFragment, clazz.getSimpleName()).commit();
+      if (fragmentManager.findFragmentByTag(clazz.getSimpleName()) == null) {
+        fragmentTransaction.add(R.id.content_container,
+            newFragment, clazz.getSimpleName());
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+      } else {
+        Log.w(TAG, "Fragment already added: " + clazz.getSimpleName());
+        //fragmentManager.popBackStackImmediate(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      }
     } else {
-      fragmentTransaction.replace(R.id.content_container,
-          newFragment, clazz.getSimpleName()).commit();
+      if (fragmentManager.findFragmentByTag(clazz.getSimpleName()) == null) {
+        fragmentTransaction.replace(R.id.content_container,
+            newFragment, clazz.getSimpleName());
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+      } else {
+        Log.w(TAG, "Fragment already added: " + clazz.getSimpleName());
+        //fragmentManager.popBackStackImmediate(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+      }
     }
     currentFragment = newFragment;
   }

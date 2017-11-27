@@ -40,4 +40,14 @@
     <!-- Fragment Exercises -->
     <string name="fragment_exericses_title">Exercises</string>
 
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, sale viris intellegam usu eu, persius patrioque sea at. Ne salutandi repudiandae mei, cu mollis accusam mediocrem mea. Altera dolorem praesent at vis. Torquatos philosophia ad quo. Omnis adipiscing has ea, mel no hinc iudico percipit.</string>
+
+    <!-- Exercises -->
+    <string name="step00_warmup00">
+        1 Встать прямо, ноги на ширине плеч, ступни параллельны, тело расслаблено.\n
+        2 Сложенные вместе ладони поднять до уровня груди.\n
+        3 Открыть ладони к себе, вращательным движением на себя опустить кисти рук пальцами вниз таким образом, чтобы кисти сомкнулись тыльной стороной.\n
+        4 Продолжить вращение, открыв ладони от себя, затем, сомкнув их, вернуть в исходное положение. Выполнять 8 раз.\n
+        5 Повторить вращение рук в противоположном направлении, от себя, еще 8 раз.\n
+    </string>
 </resources>

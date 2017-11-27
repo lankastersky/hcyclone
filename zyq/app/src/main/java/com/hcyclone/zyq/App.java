@@ -7,13 +7,18 @@ public class App extends Application {
 
   private static final String TAG = App.class.getSimpleName();
 
+  private ExerciseModel exerciseModel;
+
   @Override
   public void onCreate() {
     super.onCreate();
-    initSingletons();
+
     if (Utils.isDebug()) {
       enableStrictMode();
     }
+
+    initSingletons();
+    exerciseModel = new ExerciseModel(this);
   }
 
   protected void initSingletons() {

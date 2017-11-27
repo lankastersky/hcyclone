@@ -38,7 +38,13 @@ public class ExercisesFragment extends Fragment
 
     List<Exercise> exercises = new ArrayList<>();
     for (int i = 0; i < 10; i++) {
-      Exercise exercise = new Exercise("Exercise " + i, i);
+      Exercise exercise =
+          new Exercise(
+              "Exercise " + i,
+              Exercise.ExerciseType.values()[i % 2],
+              Exercise.LevelType.values()[i % 3],
+              getString(R.string.step00_warmup00),
+              R.mipmap.step00warmup00);
       exercises.add(exercise);
     }
 

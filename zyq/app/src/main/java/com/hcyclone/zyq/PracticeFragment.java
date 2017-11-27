@@ -1,5 +1,6 @@
 package com.hcyclone.zyq;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,7 +32,9 @@ public class PracticeFragment extends Fragment {
     warmup.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Toast.makeText(getActivity(), "warmup", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), WarmUpActivity.class);
+        startActivity(intent);
+
       }
     });
 
