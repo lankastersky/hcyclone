@@ -21,6 +21,10 @@ public class App extends Application {
     exerciseModel = new ExerciseModel(this);
   }
 
+  ExerciseModel getExerciseModel() {
+    return exerciseModel;
+  }
+
   protected void initSingletons() {
     Analytics.getInstance().init(this);
   }

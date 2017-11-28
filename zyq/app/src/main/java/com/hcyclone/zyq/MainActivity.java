@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity
   private static final String TAG = MainActivity.class.getSimpleName();
   private static final String SELECTED_MENU_ITEM_ID_PARAM = "selectedMenuItemId";
 
-  private Fragment currentFragment;
   private int selectedMenuItemId;
+  private Exercise.LevelType currentLevel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -92,16 +92,25 @@ public class MainActivity extends AppCompatActivity
     selectMenuItem(selectedMenuItemId);
   }
 
+  Exercise.LevelType getCurrentLevel() {
+    return currentLevel;
+  }
+
   private void selectMenuItem(int menuItemId) {
     FragmentManager fragmentManager = getSupportFragmentManager();
     Fragment newFragment;
     switch (menuItemId) {
       case R.id.nav_level_1:
+        currentLevel = Exercise.LevelType.LEVEL1;
+        setPracticeFragment(currentLevel);
+        break;
       case R.id.nav_level_2:
+        currentLevel = Exercise.LevelType.LEVEL2;
+        setPracticeFragment(currentLevel);
+        break;
       case R.id.nav_level_3:
-        newFragment = fragmentManager.findFragmentByTag(
-            PracticeFragment.class.getSimpleName());
-        replaceFragment(newFragment, PracticeFragment.class);
+        currentLevel = Exercise.LevelType.LEVEL3;
+        setPracticeFragment(currentLevel);
         break;
       case R.id.nav_exercises:
         newFragment = fragmentManager.findFragmentByTag(
@@ -124,41 +133,28 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private void replaceFragment(Fragment newFragment, Class clazz) {
-    if (newFragment == currentFragment && newFragment != null) {
-      return;
+  private void setPracticeFragment(Exercise.LevelType levelType) {
+    Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
+        PracticeFragment.class.getSimpleName());
+    if (newFragment != null) {
+      ((PracticeFragment) newFragment).updateLevelType(currentLevel);
+    } else {
+      replaceFragment(newFragment, PracticeFragment.class);
     }
+  }
+
+  private void replaceFragment(Fragment newFragment, Class clazz) {
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (currentFragment != null) {
-      fragmentTransaction.remove(currentFragment);
-    }
     if (newFragment == null) {
       try {
         newFragment = (Fragment) clazz.newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
         Log.d(TAG, e.toString());
       }
-      if (fragmentManager.findFragmentByTag(clazz.getSimpleName()) == null) {
-        fragmentTransaction.add(R.id.content_container,
-            newFragment, clazz.getSimpleName());
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-      } else {
-        Log.w(TAG, "Fragment already added: " + clazz.getSimpleName());
-        //fragmentManager.popBackStackImmediate(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-      }
-    } else {
-      if (fragmentManager.findFragmentByTag(clazz.getSimpleName()) == null) {
-        fragmentTransaction.replace(R.id.content_container,
-            newFragment, clazz.getSimpleName());
-        //fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
-      } else {
-        Log.w(TAG, "Fragment already added: " + clazz.getSimpleName());
-        //fragmentManager.popBackStackImmediate(clazz.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-      }
     }
-    currentFragment = newFragment;
+      fragmentTransaction
+          .replace(R.id.content_container, newFragment, clazz.getSimpleName())
+          .commit();
   }
 }

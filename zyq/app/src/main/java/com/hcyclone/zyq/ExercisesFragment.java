@@ -36,19 +36,26 @@ public class ExercisesFragment extends Fragment
     layoutManager = new LinearLayoutManager(getContext());
     recyclerView.setLayoutManager(layoutManager);
 
-    List<Exercise> exercises = new ArrayList<>();
-    for (int i = 0; i < 10; i++) {
-      Exercise exercise =
-          new Exercise(
-              "Exercise " + i,
-              Exercise.ExerciseType.values()[i % 2],
-              Exercise.LevelType.values()[i % 3],
-              getString(R.string.step00_warmup00),
-              R.mipmap.step00warmup00);
-      exercises.add(exercise);
-    }
+    App app = (App) getContext().getApplicationContext();
+    ExerciseModel exerciseModel = app.getExerciseModel();
+//    Exercise exercise = exerciseModel.getExercises().get(0);
+//    List<Exercise> exercises = new ArrayList<>();
 
-    adapter = new ExerciseRecyclerViewAdapter(exercises, this);
+//    for (int i = 0; i < 10; i++) {
+//      Exercise exercise =
+//          new Exercise(
+//              "Exercise " + i,
+//              Exercise.ExerciseType.values()[i % Exercise.ExerciseType.values().length],
+//              Exercise.LevelType.values()[i % Exercise.LevelType.values().length],
+//              getString(R.string.step00_warmup00),
+//              "",
+//              //R.mipmap.level1warmup0
+//              "level1warmup0.gif"
+//          );
+//      exercises.add(exercise);
+//    }
+
+    adapter = new ExerciseRecyclerViewAdapter(exerciseModel.getExercises(), this);
     recyclerView.setAdapter(adapter);
 
     return view;

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.stepstone.stepper.Step;
@@ -19,7 +20,7 @@ public class ExerciseFragment extends Fragment implements Step {
 
   public static final String TAG = ExerciseFragment.class.getSimpleName();
 
-  private int step;
+  private Exercise exercise;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,8 +28,10 @@ public class ExerciseFragment extends Fragment implements Step {
 
     View view = inflater.inflate(R.layout.fragment_exercise, container, false);
 
-    step = getArguments().getInt(WarmUpAdapter.CURRENT_STEP_POSITION_KEY);
-
+    int step = getArguments().getInt(WarmUpAdapter.CURRENT_STEP_POSITION_KEY);
+    App app = (App) getContext().getApplicationContext();
+    ExerciseModel exerciseModel = app.getExerciseModel();
+    exercise = exerciseModel.getExercises().get(step);
     return view;
   }
 
@@ -48,9 +51,14 @@ public class ExerciseFragment extends Fragment implements Step {
   @Override
   public void onSelected() {
     //update UI when selected
-    getActivity().setTitle("Warm Up " + step);
-    ImageView imageView = getView().findViewById(R.id.imageView);
-    Glide.with(getActivity()).load(R.mipmap.step00warmup00).into(imageView);
+    getActivity().setTitle(exercise.name);
+    TextView descriptionTextView = getView().findViewById(R.id.exercise_description);
+    descriptionTextView.setText(exercise.description);
+    ImageView imageView = getView().findViewById(R.id.exercise_image_view);
+    String fileName = exercise.imageName.substring(0, exercise.imageName.length() - 4); // without .gif
+    int resID = getResources().getIdentifier(
+        fileName, "mipmap", getContext().getPackageName());
+    Glide.with(getActivity()).load(resID).into(imageView);
   }
 
   @Override

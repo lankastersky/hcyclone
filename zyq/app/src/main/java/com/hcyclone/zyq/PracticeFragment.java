@@ -1,5 +1,6 @@
 package com.hcyclone.zyq;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,11 +13,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PracticeFragment extends Fragment {
 
   private static final String TAG = PracticeFragment.class.getSimpleName();
+
+  private Exercise.LevelType levelType;
+
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    try {
+      MainActivity mainActivity = (MainActivity) context;
+      levelType = mainActivity.getCurrentLevel();
+    } catch (ClassCastException e) {
+      throw new ClassCastException(context.toString() + " is not MainActivity");
+    }
+  }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,6 +65,12 @@ public class PracticeFragment extends Fragment {
   }
 
   @Override
+  public void onResume() {
+    super.onResume();
+    refreshUi();
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.fragment_practice_menu, menu);
     super.onCreateOptionsMenu(menu,inflater);
@@ -68,6 +89,19 @@ public class PracticeFragment extends Fragment {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  public void updateLevelType(Exercise.LevelType levelType) {
+    if (this.levelType == levelType) {
+      return;
+    }
+    this.levelType = levelType;
+    refreshUi();
+  }
+
+  private void refreshUi() {
+    TextView practiceLevelTextView = getView().findViewById(R.id.practice_level);
+    practiceLevelTextView.setText("Level " + levelType);
   }
 
   private void showDescription() {

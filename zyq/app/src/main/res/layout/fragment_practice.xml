@@ -9,19 +9,24 @@
     tools:context="com.hcyclone.zyq.PracticeFragment">
 
     <TextView
+        android:id="@+id/practice_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@string/fontFamilyMedium"
         android:padding="16dp"
-        android:text="level 1"
+        android:text=""
         android:textSize="16sp"/>
+
     <Button
         android:id="@+id/warmup_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="warmup"/>
+        android:layout_height="wrap_content"
+        android:text="warmup"/>
+
     <Button
         android:id="@+id/practice_button"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="@string/fragment_practice_title"/>
+        android:layout_height="wrap_content"
+        android:text="@string/fragment_practice_title"/>
 
 </LinearLayout>

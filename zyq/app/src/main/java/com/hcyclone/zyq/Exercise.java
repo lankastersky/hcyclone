@@ -1,6 +1,6 @@
 package com.hcyclone.zyq;
 
-import android.support.annotation.IntegerRes;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Exercise plain object.
@@ -11,39 +11,67 @@ final class Exercise {
   final ExerciseType type;
   final LevelType level;
   final String description;
-  final @IntegerRes int imageViewId;
-
-  Exercise(String name) {
-
-    this.name = name;
-    this.type = ExerciseType.WARMUP;
-    this.level = LevelType.LEVEL1;
-    this.description = "test description";
-    this.imageViewId = R.mipmap.step00warmup00;
-  }
+  final String detailedDescription;
+  final String imageName;
 
   Exercise(
       String name,
       ExerciseType type,
       LevelType level,
       String description,
-      @IntegerRes int imageViewId) {
+      String detailedDescription,
+      //@IntegerRes int imageViewId
+      String imageName
+  ) {
 
     this.name = name;
+//    this.type = ExerciseType.values()[type];
+//    this.level = LevelType.values()[level];
     this.type = type;
     this.level = level;
     this.description = description;
-    this.imageViewId = imageViewId;
+    this.detailedDescription = detailedDescription;
+    //this.imageViewId = imageViewId;
+    this.imageName = imageName;
   }
 
   enum ExerciseType {
-    WARMUP,
-    MEDITATION,
+    @SerializedName("0")
+    UNKNOWN(0),
+    @SerializedName("1")
+    WARMUP(1),
+    @SerializedName("2")
+    MEDITATION(2);
+
+    private final int value;
+
+    public int getValue() {
+      return value;
+    }
+
+    private ExerciseType(int value) {
+      this.value = value;
+    }
   }
 
   enum LevelType {
-    LEVEL1,
-    LEVEL2,
-    LEVEL3,
+    @SerializedName("0")
+    UNKNOWN(0),
+    @SerializedName("1")
+    LEVEL1(1),
+    @SerializedName("2")
+    LEVEL2(2),
+    @SerializedName("3")
+    LEVEL3(3);
+
+    private final int value;
+
+    public int getValue() {
+      return value;
+    }
+
+    LevelType(int value) {
+      this.value = value;
+    }
   }
 }

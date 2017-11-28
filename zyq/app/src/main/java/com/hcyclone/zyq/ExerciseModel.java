@@ -33,6 +33,10 @@ final class ExerciseModel {
     }
   }
 
+  List<Exercise> getExercises() {
+    return exercises;
+  }
+
   private void readFromFile(Context context) throws IOException {
     AssetManager am = context.getAssets();
     InputStream is = am.open(EXERCISES_ASSETS_FILENAME);
