@@ -35,6 +35,10 @@ final class Exercise {
     this.imageName = imageName;
   }
 
+  String getId() {
+    return String.format("%s_%s_%s", name, level, type);
+  }
+
   enum ExerciseType {
     @SerializedName("0")
     UNKNOWN(0),
@@ -49,7 +53,7 @@ final class Exercise {
       return value;
     }
 
-    private ExerciseType(int value) {
+    ExerciseType(int value) {
       this.value = value;
     }
   }

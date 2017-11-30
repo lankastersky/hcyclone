@@ -33,6 +33,11 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <activity
+            android:name=".ExercisesActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
     </application>
 
 </manifest>

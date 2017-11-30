@@ -6,7 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import com.google.common.collect.Iterables;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Exercise}.
@@ -14,11 +17,13 @@ import java.util.List;
 public class ExerciseRecyclerViewAdapter
     extends RecyclerView.Adapter<ExerciseRecyclerViewAdapter.ViewHolder> {
 
-  private final List<Exercise> values;
+  private final Collection<Exercise> exercises;
   private final OnExerciseSelectListener listener;
 
-  ExerciseRecyclerViewAdapter(List<Exercise> items, OnExerciseSelectListener listener) {
-    values = items;
+  ExerciseRecyclerViewAdapter(
+      Map<String, Exercise> exercisesMap, OnExerciseSelectListener listener) {
+
+    this.exercises = exercisesMap.values();
     this.listener = listener;
   }
 
@@ -31,7 +36,7 @@ public class ExerciseRecyclerViewAdapter
 
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
-    holder.item = values.get(position);
+    holder.item = Iterables.get(exercises, position);
     holder.nameView.setText(holder.item.name);
     holder.typeView.setText(String.valueOf(holder.item.type));
 
@@ -47,7 +52,7 @@ public class ExerciseRecyclerViewAdapter
 
   @Override
   public int getItemCount() {
-    return values.size();
+    return exercises.size();
   }
 
   static class ViewHolder extends RecyclerView.ViewHolder {

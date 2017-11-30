@@ -28,16 +28,18 @@ public class ExerciseFragment extends Fragment implements Step {
 
     View view = inflater.inflate(R.layout.fragment_exercise, container, false);
 
-    int step = getArguments().getInt(WarmUpAdapter.CURRENT_STEP_POSITION_KEY);
+    String exerciseId = getArguments().getString(BundleConstants.EXERCISE_ID_KEY);
     App app = (App) getContext().getApplicationContext();
     ExerciseModel exerciseModel = app.getExerciseModel();
-    exercise = exerciseModel.getExercises().get(step);
+    exercise = exerciseModel.getExercise(exerciseId);
+
     return view;
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
+  public void onStart() {
+    super.onStart();
+    refreshUi(getView());
   }
 
   // Step
@@ -50,15 +52,7 @@ public class ExerciseFragment extends Fragment implements Step {
 
   @Override
   public void onSelected() {
-    //update UI when selected
-    getActivity().setTitle(exercise.name);
-    TextView descriptionTextView = getView().findViewById(R.id.exercise_description);
-    descriptionTextView.setText(exercise.description);
-    ImageView imageView = getView().findViewById(R.id.exercise_image_view);
-    String fileName = exercise.imageName.substring(0, exercise.imageName.length() - 4); // without .gif
-    int resID = getResources().getIdentifier(
-        fileName, "mipmap", getContext().getPackageName());
-    Glide.with(getActivity()).load(resID).into(imageView);
+    refreshUi(getView());
   }
 
   @Override
@@ -66,4 +60,14 @@ public class ExerciseFragment extends Fragment implements Step {
     //handle error inside of the fragment, e.g. show error on EditText
   }
 
+  private void refreshUi(View view) {
+    getActivity().setTitle(exercise.name);
+    TextView descriptionTextView = view.findViewById(R.id.exercise_description);
+    descriptionTextView.setText(exercise.description);
+    ImageView imageView = view.findViewById(R.id.exercise_image_view);
+    String fileName = exercise.imageName.substring(0, exercise.imageName.length() - 4); // without .gif
+    int resID = getResources().getIdentifier(
+        fileName, "mipmap", getContext().getPackageName());
+    //Glide.with(getActivity()).load(resID).into(imageView);
+  }
 }

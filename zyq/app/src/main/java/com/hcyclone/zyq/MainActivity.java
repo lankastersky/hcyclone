@@ -46,14 +46,6 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private void selectMenuItemPractice() {
-    NavigationView navigationView = findViewById(R.id.nav_view);
-    Menu menu = navigationView.getMenu();
-    MenuItem menuItem = menu.findItem(R.id.nav_level_1);
-    menuItem.setChecked(true);
-    onNavigationItemSelected(menuItem);
-  }
-
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
@@ -133,11 +125,19 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
+  private void selectMenuItemPractice() {
+    NavigationView navigationView = findViewById(R.id.nav_view);
+    Menu menu = navigationView.getMenu();
+    MenuItem menuItem = menu.findItem(R.id.nav_level_1);
+    menuItem.setChecked(true);
+    onNavigationItemSelected(menuItem);
+  }
+
   private void setPracticeFragment(Exercise.LevelType levelType) {
     Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
         PracticeFragment.class.getSimpleName());
     if (newFragment != null) {
-      ((PracticeFragment) newFragment).updateLevelType(currentLevel);
+      ((PracticeFragment) newFragment).updateLevelType(levelType);
     } else {
       replaceFragment(newFragment, PracticeFragment.class);
     }

@@ -14,7 +14,7 @@
         android:layout_weight="3"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="0dp"
-        android:src="@drawable/ic_menu_camera"/>
+        android:src="@mipmap/level1warmup0"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@string/fontFamilyMedium"
         android:padding="16dp"
-        android:text="@string/step00_warmup00"
+        android:text="some text"
         android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         android:textSize="12sp"/>

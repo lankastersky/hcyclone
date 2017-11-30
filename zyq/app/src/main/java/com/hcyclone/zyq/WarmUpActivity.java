@@ -16,17 +16,22 @@ public class WarmUpActivity extends AppCompatActivity implements StepperLayout.S
   public static final String TAG = PracticeDescriptionFragment.class.getSimpleName();
 
   private StepperLayout stepperLayout;
+  private Exercise.LevelType level;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_warmup);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    if (getIntent().getExtras() != null) {
+      level = (Exercise.LevelType) getIntent().getExtras().get(BundleConstants.LEVEL_KEY);
+    }
 
     stepperLayout = findViewById(R.id.stepperLayout);
     stepperLayout.setAdapter(
-        new WarmUpAdapter(getSupportFragmentManager(), this));
+        new WarmUpAdapter(level, getSupportFragmentManager(), this));
     stepperLayout.setListener(this);
+
   }
 
   // StepperLayout.StepperListener

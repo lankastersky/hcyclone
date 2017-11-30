@@ -2,24 +2,25 @@ package com.hcyclone.zyq;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public class ExercisesFragment extends Fragment
     implements OnExerciseSelectListener {
 
-  private static final String TAG = ExercisesFragment.class.getSimpleName();
+  static final String TAG = ExercisesFragment.class.getSimpleName();
 
   private RecyclerView recyclerView;
   private RecyclerView.Adapter adapter;
   private RecyclerView.LayoutManager layoutManager;
+  private Exercise.LevelType level;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,6 +29,10 @@ public class ExercisesFragment extends Fragment
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_exercises, container, false);
     getActivity().setTitle(getString(R.string.fragment_exericses_title));
+
+    if (getArguments() != null) {
+      level = (Exercise.LevelType) getArguments().get(BundleConstants.LEVEL_KEY);
+    }
 
     recyclerView = view.findViewById(R.id.recycler_view);
     recyclerView.setHasFixedSize(true);
@@ -38,9 +43,10 @@ public class ExercisesFragment extends Fragment
 
     App app = (App) getContext().getApplicationContext();
     ExerciseModel exerciseModel = app.getExerciseModel();
-//    Exercise exercise = exerciseModel.getExercises().get(0);
+    Map<String, Exercise> exercisesMap = level == null
+        ? exerciseModel.getExercises()
+        : exerciseModel.getExercises(level);
 //    List<Exercise> exercises = new ArrayList<>();
-
 //    for (int i = 0; i < 10; i++) {
 //      Exercise exercise =
 //          new Exercise(
@@ -49,13 +55,12 @@ public class ExercisesFragment extends Fragment
 //              Exercise.LevelType.values()[i % Exercise.LevelType.values().length],
 //              getString(R.string.step00_warmup00),
 //              "",
-//              //R.mipmap.level1warmup0
 //              "level1warmup0.gif"
 //          );
 //      exercises.add(exercise);
 //    }
 
-    adapter = new ExerciseRecyclerViewAdapter(exerciseModel.getExercises(), this);
+    adapter = new ExerciseRecyclerViewAdapter(exercisesMap, this);
     recyclerView.setAdapter(adapter);
 
     return view;
@@ -68,7 +73,24 @@ public class ExercisesFragment extends Fragment
   }
 
   @Override
-  public void onListFragmentInteraction(Exercise item) {
-    Toast.makeText(getActivity(), item.name, Toast.LENGTH_SHORT).show();
+  public void onListFragmentInteraction(Exercise exercise) {
+    ExerciseFragment exerciseFragment = new ExerciseFragment();
+    Bundle bundle = new Bundle();
+    bundle.putString(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
+    exerciseFragment.setArguments(bundle);
+
+    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+    if (fragmentManager.findFragmentByTag(ExerciseFragment.TAG) == null) {
+      fragmentTransaction
+          .replace(
+              ((ViewGroup)getView().getParent()).getId(),
+              exerciseFragment,
+              ExerciseFragment.TAG)
+          .addToBackStack(ExerciseFragment.TAG)
+          .commit();
+    } else {
+      Log.e(TAG, "Exercise fragment already exists");
+    }
   }
 }

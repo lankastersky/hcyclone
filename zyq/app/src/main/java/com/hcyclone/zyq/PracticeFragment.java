@@ -14,20 +14,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class PracticeFragment extends Fragment {
 
   private static final String TAG = PracticeFragment.class.getSimpleName();
-
-  private Exercise.LevelType levelType;
+  private Exercise.LevelType level;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
     try {
       MainActivity mainActivity = (MainActivity) context;
-      levelType = mainActivity.getCurrentLevel();
+      level = mainActivity.getCurrentLevel();
     } catch (ClassCastException e) {
       throw new ClassCastException(context.toString() + " is not MainActivity");
     }
@@ -48,6 +46,7 @@ public class PracticeFragment extends Fragment {
       @Override
       public void onClick(View v) {
         Intent intent = new Intent(getContext(), WarmUpActivity.class);
+        intent.putExtra(BundleConstants.LEVEL_KEY, level);
         startActivity(intent);
 
       }
@@ -57,7 +56,9 @@ public class PracticeFragment extends Fragment {
     practice.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Toast.makeText(getActivity(), "practice", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getContext(), ExercisesActivity.class);
+        intent.putExtra(BundleConstants.LEVEL_KEY, level);
+        startActivity(intent);
       }
     });
 
@@ -92,16 +93,16 @@ public class PracticeFragment extends Fragment {
   }
 
   public void updateLevelType(Exercise.LevelType levelType) {
-    if (this.levelType == levelType) {
+    if (this.level == levelType) {
       return;
     }
-    this.levelType = levelType;
+    this.level = levelType;
     refreshUi();
   }
 
   private void refreshUi() {
     TextView practiceLevelTextView = getView().findViewById(R.id.practice_level);
-    practiceLevelTextView.setText("Level " + levelType);
+    practiceLevelTextView.setText("Level " + level);
   }
 
   private void showDescription() {
