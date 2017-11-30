@@ -28,10 +28,12 @@ public class ExerciseFragment extends Fragment implements Step {
 
     View view = inflater.inflate(R.layout.fragment_exercise, container, false);
 
-    String exerciseId = getArguments().getString(BundleConstants.EXERCISE_ID_KEY);
-    App app = (App) getContext().getApplicationContext();
-    ExerciseModel exerciseModel = app.getExerciseModel();
-    exercise = exerciseModel.getExercise(exerciseId);
+    if (getArguments() != null) {
+      String exerciseId = getArguments().getString(BundleConstants.EXERCISE_ID_KEY);
+      App app = (App) getContext().getApplicationContext();
+      ExerciseModel exerciseModel = app.getExerciseModel();
+      exercise = exerciseModel.getExercise(exerciseId);
+    }
 
     return view;
   }
@@ -68,6 +70,6 @@ public class ExerciseFragment extends Fragment implements Step {
     String fileName = exercise.imageName.substring(0, exercise.imageName.length() - 4); // without .gif
     int resID = getResources().getIdentifier(
         fileName, "mipmap", getContext().getPackageName());
-    //Glide.with(getActivity()).load(resID).into(imageView);
+    Glide.with(getActivity()).load(resID).into(imageView);
   }
 }

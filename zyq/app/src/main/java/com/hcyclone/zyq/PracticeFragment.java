@@ -3,21 +3,25 @@ package com.hcyclone.zyq;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
-public class PracticeFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Shows practice start page.
+ */
+public class PracticeFragment extends ListFragment implements OnItemSelectListener<ExerciseGroup> {
 
   private static final String TAG = PracticeFragment.class.getSimpleName();
+
   private Exercise.LevelType level;
 
   @Override
@@ -37,30 +41,12 @@ public class PracticeFragment extends Fragment {
 
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_practice, container, false);
-    getActivity().setTitle(getString(R.string.fragment_practice_title));
 
     setHasOptionsMenu(true);
 
-    Button warmup = view.findViewById(R.id.warmup_button);
-    warmup.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(getContext(), WarmUpActivity.class);
-        intent.putExtra(BundleConstants.LEVEL_KEY, level);
-        startActivity(intent);
-
-      }
-    });
-
-    Button practice = view.findViewById(R.id.practice_button);
-    practice.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Intent intent = new Intent(getContext(), ExercisesActivity.class);
-        intent.putExtra(BundleConstants.LEVEL_KEY, level);
-        startActivity(intent);
-      }
-    });
+    recyclerView = view.findViewById(R.id.practice_recycler_view);
+    RecyclerView.Adapter adapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
+    createListLayout(recyclerView, adapter);
 
     return view;
   }
@@ -79,11 +65,7 @@ public class PracticeFragment extends Fragment {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
-
     if (id == R.id.action_description) {
       showDescription();
       return true;
@@ -92,7 +74,41 @@ public class PracticeFragment extends Fragment {
     return super.onOptionsItemSelected(item);
   }
 
-  public void updateLevelType(Exercise.LevelType levelType) {
+  @Override
+  protected Collection<ExerciseGroup> buildListItems() {
+    List<ExerciseGroup> items = new ArrayList<>();
+    items.add(
+        new ExerciseGroup(
+            Exercise.ExerciseType.WARMUP.toString(),
+            Exercise.ExerciseType.WARMUP));
+    items.add(
+        new ExerciseGroup(
+            Exercise.ExerciseType.MEDITATION.toString(),
+            Exercise.ExerciseType.MEDITATION));
+    items.add(
+        new ExerciseGroup(
+            Exercise.ExerciseType.ADDITIONAL_MEDITATION.toString(),
+            Exercise.ExerciseType.ADDITIONAL_MEDITATION));
+    items.add(
+        new ExerciseGroup(
+            Exercise.ExerciseType.FINAL.toString(),
+            Exercise.ExerciseType.FINAL));
+    items.add(
+        new ExerciseGroup(
+            Exercise.ExerciseType.TREATMENT.toString(),
+            Exercise.ExerciseType.TREATMENT));
+    return items;
+  }
+
+  @Override
+  public void onItemSelected(ExerciseGroup exerciseGroup) {
+        Intent intent = new Intent(getContext(), ExercisesActivity.class);
+        intent.putExtra(BundleConstants.EXERCISE_LEVEL_KEY, level);
+        intent.putExtra(BundleConstants.EXERCISE_TYPE_KEY, exerciseGroup.type);
+        startActivity(intent);
+  }
+
+  void updateLevelType(Exercise.LevelType levelType) {
     if (this.level == levelType) {
       return;
     }
@@ -101,25 +117,13 @@ public class PracticeFragment extends Fragment {
   }
 
   private void refreshUi() {
-    TextView practiceLevelTextView = getView().findViewById(R.id.practice_level);
-    practiceLevelTextView.setText("Level " + level);
+    getActivity()
+        .setTitle(String.format(getString(R.string.fragment_practice_title), level.getValue()));
   }
 
   private void showDescription() {
-    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    try {
-      if (fragmentManager.findFragmentByTag(PracticeDescriptionFragment.TAG) == null) {
-        fragmentTransaction
-            .replace(
-                ((ViewGroup)getView().getParent()).getId(),
-                PracticeDescriptionFragment.class.newInstance(),
-                PracticeDescriptionFragment.TAG)
-            .addToBackStack(PracticeDescriptionFragment.TAG)
-            .commit();
-      }
-    } catch (java.lang.InstantiationException | IllegalAccessException e) {
-      Log.e(TAG, "Failed to show practice description", e);
-    }
+    Intent intent = new Intent(getContext(), DescriptionActivity.class);
+    //intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exerciseModel)
+    startActivity(intent);
   }
 }

@@ -17,11 +17,9 @@ public class WarmUpAdapter extends AbstractFragmentStepAdapter {
 
   private final Collection<Exercise> exercises;
 
-  WarmUpAdapter(Exercise.LevelType level, FragmentManager fm, Context context) {
+  WarmUpAdapter(Collection<Exercise> exercises, FragmentManager fm, Context context) {
     super(fm, context);
-    App app = (App) context.getApplicationContext();
-    ExerciseModel exerciseModel = app.getExerciseModel();
-    exercises = exerciseModel.getExercises(level).values();
+    this.exercises = exercises;
   }
 
   @Override

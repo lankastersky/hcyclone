@@ -1,51 +1,53 @@
 package com.hcyclone.zyq;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Collection;
 import java.util.Map;
 
-public class ExercisesFragment extends Fragment
-    implements OnExerciseSelectListener {
+/**
+ * Shows exercises.
+ */
+public class ExercisesFragment extends ListFragment implements OnItemSelectListener<Exercise> {
 
   static final String TAG = ExercisesFragment.class.getSimpleName();
 
-  private RecyclerView recyclerView;
-  private RecyclerView.Adapter adapter;
-  private RecyclerView.LayoutManager layoutManager;
   private Exercise.LevelType level;
+  private Exercise.ExerciseType type;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
+    super.onCreateView(inflater, container, savedInstanceState);
+
     // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_exercises, container, false);
-    getActivity().setTitle(getString(R.string.fragment_exericses_title));
 
     if (getArguments() != null) {
-      level = (Exercise.LevelType) getArguments().get(BundleConstants.LEVEL_KEY);
+      level = (Exercise.LevelType) getArguments().get(BundleConstants.EXERCISE_LEVEL_KEY);
+      type = (Exercise.ExerciseType) getArguments().get(BundleConstants.EXERCISE_TYPE_KEY);
     }
 
-    recyclerView = view.findViewById(R.id.recycler_view);
-    recyclerView.setHasFixedSize(true);
-    recyclerView.setNestedScrollingEnabled(false);
+    getActivity().setTitle(type.toString());
 
-    layoutManager = new LinearLayoutManager(getContext());
-    recyclerView.setLayoutManager(layoutManager);
+    recyclerView = view.findViewById(R.id.exercises_recycler_view);
+    RecyclerView.Adapter adapter = new ExerciseRecyclerViewAdapter(buildListItems(), this);
+    createListLayout(recyclerView, adapter);
 
-    App app = (App) getContext().getApplicationContext();
-    ExerciseModel exerciseModel = app.getExerciseModel();
+    return view;
+  }
+
+  @Override
+  protected Collection buildListItems() {
     Map<String, Exercise> exercisesMap = level == null
         ? exerciseModel.getExercises()
-        : exerciseModel.getExercises(level);
+        : exerciseModel.getExercises(level, type);
 //    List<Exercise> exercises = new ArrayList<>();
 //    for (int i = 0; i < 10; i++) {
 //      Exercise exercise =
@@ -59,38 +61,35 @@ public class ExercisesFragment extends Fragment
 //          );
 //      exercises.add(exercise);
 //    }
-
-    adapter = new ExerciseRecyclerViewAdapter(exercisesMap, this);
-    recyclerView.setAdapter(adapter);
-
-    return view;
+    return exercisesMap.values();
   }
 
   @Override
-  public void onDetach() {
-    super.onDetach();
-    adapter = null;
-  }
-
-  @Override
-  public void onListFragmentInteraction(Exercise exercise) {
-    ExerciseFragment exerciseFragment = new ExerciseFragment();
-    Bundle bundle = new Bundle();
-    bundle.putString(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
-    exerciseFragment.setArguments(bundle);
-
-    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (fragmentManager.findFragmentByTag(ExerciseFragment.TAG) == null) {
-      fragmentTransaction
-          .replace(
-              ((ViewGroup)getView().getParent()).getId(),
-              exerciseFragment,
-              ExerciseFragment.TAG)
-          .addToBackStack(ExerciseFragment.TAG)
-          .commit();
-    } else {
-      Log.e(TAG, "Exercise fragment already exists");
+  public void onItemSelected(Exercise exercise) {
+    switch (exercise.type) {
+      case WARMUP:
+      case FINAL:
+        showExerciseFlow(exercise);
+        break;
+      case TREATMENT:
+      case ADDITIONAL_MEDITATION:
+      case MEDITATION:
+        showExercise(exercise);
+        break;
+      default:
+        throw new IllegalArgumentException("No such exercise type: " + exercise.type);
     }
+  }
+
+  private void showExercise(Exercise exercise) {
+    Intent intent = new Intent(getContext(), ExerciseActivity.class);
+    intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
+    startActivity(intent);
+  }
+
+  private void showExerciseFlow(Exercise exercise) {
+    Intent intent = new Intent(getContext(), WarmUpActivity.class);
+    intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
+    startActivity(intent);
   }
 }

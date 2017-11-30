@@ -32,7 +32,7 @@
     <string name="feedback_send_email">Send email</string>
 
     <!-- Fragment Practice -->
-    <string name="fragment_practice_title">Practice</string>
+    <string name="fragment_practice_title">Level %d</string>
 
     <!-- Fragment Practice Description -->
     <string name="fragment_practice_description_title">Description</string>

@@ -5,8 +5,9 @@ package com.hcyclone.zyq;
  */
 final class BundleConstants {
 
-  static final String LEVEL_KEY = "level";
   static final String EXERCISE_ID_KEY = "exerciseId";
+  static final String EXERCISE_LEVEL_KEY = "exerciseLevel";
+  static final String EXERCISE_TYPE_KEY = "exerciseType";
 
   private BundleConstants() {}
 }

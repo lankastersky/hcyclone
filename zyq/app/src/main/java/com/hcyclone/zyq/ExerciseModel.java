@@ -39,10 +39,14 @@ final class ExerciseModel {
     return exercisesMap;
   }
 
-  Map<String, Exercise> getExercises(Exercise.LevelType level) {
+  Map<String, Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
     Map<String, Exercise> filteredExercisesMap = new HashMap<>();
     for (Exercise exercise : exercisesMap.values()) {
-      if (exercise.level == level) {
+      if (type == null || type == Exercise.ExerciseType.UNKNOWN) {
+        if (exercise.level == level) {
+          filteredExercisesMap.put(exercise.getId(), exercise);
+        }
+      } else if (exercise.level == level && exercise.type == type) {
         filteredExercisesMap.put(exercise.getId(), exercise);
       }
     }

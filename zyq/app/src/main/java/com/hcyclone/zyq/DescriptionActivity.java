@@ -5,9 +5,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 /**
- * Shows exercises.
+ * Shows description.
  */
-public class ExercisesActivity extends ScrolledActivity {
+public class DescriptionActivity extends ScrolledActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -15,14 +15,14 @@ public class ExercisesActivity extends ScrolledActivity {
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (fragmentManager.findFragmentByTag(ExercisesFragment.TAG) == null) {
-      ExercisesFragment exercisesFragment = new ExercisesFragment();
-      exercisesFragment.setArguments(getIntent().getExtras());
+    if (fragmentManager.findFragmentByTag(DescriptionFragment.TAG) == null) {
+      DescriptionFragment descriptionFragment = new DescriptionFragment();
+      descriptionFragment.setArguments(getIntent().getExtras());
       fragmentTransaction
-          .add(R.id.content_container, exercisesFragment, ExercisesFragment.TAG)
+          .add(R.id.content_container, descriptionFragment, DescriptionFragment.TAG)
           .commit();
     } else {
-      Log.d(ExercisesActivity.class.getSimpleName(), "Exercises Fragment already created");
+      Log.d(DescriptionActivity.class.getSimpleName(), "Description Fragment already created");
     }
   }
 }

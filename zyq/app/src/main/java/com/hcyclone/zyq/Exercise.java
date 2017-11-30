@@ -42,10 +42,21 @@ final class Exercise {
   enum ExerciseType {
     @SerializedName("0")
     UNKNOWN(0),
+
     @SerializedName("1")
     WARMUP(1),
+
     @SerializedName("2")
-    MEDITATION(2);
+    MEDITATION(2),
+
+    @SerializedName("3")
+    ADDITIONAL_MEDITATION(3),
+
+    @SerializedName("4")
+    FINAL(4),
+
+    @SerializedName("5")
+    TREATMENT(5);
 
     private final int value;
 
@@ -61,10 +72,13 @@ final class Exercise {
   enum LevelType {
     @SerializedName("0")
     UNKNOWN(0),
+
     @SerializedName("1")
     LEVEL1(1),
+
     @SerializedName("2")
     LEVEL2(2),
+
     @SerializedName("3")
     LEVEL3(3);
 
