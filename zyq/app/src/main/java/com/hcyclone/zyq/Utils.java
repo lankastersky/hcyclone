@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 
-final class Utils {
+public final class Utils {
 
   private static final String TAG = Utils.class.getSimpleName();
 
@@ -15,7 +15,7 @@ final class Utils {
     return BuildConfig.DEBUG;
   }
 
-  static void sendFeedback(Context context) {
+  public static void sendFeedback(Context context) {
     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
         "mailto","lankastersky@gmail.com", null));
     emailIntent.putExtra(Intent.EXTRA_SUBJECT, getApplicationName(context) + " feedback "

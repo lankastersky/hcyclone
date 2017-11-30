@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.hcyclone.zyq.Log;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.Utils;
+import com.hcyclone.zyq.model.Exercise;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener {

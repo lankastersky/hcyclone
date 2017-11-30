@@ -1,10 +1,12 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 
 import com.google.common.collect.Iterables;
+import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.model.Exercise;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 

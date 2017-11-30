@@ -1,20 +1,20 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.model;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Exercise plain object.
  */
-final class Exercise {
+public final class Exercise {
 
-  final String name;
-  final ExerciseType type;
-  final LevelType level;
-  final String description;
-  final String detailedDescription;
-  final String imageName;
+  public final String name;
+  public final ExerciseType type;
+  public final LevelType level;
+  public final String description;
+  public final String detailedDescription;
+  public final String imageName;
 
-  Exercise(
+  public Exercise(
       String name,
       ExerciseType type,
       LevelType level,
@@ -35,11 +35,11 @@ final class Exercise {
     this.imageName = imageName;
   }
 
-  String getId() {
+  public String getId() {
     return String.format("%s_%s_%s", name, level, type);
   }
 
-  enum ExerciseType {
+  public enum ExerciseType {
     @SerializedName("0")
     UNKNOWN(0),
 
@@ -69,7 +69,7 @@ final class Exercise {
     }
   }
 
-  enum LevelType {
+  public enum LevelType {
     @SerializedName("0")
     UNKNOWN(0),
 

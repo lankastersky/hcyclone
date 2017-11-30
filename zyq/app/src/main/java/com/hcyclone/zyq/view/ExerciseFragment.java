@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,6 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hcyclone.zyq.App;
+import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.ExerciseModel;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 

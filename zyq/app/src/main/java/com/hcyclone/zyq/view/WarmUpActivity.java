@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +8,11 @@ import android.widget.Toast;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.hcyclone.zyq.App;
+import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.ExerciseModel;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 

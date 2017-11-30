@@ -3,6 +3,8 @@ package com.hcyclone.zyq;
 import android.app.Application;
 import android.os.StrictMode;
 
+import com.hcyclone.zyq.model.ExerciseModel;
+
 public class App extends Application {
 
   private static final String TAG = App.class.getSimpleName();
@@ -21,7 +23,7 @@ public class App extends Application {
     exerciseModel = new ExerciseModel(this);
   }
 
-  ExerciseModel getExerciseModel() {
+  public ExerciseModel getExerciseModel() {
     return exerciseModel;
   }
 

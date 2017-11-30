@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.ExerciseGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;

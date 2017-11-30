@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.model;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.hcyclone.zyq.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Model for exercises.
  */
-final class ExerciseModel {
+public final class ExerciseModel {
 
   private static final String TAG = ExerciseModel.class.getSimpleName();
   private static final Gson GSON = new Gson();
@@ -27,7 +28,7 @@ final class ExerciseModel {
 
   private final Map<String, Exercise> exercisesMap = new HashMap<>();
 
-  ExerciseModel(Context context) {
+  public ExerciseModel(Context context) {
     try {
       readFromFile(context);
     } catch (IOException e) {
@@ -35,11 +36,11 @@ final class ExerciseModel {
     }
   }
 
-  Map<String, Exercise> getExercises() {
+  public Map<String, Exercise> getExercises() {
     return exercisesMap;
   }
 
-  Map<String, Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
+  public Map<String, Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
     Map<String, Exercise> filteredExercisesMap = new HashMap<>();
     for (Exercise exercise : exercisesMap.values()) {
       if (type == null || type == Exercise.ExerciseType.UNKNOWN) {
@@ -53,7 +54,7 @@ final class ExerciseModel {
     return filteredExercisesMap;
   }
 
-  Exercise getExercise(String id) {
+  public Exercise getExercise(String id) {
     return exercisesMap.get(id);
   }
 

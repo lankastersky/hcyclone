@@ -1,8 +1,11 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+
+import com.hcyclone.zyq.Log;
+import com.hcyclone.zyq.R;
 
 /**
  * Shows exercise.

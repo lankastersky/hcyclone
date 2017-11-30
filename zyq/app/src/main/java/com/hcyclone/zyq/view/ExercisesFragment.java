@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.model.Exercise;
 
 import java.util.Collection;
 import java.util.Map;

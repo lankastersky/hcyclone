@@ -1,4 +1,4 @@
-package com.hcyclone.zyq;
+package com.hcyclone.zyq.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,25 +6,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.common.collect.Iterables;
+import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.model.Exercise;
 
 import java.util.Collection;
 
 /**
- * {@link RecyclerView.Adapter} that can display practice items.
+ * {@link RecyclerView.Adapter} that can display a {@link Exercise}.
  */
-class PracticeRecyclerViewAdapter
-    extends ListAdapter<ExerciseGroup, PracticeRecyclerViewAdapter.ViewHolder> {
+public class ExerciseRecyclerViewAdapter
+    extends ListAdapter<Exercise, ExerciseRecyclerViewAdapter.ViewHolder> {
 
-  PracticeRecyclerViewAdapter(
-      Collection<ExerciseGroup> items, OnItemSelectListener<ExerciseGroup> listener) {
+  ExerciseRecyclerViewAdapter(Collection<Exercise> items, OnItemSelectListener<Exercise> listener) {
     super(items, listener);
   }
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.cardview_exercise_group, parent, false);
+        .inflate(R.layout.cardview_exercise_summary, parent, false);
     return new ViewHolder(view);
   }
 
@@ -35,15 +35,15 @@ class PracticeRecyclerViewAdapter
     holder.typeView.setText(String.valueOf(holder.item.type));
   }
 
-  static class ViewHolder extends ListAdapter.ViewHolder<ExerciseGroup> {
+  static class ViewHolder extends ListAdapter.ViewHolder<Exercise> {
 
     final TextView nameView;
     final TextView typeView;
 
     ViewHolder(View view) {
       super(view);
-      nameView = view.findViewById(R.id.exercise_group_name);
-      typeView = view.findViewById(R.id.exercise_group_type);
+      nameView = view.findViewById(R.id.exercise_name);
+      typeView = view.findViewById(R.id.exercise_type);
     }
   }
 }
