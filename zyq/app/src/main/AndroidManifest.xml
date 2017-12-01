@@ -29,7 +29,7 @@
         </activity>
 
         <activity
-            android:name=".view.WarmUpActivity"
+            android:name=".view.ExerciseFlowActivity"
             android:parentActivityName=".view.MainActivity">
         </activity>
 

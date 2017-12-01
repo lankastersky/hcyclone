@@ -38,7 +38,8 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
       type = (Exercise.ExerciseType) getArguments().get(BundleConstants.EXERCISE_TYPE_KEY);
     }
 
-    getActivity().setTitle(type.toString());
+    getActivity()
+        .setTitle(type != null ? type.toString() : getString(R.string.fragment_exericses_title));
 
     recyclerView = view.findViewById(R.id.exercises_recycler_view);
     RecyclerView.Adapter adapter = new ExerciseRecyclerViewAdapter(buildListItems(), this);
@@ -92,7 +93,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
   }
 
   private void showExerciseFlow(Exercise exercise) {
-    Intent intent = new Intent(getContext(), WarmUpActivity.class);
+    Intent intent = new Intent(getContext(), ExerciseFlowActivity.class);
     intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
     startActivity(intent);
   }

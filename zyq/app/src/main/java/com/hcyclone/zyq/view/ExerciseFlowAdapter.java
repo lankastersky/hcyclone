@@ -13,13 +13,13 @@ import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 import java.util.Collection;
 
 /**
- * Warm Up exercises adapter.
+ * Show exercises flow.
  */
-public class WarmUpAdapter extends AbstractFragmentStepAdapter {
+public class ExerciseFlowAdapter extends AbstractFragmentStepAdapter {
 
   private final Collection<Exercise> exercises;
 
-  WarmUpAdapter(Collection<Exercise> exercises, FragmentManager fm, Context context) {
+  ExerciseFlowAdapter(Collection<Exercise> exercises, FragmentManager fm, Context context) {
     super(fm, context);
     this.exercises = exercises;
   }

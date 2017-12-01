@@ -155,11 +155,11 @@ public class MainActivity extends AppCompatActivity
       try {
         newFragment = (Fragment) clazz.newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
-        Log.d(TAG, e.toString());
+        Log.e(TAG, "Failed to create fragment", e);
       }
     }
-      fragmentTransaction
-          .replace(R.id.content_container, newFragment, clazz.getSimpleName())
-          .commit();
+    fragmentTransaction
+        .replace(R.id.content_container, newFragment, clazz.getSimpleName())
+        .commit();
   }
 }

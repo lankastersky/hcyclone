@@ -19,9 +19,10 @@ import com.stepstone.stepper.VerificationError;
 import java.util.Collection;
 
 /**
- * Warm Up workflow.
+ * Shows exercise workflow.
  */
-public class WarmUpActivity extends AppCompatActivity implements StepperLayout.StepperListener {
+public class ExerciseFlowActivity
+    extends AppCompatActivity implements StepperLayout.StepperListener {
 
   public static final String TAG = DescriptionFragment.class.getSimpleName();
 
@@ -31,7 +32,7 @@ public class WarmUpActivity extends AppCompatActivity implements StepperLayout.S
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_warmup);
+    setContentView(R.layout.activity_exercise_flow);
 
     if (getIntent().getExtras() != null) {
       String exerciseId = getIntent().getExtras().getString(BundleConstants.EXERCISE_ID_KEY);
@@ -42,7 +43,7 @@ public class WarmUpActivity extends AppCompatActivity implements StepperLayout.S
           exerciseModel.getExercises(exercise.level, exercise.type).values();
       stepperLayout = findViewById(R.id.stepperLayout);
       stepperLayout
-          .setAdapter(new WarmUpAdapter(exercises, getSupportFragmentManager(), this));
+          .setAdapter(new ExerciseFlowAdapter(exercises, getSupportFragmentManager(), this));
       stepperLayout.setListener(this);
 
       int currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
