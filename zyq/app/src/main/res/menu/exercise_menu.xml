@@ -4,6 +4,6 @@
     <item android:id="@+id/action_description"
           android:orderInCategory="100"
           android:title="Description"
-          android:icon="@mipmap/ic_help_black_24dp"
+          android:icon="@mipmap/ic_help_outline_white_24dp"
           app:showAsAction="ifRoom"/>
 </menu>

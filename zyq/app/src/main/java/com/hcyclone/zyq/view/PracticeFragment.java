@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseGroup;
 
@@ -32,12 +33,8 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    try {
-      MainActivity mainActivity = (MainActivity) context;
-      level = mainActivity.getCurrentLevel();
-    } catch (ClassCastException e) {
-      throw new ClassCastException(context.toString() + " is not MainActivity");
-    }
+    MainActivity mainActivity = (MainActivity) context;
+    level = mainActivity.getCurrentLevel();
   }
 
   @Override
@@ -64,7 +61,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-    inflater.inflate(R.menu.fragment_practice_menu, menu);
+    inflater.inflate(R.menu.exercise_menu, menu);
     super.onCreateOptionsMenu(menu,inflater);
   }
 
@@ -72,7 +69,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   public boolean onOptionsItemSelected(MenuItem item) {
     int id = item.getItemId();
     if (id == R.id.action_description) {
-      showDescription();
+      Utils.showDescription(getContext());
       return true;
     }
 
@@ -124,11 +121,5 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   private void refreshUi() {
     getActivity()
         .setTitle(String.format(getString(R.string.fragment_practice_title), level.getValue()));
-  }
-
-  private void showDescription() {
-    Intent intent = new Intent(getContext(), DescriptionActivity.class);
-    //intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exerciseModel)
-    startActivity(intent);
   }
 }

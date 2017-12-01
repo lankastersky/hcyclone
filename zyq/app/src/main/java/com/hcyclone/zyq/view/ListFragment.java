@@ -19,7 +19,6 @@ import java.util.Collection;
 public abstract class ListFragment extends Fragment {
 
   protected RecyclerView recyclerView;
-  //protected RecyclerView.Adapter adapter;
   protected RecyclerView.LayoutManager layoutManager;
   protected ExerciseModel exerciseModel;
 
@@ -41,12 +40,6 @@ public abstract class ListFragment extends Fragment {
 
     recyclerView.setAdapter(adapter);
   }
-
-//  @Override
-//  public void onDestroyView() {
-//    super.onDestroyView();
-//    adapter = null;
-//  }
 
   protected abstract Collection buildListItems();
 }

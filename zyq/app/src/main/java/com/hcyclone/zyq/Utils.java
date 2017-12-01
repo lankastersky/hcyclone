@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.provider.AlarmClock;
+
+import com.hcyclone.zyq.view.DescriptionActivity;
 
 public final class Utils {
 
@@ -14,6 +17,30 @@ public final class Utils {
   static boolean isDebug() {
     return BuildConfig.DEBUG;
   }
+
+  public static void showDescription(Context context) {
+    Intent intent = new Intent(context, DescriptionActivity.class);
+    //intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exerciseModel)
+    context.startActivity(intent);
+  }
+
+  public static void startTimer(String message, Context context) {
+    Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
+        .putExtra(AlarmClock.EXTRA_MESSAGE, message)
+        //.putExtra(AlarmClock.EXTRA_LENGTH, seconds)
+        .putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+    if (intent.resolveActivity(context.getPackageManager()) != null) {
+      context.startActivity(intent);
+    }
+  }
+
+//  public static void playMedia(Uri file, Context context) {
+//    Intent intent = new Intent(Intent.ACTION_VIEW);
+//    intent.setData(file);
+//    if (intent.resolveActivity(context.getPackageManager()) != null) {
+//      context.startActivity(intent);
+//    }
+//  }
 
   public static void sendFeedback(Context context) {
     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
