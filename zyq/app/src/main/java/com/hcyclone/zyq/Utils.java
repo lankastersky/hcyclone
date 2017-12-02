@@ -20,9 +20,10 @@ public final class Utils {
     return BuildConfig.DEBUG;
   }
 
-  public static void showDescription(Context context) {
+  public static void showDescription(String description, Context context) {
+
     Intent intent = new Intent(context, DescriptionActivity.class);
-    //intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exerciseModel)
+    intent.putExtra(BundleConstants.DESCRIPTION_KEY, description);
     context.startActivity(intent);
   }
 

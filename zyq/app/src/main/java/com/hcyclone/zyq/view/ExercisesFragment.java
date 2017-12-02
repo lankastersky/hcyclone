@@ -28,9 +28,6 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    super.onCreateView(inflater, container, savedInstanceState);
-
-    // Inflate the layout for this fragment
     View view = inflater.inflate(R.layout.fragment_exercises, container, false);
 
     if (getArguments() != null) {
@@ -82,7 +79,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
         showExercise(exercise);
         break;
       default:
-        throw new IllegalArgumentException("No such exercise type: " + exercise.type);
+        throw new AssertionError("No such exercise type: " + exercise.type);
     }
   }
 

@@ -5,33 +5,20 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Exercise plain object.
  */
-public final class Exercise {
+public final class Exercise extends ExerciseGroup {
 
-  public final String name;
-  public final ExerciseType type;
-  public final LevelType level;
   public final String description;
-  public final String detailedDescription;
   public final String imageName;
 
   public Exercise(
       String name,
-      ExerciseType type,
       LevelType level,
+      ExerciseType type,
       String description,
-      String detailedDescription,
-      //@IntegerRes int imageViewId
       String imageName
   ) {
-
-    this.name = name;
-//    this.type = ExerciseType.values()[type];
-//    this.level = LevelType.values()[level];
-    this.type = type;
-    this.level = level;
+    super(name, level, type);
     this.description = description;
-    this.detailedDescription = detailedDescription;
-    //this.imageViewId = imageViewId;
     this.imageName = imageName;
   }
 

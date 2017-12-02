@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +41,7 @@ public class ExerciseFragment extends Fragment implements Step {
 
   private Exercise exercise;
   private AudioPlayer audioPlayer;
+  private ExerciseModel exerciseModel;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -52,7 +54,7 @@ public class ExerciseFragment extends Fragment implements Step {
     if (getArguments() != null) {
       String exerciseId = getArguments().getString(BundleConstants.EXERCISE_ID_KEY);
       App app = (App) getContext().getApplicationContext();
-      ExerciseModel exerciseModel = app.getExerciseModel();
+      exerciseModel = app.getExerciseModel();
       exercise = exerciseModel.getExercise(exerciseId);
     }
 
@@ -79,6 +81,10 @@ public class ExerciseFragment extends Fragment implements Step {
             ? R.menu.meditation_menu
             : R.menu.exercise_menu,
         menu);
+    if (TextUtils.isEmpty(exerciseModel.getDescription(exercise.level, exercise.type))) {
+      MenuItem item = menu.findItem(R.id.action_description);
+      item.setVisible(false);
+    }
     super.onCreateOptionsMenu(menu,inflater);
   }
 
@@ -87,7 +93,8 @@ public class ExerciseFragment extends Fragment implements Step {
     int id = item.getItemId();
     switch (id) {
       case R.id.action_description:
-        Utils.showDescription(getContext());
+        Utils.showDescription(
+            exerciseModel.getDescription(exercise.level, exercise.type), getContext());
         return true;
       case R.id.action_timer:
         Utils.startTimer(exercise.name, getContext());
@@ -134,7 +141,7 @@ public class ExerciseFragment extends Fragment implements Step {
   }
 
   private void selectAudio(final OnAudioClickListener onAudioClickListener) {
-    final Map<String, String> audioToUriMap = audioPlayer.AUDIO_TO_URI_MAP;
+    final Map<String, String> audioToUriMap = AudioPlayer.AUDIO_TO_URI_MAP;
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
     builder.setTitle("Pick an audio");
     builder.setItems(
