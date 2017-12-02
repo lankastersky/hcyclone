@@ -3,6 +3,8 @@ package com.hcyclone.zyq;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.AlarmClock;
 
@@ -50,6 +52,13 @@ public final class Utils {
 
     context.startActivity(Intent.createChooser(emailIntent,
         context.getString(R.string.feedback_send_email)));
+  }
+
+  public static boolean isInternetConnected(Context context) {
+    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
+        Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
 
   private static String getApplicationName(Context context) {

@@ -1,7 +1,7 @@
 package com.hcyclone.zyq.view;
 
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,9 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.common.collect.Iterables;
 import com.hcyclone.zyq.App;
+import com.hcyclone.zyq.AudioPlayer;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
@@ -25,6 +28,9 @@ import com.hcyclone.zyq.model.ExerciseModel;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * Base fragment for the exercise.
  */
@@ -33,6 +39,7 @@ public class ExerciseFragment extends Fragment implements Step {
   public static final String TAG = ExerciseFragment.class.getSimpleName();
 
   private Exercise exercise;
+  private AudioPlayer audioPlayer;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,7 +62,14 @@ public class ExerciseFragment extends Fragment implements Step {
   @Override
   public void onStart() {
     super.onStart();
+    audioPlayer = new AudioPlayer();
     refreshUi(getView());
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    audioPlayer.reset();
   }
 
   @Override
@@ -69,7 +83,7 @@ public class ExerciseFragment extends Fragment implements Step {
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
+  public boolean onOptionsItemSelected(final MenuItem item) {
     int id = item.getItemId();
     switch (id) {
       case R.id.action_description:
@@ -79,12 +93,22 @@ public class ExerciseFragment extends Fragment implements Step {
         Utils.startTimer(exercise.name, getContext());
         return true;
       case R.id.action_player:
-        Uri uri = Uri.parse("http://www.qigong.ru/music/1_Yan_Qi_73.mp3");
-//        Utils.playMedia(uri, getContext());
-        try {
-          playAudio("http://www.qigong.ru/music/1_Yan_Qi_73.mp3");
-        } catch (Exception e) {
-          Log.e(TAG, "Failed to play music", e);
+        if (audioPlayer.isPlaying()) {
+          audioPlayer.reset();
+          item.setIcon(R.mipmap.ic_play_arrow_white_24dp);
+        } else {
+          if (!Utils.isInternetConnected(getContext())) {
+            Toast
+                .makeText(getContext(), "No internet connection. Try later.", Toast.LENGTH_LONG)
+                .show();
+            return true;
+          }
+          selectAudio(new OnAudioClickListener() {
+            @Override
+            public void play(String audioName) {
+              item.setIcon(R.mipmap.ic_stop_white_24dp);
+            }
+          });
         }
         return true;
     }
@@ -109,26 +133,34 @@ public class ExerciseFragment extends Fragment implements Step {
     //handle error inside of the fragment, e.g. show error on EditText
   }
 
-  private MediaPlayer mediaPlayer;
-
-  private void playAudio(String url) throws Exception {
-    killMediaPlayer();
-
-    mediaPlayer = new MediaPlayer();
-    mediaPlayer.setDataSource(url);
-    mediaPlayer.prepare();
-    mediaPlayer.start();
+  private void selectAudio(final OnAudioClickListener onAudioClickListener) {
+    final Map<String, String> audioToUriMap = audioPlayer.AUDIO_TO_URI_MAP;
+    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+    builder.setTitle("Pick an audio");
+    builder.setItems(
+        audioToUriMap.keySet().toArray(new String[audioToUriMap.size()]),
+        new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        String uri = Iterables.get(audioToUriMap.values(), which);
+        try {
+          audioPlayer.play(uri);
+        } catch (IOException e) {
+          Log.e(TAG, "Failed to play audio", e);
+          Toast
+              .makeText(getContext(), "Failed to play audio", Toast.LENGTH_LONG)
+              .show();
+          return;
+        }
+        String audioName = Iterables.get(audioToUriMap.keySet(), which);
+        onAudioClickListener.play(audioName);
+      }
+    });
+    builder.show();
   }
 
-  private void killMediaPlayer() {
-    if(mediaPlayer!=null) {
-      try {
-        mediaPlayer.release();
-      }
-      catch(Exception e) {
-        e.printStackTrace();
-      }
-    }
+  private interface OnAudioClickListener {
+    void play(String audioName);
   }
 
   private void refreshUi(View view) {
