@@ -2,12 +2,13 @@ package com.hcyclone.zyq.model;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.text.TextUtils;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise.LevelType;
 import com.hcyclone.zyq.model.Exercise.ExerciseType;
 
@@ -16,7 +17,9 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -27,17 +30,24 @@ public final class ExerciseModel {
   private static final String TAG = ExerciseModel.class.getSimpleName();
   private static final Gson GSON = new Gson();
   private static final Type EXERCISE_TYPE = new TypeToken<List<Exercise>>() {}.getType();
-  private static final String EXERCISES_ASSETS_FILENAME = "exercises.json";
-  private static final String DESCRIPTION_FILENAME_TEMPLATE = "%s_%s.html";
+  private static final String EXERCISES_ASSETS_LEVEL1_FILENAME = "exercises1.json";
+  private static final String EXERCISES_ASSETS_LEVEL2_FILENAME = "exercises2.json";
+  private static final String EXERCISES_ASSETS_LEVEL3_FILENAME = "exercises3.json";
+  private static final String DESCRIPTION_ID_DELIMITER = "_";
+  private static final String DESCRIPTION_FILE_TEMPLATE = "descriptions/%s.html";
 
   private final Map<String, Exercise> exercisesMap;
-  private final Table<LevelType, ExerciseType, String> descriptionCache = HashBasedTable.create();
+  private final Map<String, String> descriptionCache = new HashMap<>();
   private final Context context;
 
   public ExerciseModel(Context context) {
     this.context = context;
     try {
-      exercisesMap = readExercisesFromFile(EXERCISES_ASSETS_FILENAME, context);
+      ImmutableMap.Builder<String, Exercise> exerciseBuilder = ImmutableMap.builder();
+      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL1_FILENAME, context));
+      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL2_FILENAME, context));
+      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL3_FILENAME, context));
+      exercisesMap = exerciseBuilder.build();
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read exercises from file", e);
     }
@@ -48,7 +58,7 @@ public final class ExerciseModel {
   }
 
   public Map<String, Exercise> getExercises(LevelType level, ExerciseType type) {
-    Map<String, Exercise> filteredExercisesMap = new HashMap<>();
+    Map<String, Exercise> filteredExercisesMap = new LinkedHashMap<>();
     for (Exercise exercise : exercisesMap.values()) {
       if (type == null || type == ExerciseType.UNKNOWN) {
         if (exercise.level == level) {
@@ -65,48 +75,87 @@ public final class ExerciseModel {
     return exercisesMap.get(id);
   }
 
-  public String getDescription(LevelType level, ExerciseType type) {
-    if (descriptionCache.contains(level, type)) {
-      return descriptionCache.get(level, type);
+  public String getPracticeDescription(LevelType level) {
+    return getPracticeDescription(getDescriptionId(level.getValue(), null, null));
+  }
+
+  public String getPracticeDescription(Exercise exercise) {
+    return getPracticeDescription(
+        getDescriptionId(exercise.level.getValue(), exercise.type.getValue(), exercise.name));
+  }
+
+  public List<ExerciseGroup> buildExerciseGroups(LevelType level) {
+    List<ExerciseGroup> items = new ArrayList<>();
+    items.add(
+        new ExerciseGroup(
+            exerciseTypeToString(ExerciseType.WARMUP),
+            level,
+            ExerciseType.WARMUP));
+    items.add(
+        new ExerciseGroup(
+            exerciseTypeToString(ExerciseType.MEDITATION),
+            level,
+            ExerciseType.MEDITATION));
+    items.add(
+        new ExerciseGroup(
+            exerciseTypeToString(ExerciseType.ADDITIONAL_MEDITATION),
+            level,
+            ExerciseType.ADDITIONAL_MEDITATION));
+    items.add(
+        new ExerciseGroup(
+            exerciseTypeToString(ExerciseType.FINAL),
+            level,
+            ExerciseType.FINAL));
+    items.add(
+        new ExerciseGroup(
+            exerciseTypeToString(ExerciseType.TREATMENT),
+            level,
+            ExerciseType.TREATMENT));
+    return items;
+  }
+
+  public String exerciseTypeToString(ExerciseType type) {
+    switch (type) {
+      case WARMUP:
+        return context.getString(R.string.warmup);
+      case MEDITATION:
+        return context.getString(R.string.type_meditation);
+      case ADDITIONAL_MEDITATION:
+        return context.getString(R.string.type_additional_meditation);
+      case FINAL:
+        return context.getString(R.string.type_final);
+      case TREATMENT:
+        return context.getString(R.string.type_treatment);
+      default:
+        throw new AssertionError("No such exercise type: " + type);
     }
-    String fileName = String.format(DESCRIPTION_FILENAME_TEMPLATE, level, type);
+  }
+
+  private String getPracticeDescription(String id) {
+    if (descriptionCache.containsKey(id)) {
+      return descriptionCache.get(id);
+    }
     try {
-      String description = readFromFile(fileName, context);
-      descriptionCache.put(level, type, description);
+      String description = readFromFile(String.format(DESCRIPTION_FILE_TEMPLATE, id), context);
+      descriptionCache.put(id, description);
       return description;
     } catch (IOException e) {
       return "";
     }
   }
 
-  public static List<ExerciseGroup> buildExerciseGroups(LevelType level) {
-    List<ExerciseGroup> items = new ArrayList<>();
-    items.add(
-        new ExerciseGroup(
-            ExerciseType.WARMUP.toString(),
-            level,
-            ExerciseType.WARMUP));
-    items.add(
-        new ExerciseGroup(
-            ExerciseType.MEDITATION.toString(),
-            level,
-            ExerciseType.MEDITATION));
-    items.add(
-        new ExerciseGroup(
-            ExerciseType.ADDITIONAL_MEDITATION.toString(),
-            level,
-            ExerciseType.ADDITIONAL_MEDITATION));
-    items.add(
-        new ExerciseGroup(
-            ExerciseType.FINAL.toString(),
-            level,
-            ExerciseType.FINAL));
-    items.add(
-        new ExerciseGroup(
-            ExerciseType.TREATMENT.toString(),
-            level,
-            ExerciseType.TREATMENT));
-    return items;
+  private String getDescriptionId(Integer level, Integer type, String name) {
+    StringBuilder descriptionIdBuilder = new StringBuilder();
+    descriptionIdBuilder.append(level);
+    if (type != null) {
+      descriptionIdBuilder.append(DESCRIPTION_ID_DELIMITER);
+      descriptionIdBuilder.append(type);
+    }
+    if (!TextUtils.isEmpty(name)) {
+      descriptionIdBuilder.append(DESCRIPTION_ID_DELIMITER);
+      descriptionIdBuilder.append(name.toLowerCase(Locale.US));
+    }
+    return descriptionIdBuilder.toString();
   }
 
   private static Map<String, Exercise> readExercisesFromFile(String fileName, Context context)
@@ -115,13 +164,14 @@ public final class ExerciseModel {
     String fileContent = readFromFile(fileName, context);
 
     List<Exercise> exercises = GSON.fromJson(fileContent, EXERCISE_TYPE);
-    Map<String, Exercise> exercisesMap = new HashMap<>();
+    Map<String, Exercise> exercisesMap = new LinkedHashMap<>();
     for (Exercise exercise : exercises) {
       exercisesMap.put(exercise.getId(), exercise);
     }
     return exercisesMap;
   }
 
+  // TODO: too slow, move resources to raw folder if possible.
   private static String readFromFile(String fileName, Context context) throws IOException {
     AssetManager am = context.getAssets();
     InputStream inputStream = am.open(fileName);

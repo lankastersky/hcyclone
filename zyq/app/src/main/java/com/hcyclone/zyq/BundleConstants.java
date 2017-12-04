@@ -10,5 +10,7 @@ public final class BundleConstants {
   public static final String EXERCISE_TYPE_KEY = "exerciseType";
   public static final String DESCRIPTION_KEY = "description";
 
+  public static final String AUDIO_NAME_KEY = "audioNameKey";
+
   private BundleConstants() {}
 }

@@ -1,6 +1,7 @@
 package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,6 +34,11 @@ public class ExerciseFlowActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_exercise_flow);
+
+    ActionBar actionBar = getSupportActionBar();
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(false);
+    }
 
     if (getIntent().getExtras() != null) {
       String exerciseId = getIntent().getExtras().getString(BundleConstants.EXERCISE_ID_KEY);

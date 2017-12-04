@@ -30,7 +30,7 @@ public abstract class ScrolledActivity extends AppCompatActivity {
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       // Show the Up button in the action bar.
-      actionBar.setDisplayHomeAsUpEnabled(true);
+      //actionBar.setDisplayHomeAsUpEnabled(true);
     }
   }
 

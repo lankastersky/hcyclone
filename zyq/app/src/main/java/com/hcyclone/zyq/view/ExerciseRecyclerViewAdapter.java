@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.ExerciseGroup;
 
 import java.util.Collection;
 
@@ -17,7 +18,8 @@ import java.util.Collection;
 public class ExerciseRecyclerViewAdapter
     extends ListAdapter<Exercise, ExerciseRecyclerViewAdapter.ViewHolder> {
 
-  ExerciseRecyclerViewAdapter(Collection<Exercise> items, OnItemSelectListener<Exercise> listener) {
+  ExerciseRecyclerViewAdapter(
+      Collection<Exercise> items, OnItemSelectListener<Exercise> listener) {
     super(items, listener);
   }
 

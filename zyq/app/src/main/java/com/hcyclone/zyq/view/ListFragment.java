@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.hcyclone.zyq.App;
+import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ import java.util.Collection;
 /**
  * Base fragment containing lists.
  */
-public abstract class ListFragment extends Fragment {
+public abstract class ListFragment<T> extends Fragment {
 
   protected RecyclerView recyclerView;
   protected RecyclerView.LayoutManager layoutManager;
@@ -36,5 +37,5 @@ public abstract class ListFragment extends Fragment {
     recyclerView.setAdapter(adapter);
   }
 
-  protected abstract Collection buildListItems();
+  protected abstract Collection<T> buildListItems();
 }

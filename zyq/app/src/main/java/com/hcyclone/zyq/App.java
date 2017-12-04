@@ -9,6 +9,7 @@ public class App extends Application {
 
   private static final String TAG = App.class.getSimpleName();
 
+  private AudioPlayer player;
   private ExerciseModel exerciseModel;
 
   @Override
@@ -21,6 +22,11 @@ public class App extends Application {
 
     initSingletons();
     exerciseModel = new ExerciseModel(this);
+    player = new AudioPlayer();
+  }
+
+  public AudioPlayer getPlayer() {
+    return player;
   }
 
   public ExerciseModel getExerciseModel() {

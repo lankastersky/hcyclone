@@ -114,6 +114,11 @@ public class MainActivity extends AppCompatActivity
             ExercisesFragment.class.getSimpleName());
         replaceFragment(newFragment, ExercisesFragment.class);
         break;
+      case R.id.nav_audio:
+        newFragment = fragmentManager.findFragmentByTag(
+            AudioFragment.class.getSimpleName());
+        replaceFragment(newFragment, AudioFragment.class);
+        break;
       case R.id.nav_settings:
         newFragment = fragmentManager.findFragmentByTag(
             SettingsFragment.class.getSimpleName());

@@ -8,13 +8,10 @@
     android:orientation="vertical"
     tools:context="com.hcyclone.zyq.view.DescriptionFragment">
 
-    <TextView
-        android:id="@+id/detailed_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@string/fontFamilyMedium"
-        android:padding="16dp"
-        android:text="Description"
-        android:textSize="16sp"/>
+    <WebView
+        android:id="@+id/description_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".activity.WebViewActivity"/>
 
 </LinearLayout>

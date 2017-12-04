@@ -21,7 +21,6 @@ public final class Utils {
   }
 
   public static void showDescription(String description, Context context) {
-
     Intent intent = new Intent(context, DescriptionActivity.class);
     intent.putExtra(BundleConstants.DESCRIPTION_KEY, description);
     context.startActivity(intent);
@@ -39,7 +38,7 @@ public final class Utils {
 
 //  public static void playMedia(Uri file, Context context) {
 //    Intent intent = new Intent(Intent.ACTION_VIEW);
-//    intent.setData(file);
+//    intent.setDataAndType(file, "audio/*");
 //    if (intent.resolveActivity(context.getPackageManager()) != null) {
 //      context.startActivity(intent);
 //    }

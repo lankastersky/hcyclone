@@ -6,7 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="ms_stepperStyle">@style/DotStepperStyle</item>
+        <item name="ms_stepperStyle">@style/StepperStyle</item>
     </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -25,8 +25,8 @@
         <!--<item name="android:windowNoTitle">true</item>-->
     </style>
 
-    <style name="DotStepperStyle">
-        <item name="ms_stepperType">dots</item>
+    <style name="StepperStyle">
+        <item name="ms_stepperType">progress_bar</item>
         <item name="ms_showBackButtonOnFirstStep">true</item>
         <!--<item name="ms_activeStepColor">#FFFFFF</item>-->
         <!--<item name="ms_inactiveStepColor">#006867</item>-->

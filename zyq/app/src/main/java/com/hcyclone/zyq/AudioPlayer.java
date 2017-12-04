@@ -1,6 +1,7 @@
 package com.hcyclone.zyq;
 
 import android.media.MediaPlayer;
+import android.text.TextUtils;
 
 import com.google.common.collect.ImmutableSortedMap;
 
@@ -13,6 +14,10 @@ import java.util.Map;
 public final class AudioPlayer {
 
   public static final Map<String, String> AUDIO_TO_URI_MAP;
+
+  private MediaPlayer mediaPlayer;
+  private int currentPosition;
+  private String currentAudioName;
 
   static {
     ImmutableSortedMap.Builder<String, String> builder
@@ -28,25 +33,52 @@ public final class AudioPlayer {
     AUDIO_TO_URI_MAP = builder.build();
   }
 
-  private MediaPlayer mediaPlayer;
-  private boolean playing;
+  public int getCurrentPosition() {
+    if (isPlaying()) {
+      return mediaPlayer.getCurrentPosition();
+    }
+    return currentPosition;
+  }
+
+  public String getCurlurrentAudioName() {
+    return currentAudioName;
+  }
 
   public boolean isPlaying() {
-    return playing;
+    if (mediaPlayer == null) {
+      return false;
+    }
+    return mediaPlayer.isPlaying();
   }
 
-  public void play(String url) throws IOException {
+  public void play(String audioName, MediaPlayer.OnCompletionListener listener) throws IOException {
+    currentAudioName = audioName;
+    String uri = AUDIO_TO_URI_MAP.get(audioName);
+    if (TextUtils.isEmpty(uri)) {
+      throw new AssertionError("No audio with name " + audioName);
+    }
     mediaPlayer = new MediaPlayer();
-    mediaPlayer.setDataSource(url);
+    mediaPlayer.setDataSource(uri);
+    mediaPlayer.setLooping(true);
     mediaPlayer.prepare();
     mediaPlayer.start();
-    playing = true;
+    mediaPlayer.setOnCompletionListener(listener);
   }
 
+  public void pause() {
+    if (isPlaying()) {
+      currentPosition = mediaPlayer.getCurrentPosition();
+      mediaPlayer.pause();
+    } else {
+      mediaPlayer.seekTo(currentPosition);
+      mediaPlayer.start();
+    }
+  }
   public void reset() {
-    playing = false;
     if (mediaPlayer != null) {
       mediaPlayer.release();
+      currentPosition = 0;
+      currentAudioName = null;
     }
   }
 }

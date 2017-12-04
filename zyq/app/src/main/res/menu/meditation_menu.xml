@@ -14,10 +14,4 @@
           android:icon="@mipmap/ic_timer_white_24dp"
           app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_player"
-          android:orderInCategory="300"
-          android:title="Player"
-          android:icon="@mipmap/ic_play_arrow_white_24dp"
-          app:showAsAction="ifRoom"/>
-
 </menu>

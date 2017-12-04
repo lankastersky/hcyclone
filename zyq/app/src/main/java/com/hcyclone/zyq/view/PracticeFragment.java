@@ -82,7 +82,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   @Override
   protected Collection<ExerciseGroup> buildListItems() {
-    return ExerciseModel.buildExerciseGroups(level);
+    return exerciseModel.buildExerciseGroups(level);
   }
 
   @Override
@@ -104,7 +104,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   private void refreshUi() {
     getActivity()
         .setTitle(String.format(getString(R.string.fragment_practice_title), level.getValue()));
-    description = exerciseModel.getDescription(level, Exercise.ExerciseType.UNKNOWN);
+    description = exerciseModel.getPracticeDescription(level);
     getActivity().invalidateOptionsMenu();
   }
 }

@@ -2,11 +2,10 @@ package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.webkit.WebView;
 
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
@@ -27,8 +26,9 @@ public class DescriptionFragment extends Fragment {
 
     if (getArguments() != null) {
       String description = getArguments().getString(BundleConstants.DESCRIPTION_KEY);
-      TextView descriptionTextView = view.findViewById(R.id.detailed_description);
-      descriptionTextView.setText(Html.fromHtml(description));
+      WebView descriptionView = view.findViewById(R.id.description_view);
+      //descriptionView.loadUrl("file:///android_asset/" + descriptionFileName);
+      descriptionView.loadData(description, "text/html", null);
     }
 
     return view;
