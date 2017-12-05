@@ -11,12 +11,13 @@ import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseGroup;
+import com.hcyclone.zyq.model.ExerciseModel;
 
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * Shows exercises.
+ * Shows exercises as a list.
  */
 public class ExercisesFragment extends ListFragment implements OnItemSelectListener<Exercise> {
 
@@ -38,7 +39,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
 
     getActivity()
         .setTitle(type != null
-            ? exerciseModel.exerciseTypeToString(type)
+            ? ExerciseModel.exerciseTypeToString(type, getContext())
             : getString(R.string.fragment_exericses_title));
 
     recyclerView = view.findViewById(R.id.exercises_recycler_view);

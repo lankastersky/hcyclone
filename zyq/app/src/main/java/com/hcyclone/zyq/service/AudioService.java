@@ -1,6 +1,7 @@
 package com.hcyclone.zyq.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,9 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -36,6 +38,7 @@ public class AudioService extends Service {
 
   private static final String TAG = AudioService.class.getSimpleName();
   private static final int AUDIO_NOTIFICATION_ID = 1;
+  private static final String AUDIO_CHANNEL_ID = "audio_channel";
   private static final Duration UPDATE_NOTIFICATION_INTERVAL = Duration.standardSeconds(1);
 
   private AudioPlayer player;
@@ -61,34 +64,47 @@ public class AudioService extends Service {
     App app = (App) getApplication();
     player = app.getPlayer();
 
-    // TODO: support version O.
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//      //createChannel();
-//    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      buildChannel();
+    }
 
     updateNotificationHandler = new Handler();
   }
 
   public int onStartCommand(Intent intent, int flags, final int startId) {
-    Bundle bundle = intent.getExtras();
-    KeyEvent keyEvent = bundle.getParcelable(Intent.EXTRA_KEY_EVENT);
+    KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
     if (keyEvent != null) {
       int keyCode = keyEvent.getKeyCode();
       switch (keyCode) {
         case KeyEvent.KEYCODE_MEDIA_STOP:
+          if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
+            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_STOP);
+          }
           stopSelf(startId);
           return START_NOT_STICKY;
         case KeyEvent.KEYCODE_MEDIA_PAUSE:
-        case KeyEvent.KEYCODE_MEDIA_PLAY:
           player.pause();
+          if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
+            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PAUSE);
+          }
           updateNotification();
-          return START_NOT_STICKY;
+          return START_STICKY;
+        case KeyEvent.KEYCODE_MEDIA_PLAY:
+          if (player.isInitied()) {
+            player.play();
+            if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
+              sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PLAY);
+            }
+            updateNotification();
+            return START_STICKY;
+          } // else initialise player further.
+          break;
         default:
           throw new AssertionError("Wrong key event: " + keyCode);
       }
     }
 
-    String audioName = bundle.getString(BundleConstants.AUDIO_NAME_KEY);
+    String audioName = intent.getStringExtra(BundleConstants.AUDIO_NAME_KEY);
 
     try {
       player.play(audioName, new MediaPlayer.OnCompletionListener() {
@@ -99,13 +115,20 @@ public class AudioService extends Service {
         }
       });
       startForeground(AUDIO_NOTIFICATION_ID, buildNotification());
+      updateNotificationHandler.post(updateNotificationRunnable);
     } catch (IOException e) {
       Log.e(AudioService.TAG, "Failed to play audio", e);
       return START_NOT_STICKY;
     }
 
-    updateNotificationHandler.post(updateNotificationRunnable);
-    return START_REDELIVER_INTENT;
+    return START_STICKY;
+  }
+
+  private void sendAudioBroadCast(int keyEvent) {
+    Intent broadcastIntent = new Intent();
+    broadcastIntent.setAction(BundleConstants.AUDIO_BROADCAST_RECEIVER_ACTION);
+    broadcastIntent.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, keyEvent));
+    sendBroadcast(broadcastIntent);
   }
 
   @Override
@@ -115,9 +138,31 @@ public class AudioService extends Service {
 
   @Override
   public void onDestroy() {
+    super.onDestroy();
     Log.d(TAG, "onDestroy");
     player.reset();
     player = null;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+      stopForeground(true);
+    }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.O)
+  private NotificationChannel buildChannel() {
+    NotificationManager notificationManager =
+        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+    // The user-visible name of the channel.
+    CharSequence name = "Media playback";
+    // The user-visible description of the channel.
+    String description = "Media playback controls";
+    int importance = NotificationManager.IMPORTANCE_LOW;
+    NotificationChannel channel = new NotificationChannel(AUDIO_CHANNEL_ID, name, importance);
+    // Configure the notification channel.
+    channel.setDescription(description);
+    channel.setShowBadge(false);
+    channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+    notificationManager.createNotificationChannel(channel);
+    return channel;
   }
 
   private void updateNotification() {
@@ -127,6 +172,7 @@ public class AudioService extends Service {
         AUDIO_NOTIFICATION_ID, buildNotification());
   }
 
+  /* See example http://shortn/_5pmxBDnjGC . */
   private Notification buildNotification() {
     PendingIntent playIntent = MediaButtonReceiver.buildMediaButtonPendingIntent(
         this, PlaybackStateCompat.ACTION_PLAY);
@@ -139,11 +185,12 @@ public class AudioService extends Service {
     String currentTimeHuman = DateUtils.formatElapsedTime(currentTime / 1000);
 
     NotificationCompat.Builder notificationBuilder =
-        new NotificationCompat.Builder(this, "channel");
+        new NotificationCompat.Builder(this, AUDIO_CHANNEL_ID);
     notificationBuilder
         .setStyle(
             new MediaStyle()
-//                      .setMediaSession(token)
+                // TODO: support media sessions http://shortn/_rH8MR9yU35 .
+                //.setMediaSession(token)
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(
                     MediaButtonReceiver.buildMediaButtonPendingIntent(
@@ -153,19 +200,17 @@ public class AudioService extends Service {
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setOnlyAlertOnce(true)
         .setContentTitle(getString(R.string.app_name))
-        .setContentText(player.getCurlurrentAudioName())
+        .setContentText(player.getCurrentAudioName())
         .setSubText(String.valueOf(currentTimeHuman))
         .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.play_launcher))
-//              .setContentIntent(createContentIntent())
-        .setDeleteIntent(stopIntent)
-        .addAction(R.mipmap.ic_stop_white_24dp, "Stop", stopIntent);
-        //.setAutoCancel(true)
+        .setDeleteIntent(stopIntent);
 
     if (player.isPlaying()) {
       notificationBuilder.addAction(R.mipmap.ic_pause_white_24dp, "Pause", pauseIntent);
     } else {
       notificationBuilder.addAction(R.mipmap.ic_play_arrow_white_24dp, "Play", playIntent);
     }
+    notificationBuilder.addAction(R.mipmap.ic_stop_white_24dp, "Stop", stopIntent);
 
     return notificationBuilder.build();
   }

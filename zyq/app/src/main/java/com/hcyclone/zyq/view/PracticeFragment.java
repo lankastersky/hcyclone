@@ -66,7 +66,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
-    super.onCreateOptionsMenu(menu,inflater);
+    super.onCreateOptionsMenu(menu, inflater);
   }
 
   @Override
@@ -82,7 +82,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   @Override
   protected Collection<ExerciseGroup> buildListItems() {
-    return exerciseModel.buildExerciseGroups(level);
+    return ExerciseModel.buildExerciseGroups(level, getContext());
   }
 
   @Override
@@ -104,7 +104,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   private void refreshUi() {
     getActivity()
         .setTitle(String.format(getString(R.string.fragment_practice_title), level.getValue()));
-    description = exerciseModel.getPracticeDescription(level);
+    description = exerciseModel.getPracticeDescription(level, getContext());
     getActivity().invalidateOptionsMenu();
   }
 }

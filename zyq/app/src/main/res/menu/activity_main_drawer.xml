@@ -15,17 +15,9 @@
             android:icon="@mipmap/ic_menu_practice"
             android:title="@string/level_3"/>
         <item
-            android:id="@+id/nav_exercises"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/navigation_drawer_exercises"/>
-        <item
             android:id="@+id/nav_audio"
             android:icon="@mipmap/ic_music_note_black_24dp"
-            android:title="@string/navigation_drawer_play_music"/>
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/navigation_drawer_settings"/>
+            android:title="@string/navigation_drawer_audio"/>
         <item
             android:id="@+id/nav_help"
             android:icon="@mipmap/ic_help_black_24dp"

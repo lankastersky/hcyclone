@@ -8,10 +8,4 @@
           android:icon="@mipmap/ic_help_outline_white_24dp"
           app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_timer"
-          android:orderInCategory="200"
-          android:title="Timer"
-          android:icon="@mipmap/ic_timer_white_24dp"
-          app:showAsAction="ifRoom"/>
-
 </menu>

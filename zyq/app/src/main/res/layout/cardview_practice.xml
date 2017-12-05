@@ -21,22 +21,23 @@
         android:padding="@dimen/text_margin">
 
         <TextView
-            android:id="@+id/exercise_group_name"
+            android:id="@+id/practice_item_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
             android:paddingTop="@dimen/title_margin"
-            android:text="Some name stub"
+            android:text=""
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="20sp"
         />
 
         <TextView
-            android:id="@+id/exercise_group_type"
+            android:id="@+id/practice_item_type"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
-            android:text="Some type stub"
+            android:text=""
+            android:visibility="gone"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 

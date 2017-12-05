@@ -13,8 +13,8 @@ import java.util.Collection;
 public abstract class ListAdapter<T, VH extends ListAdapter.ViewHolder<T>>
     extends RecyclerView.Adapter<VH> {
 
-  private final Collection<T> items;
-  private final OnItemSelectListener<T> listener;
+  protected final Collection<T> items;
+  protected final OnItemSelectListener<T> listener;
 
   ListAdapter(Collection<T> items, OnItemSelectListener<T> listener) {
     this.items = items;

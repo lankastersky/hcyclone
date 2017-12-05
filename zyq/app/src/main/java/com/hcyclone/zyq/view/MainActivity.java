@@ -109,21 +109,21 @@ public class MainActivity extends AppCompatActivity
         currentLevel = Exercise.LevelType.LEVEL3;
         setPracticeFragment(currentLevel);
         break;
-      case R.id.nav_exercises:
-        newFragment = fragmentManager.findFragmentByTag(
-            ExercisesFragment.class.getSimpleName());
-        replaceFragment(newFragment, ExercisesFragment.class);
-        break;
+//      case R.id.nav_exercises:
+//        newFragment = fragmentManager.findFragmentByTag(
+//            ExercisesFragment.class.getSimpleName());
+//        replaceFragment(newFragment, ExercisesFragment.class);
+//        break;
       case R.id.nav_audio:
         newFragment = fragmentManager.findFragmentByTag(
             AudioFragment.class.getSimpleName());
         replaceFragment(newFragment, AudioFragment.class);
         break;
-      case R.id.nav_settings:
-        newFragment = fragmentManager.findFragmentByTag(
-            SettingsFragment.class.getSimpleName());
-        replaceFragment(newFragment, SettingsFragment.class);
-        break;
+//      case R.id.nav_settings:
+//        newFragment = fragmentManager.findFragmentByTag(
+//            SettingsFragment.class.getSimpleName());
+//        replaceFragment(newFragment, SettingsFragment.class);
+//        break;
       case R.id.nav_help:
         newFragment = fragmentManager.findFragmentByTag(
             HelpFragment.class.getSimpleName());

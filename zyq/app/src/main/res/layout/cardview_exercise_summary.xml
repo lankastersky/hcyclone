@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
             android:paddingTop="@dimen/title_margin"
-            android:text="Some name stub"
+            android:text=""
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="20sp"
         />
@@ -36,7 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
-            android:text="Some type stub"
+            android:text=""
+            android:visibility="gone"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 

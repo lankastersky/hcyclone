@@ -25,7 +25,7 @@ class PracticeRecyclerViewAdapter
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.cardview_exercise_group, parent, false);
+        .inflate(R.layout.cardview_practice, parent, false);
     return new ViewHolder(view);
   }
 
@@ -43,8 +43,8 @@ class PracticeRecyclerViewAdapter
 
     ViewHolder(View view) {
       super(view);
-      nameView = view.findViewById(R.id.exercise_group_name);
-      typeView = view.findViewById(R.id.exercise_group_type);
+      nameView = view.findViewById(R.id.practice_item_name);
+      typeView = view.findViewById(R.id.practice_item_type);
     }
   }
 }

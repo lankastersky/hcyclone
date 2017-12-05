@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_play"
+          android:orderInCategory="100"
+          android:title="Play"
+          android:icon="@mipmap/ic_play_arrow_white_24dp"
+          app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_pause"
+          android:orderInCategory="100"
+          android:title="Pause"
+          android:icon="@mipmap/ic_pause_white_24dp"
+          app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_stop"
+          android:orderInCategory="200"
+          android:title="Stop"
+          android:icon="@mipmap/ic_stop_white_24dp"
+          app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_set_timer"
+          android:orderInCategory="300"
+          android:title="Set Timer"
+          android:icon="@mipmap/ic_timer_white_24dp"
+          app:showAsAction="ifRoom"/>
+
+</menu>

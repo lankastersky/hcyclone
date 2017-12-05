@@ -40,7 +40,7 @@ public final class AudioPlayer {
     return currentPosition;
   }
 
-  public String getCurlurrentAudioName() {
+  public String getCurrentAudioName() {
     return currentAudioName;
   }
 
@@ -51,6 +51,10 @@ public final class AudioPlayer {
     return mediaPlayer.isPlaying();
   }
 
+  public boolean isInitied() {
+    return !TextUtils.isEmpty(getCurrentAudioName());
+  }
+
   public void play(String audioName, MediaPlayer.OnCompletionListener listener) throws IOException {
     currentAudioName = audioName;
     String uri = AUDIO_TO_URI_MAP.get(audioName);
@@ -59,21 +63,30 @@ public final class AudioPlayer {
     }
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setDataSource(uri);
+    // TODO: change loop mode in UI.
     mediaPlayer.setLooping(true);
-    mediaPlayer.prepare();
-    mediaPlayer.start();
+    mediaPlayer.prepareAsync();
+    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+      @Override
+      public void onPrepared(MediaPlayer mp) {
+        mediaPlayer.start();
+      }
+    });
     mediaPlayer.setOnCompletionListener(listener);
+
+    // TODO: check wake lock and call setWakeMode if required http://shortn/_bsfpGBhTux .
+  }
+
+  public void play() {
+    mediaPlayer.seekTo(currentPosition);
+    mediaPlayer.start();
   }
 
   public void pause() {
-    if (isPlaying()) {
-      currentPosition = mediaPlayer.getCurrentPosition();
-      mediaPlayer.pause();
-    } else {
-      mediaPlayer.seekTo(currentPosition);
-      mediaPlayer.start();
-    }
+    currentPosition = mediaPlayer.getCurrentPosition();
+    mediaPlayer.pause();
   }
+
   public void reset() {
     if (mediaPlayer != null) {
       mediaPlayer.release();

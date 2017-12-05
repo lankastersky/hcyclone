@@ -74,7 +74,7 @@ public class ExerciseFragment extends Fragment implements Step {
             ? R.menu.meditation_menu
             : R.menu.exercise_menu,
         menu);
-    if (TextUtils.isEmpty(exerciseModel.getPracticeDescription(exercise))) {
+    if (TextUtils.isEmpty(exerciseModel.getPracticeDescription(exercise, getContext()))) {
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
@@ -87,10 +87,7 @@ public class ExerciseFragment extends Fragment implements Step {
     switch (id) {
       case R.id.action_description:
         Utils.showDescription(
-            exerciseModel.getPracticeDescription(exercise), getContext());
-        return true;
-      case R.id.action_timer:
-        Utils.startTimer(exercise.name, getContext());
+            exerciseModel.getPracticeDescription(exercise, getContext()), getContext());
         return true;
     }
     return super.onOptionsItemSelected(item);

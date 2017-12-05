@@ -38,10 +38,8 @@ public final class ExerciseModel {
 
   private final Map<String, Exercise> exercisesMap;
   private final Map<String, String> descriptionCache = new HashMap<>();
-  private final Context context;
 
   public ExerciseModel(Context context) {
-    this.context = context;
     try {
       ImmutableMap.Builder<String, Exercise> exerciseBuilder = ImmutableMap.builder();
       exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL1_FILENAME, context));
@@ -61,10 +59,10 @@ public final class ExerciseModel {
     Map<String, Exercise> filteredExercisesMap = new LinkedHashMap<>();
     for (Exercise exercise : exercisesMap.values()) {
       if (type == null || type == ExerciseType.UNKNOWN) {
-        if (exercise.level == level) {
+        if (exercise.level.getValue() <= level.getValue()) {
           filteredExercisesMap.put(exercise.getId(), exercise);
         }
-      } else if (exercise.level == level && exercise.type == type) {
+      } else if (exercise.level.getValue() <= level.getValue() && exercise.type == type) {
         filteredExercisesMap.put(exercise.getId(), exercise);
       }
     }
@@ -75,46 +73,48 @@ public final class ExerciseModel {
     return exercisesMap.get(id);
   }
 
-  public String getPracticeDescription(LevelType level) {
-    return getPracticeDescription(getDescriptionId(level.getValue(), null, null));
-  }
-
-  public String getPracticeDescription(Exercise exercise) {
+  public String getPracticeDescription(LevelType level, Context context) {
     return getPracticeDescription(
-        getDescriptionId(exercise.level.getValue(), exercise.type.getValue(), exercise.name));
+        getDescriptionId(level.getValue(), null, null), context);
   }
 
-  public List<ExerciseGroup> buildExerciseGroups(LevelType level) {
+  public String getPracticeDescription(Exercise exercise, Context context) {
+    return getPracticeDescription(
+        getDescriptionId(
+            exercise.level.getValue(), exercise.type.getValue(), exercise.name), context);
+  }
+
+  public static List<ExerciseGroup> buildExerciseGroups(LevelType level, Context context) {
     List<ExerciseGroup> items = new ArrayList<>();
     items.add(
         new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.WARMUP),
+            exerciseTypeToString(ExerciseType.WARMUP, context),
             level,
             ExerciseType.WARMUP));
     items.add(
         new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.MEDITATION),
+            exerciseTypeToString(ExerciseType.MEDITATION, context),
             level,
             ExerciseType.MEDITATION));
     items.add(
         new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.ADDITIONAL_MEDITATION),
+            exerciseTypeToString(ExerciseType.ADDITIONAL_MEDITATION, context),
             level,
             ExerciseType.ADDITIONAL_MEDITATION));
     items.add(
         new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.FINAL),
+            exerciseTypeToString(ExerciseType.FINAL, context),
             level,
             ExerciseType.FINAL));
     items.add(
         new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.TREATMENT),
+            exerciseTypeToString(ExerciseType.TREATMENT, context),
             level,
             ExerciseType.TREATMENT));
     return items;
   }
 
-  public String exerciseTypeToString(ExerciseType type) {
+  public static String exerciseTypeToString(ExerciseType type, Context context) {
     switch (type) {
       case WARMUP:
         return context.getString(R.string.warmup);
@@ -131,7 +131,7 @@ public final class ExerciseModel {
     }
   }
 
-  private String getPracticeDescription(String id) {
+  private String getPracticeDescription(String id, Context context) {
     if (descriptionCache.containsKey(id)) {
       return descriptionCache.get(id);
     }
