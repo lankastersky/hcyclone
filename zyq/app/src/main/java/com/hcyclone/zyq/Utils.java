@@ -3,6 +3,7 @@ package com.hcyclone.zyq;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -18,6 +19,14 @@ public final class Utils {
 
   static boolean isDebug() {
     return BuildConfig.DEBUG;
+  }
+
+  public static int pxToDp(int px) {
+    return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+  }
+
+  public static int dpToPx(int dp) {
+    return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
   }
 
   public static void showDescription(String description, Context context) {

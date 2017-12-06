@@ -27,7 +27,7 @@
     <string name="fragment_help_text" translatable="false">"text here"
     </string>
     <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion 0.1</string>
-    <string name="fragment_help">Help</string>
+    <string name="fragment_help_title">Help</string>
 
     <!-- Feedback -->
     <string name="feedback_send_email">Send email</string>

@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity
   protected void onCreate(Bundle savedInstanceState) {
     setTheme(R.style.AppTheme_NoActionBar);
     super.onCreate(savedInstanceState);
+
     setContentView(R.layout.activity_main);
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
@@ -94,8 +95,6 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void selectMenuItem(int menuItemId) {
-    FragmentManager fragmentManager = getSupportFragmentManager();
-    Fragment newFragment;
     switch (menuItemId) {
       case R.id.nav_level_1:
         currentLevel = Exercise.LevelType.LEVEL1;
@@ -109,25 +108,14 @@ public class MainActivity extends AppCompatActivity
         currentLevel = Exercise.LevelType.LEVEL3;
         setPracticeFragment(currentLevel);
         break;
-//      case R.id.nav_exercises:
-//        newFragment = fragmentManager.findFragmentByTag(
-//            ExercisesFragment.class.getSimpleName());
-//        replaceFragment(newFragment, ExercisesFragment.class);
-//        break;
       case R.id.nav_audio:
-        newFragment = fragmentManager.findFragmentByTag(
-            AudioFragment.class.getSimpleName());
-        replaceFragment(newFragment, AudioFragment.class);
+        replaceFragment(AudioFragment.class, AudioFragment.TAG);
         break;
 //      case R.id.nav_settings:
-//        newFragment = fragmentManager.findFragmentByTag(
-//            SettingsFragment.class.getSimpleName());
-//        replaceFragment(newFragment, SettingsFragment.class);
+//        replaceFragment(SettingsFragment, SettingsFragment.class);
 //        break;
       case R.id.nav_help:
-        newFragment = fragmentManager.findFragmentByTag(
-            HelpFragment.class.getSimpleName());
-        replaceFragment(newFragment, HelpFragment.class);
+        replaceFragment(HelpFragment.class, HelpFragment.TAG);
         break;
       case R.id.nav_feedback:
         Utils.sendFeedback(this);
@@ -149,22 +137,21 @@ public class MainActivity extends AppCompatActivity
     if (newFragment != null) {
       ((PracticeFragment) newFragment).updateLevelType(levelType);
     } else {
-      replaceFragment(newFragment, PracticeFragment.class);
+      replaceFragment(PracticeFragment.class, PracticeFragment.TAG);
     }
   }
 
-  private void replaceFragment(Fragment newFragment, Class clazz) {
+  private void replaceFragment(Class<? extends Fragment> clazz, String tag) {
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (newFragment == null) {
+    Fragment fragment = fragmentManager.findFragmentByTag(tag);
+    if (fragment == null) {
       try {
-        newFragment = (Fragment) clazz.newInstance();
+        fragment = clazz.newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
         Log.e(TAG, "Failed to create fragment", e);
       }
     }
-    fragmentTransaction
-        .replace(R.id.content_container, newFragment, clazz.getSimpleName())
-        .commit();
+    fragmentTransaction.replace(R.id.content_container, fragment, tag).commit();
   }
 }

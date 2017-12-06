@@ -19,8 +19,9 @@ public abstract class ScrolledActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    setTheme(R.style.AppTheme_NoActionBar);
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.app_bar_main);
+    setContentView(R.layout.activity_scrolled);
     setupActionBar();
   }
 

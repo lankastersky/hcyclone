@@ -2,7 +2,11 @@ package com.hcyclone.zyq.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
@@ -26,7 +31,7 @@ import java.util.Collection;
  */
 public class PracticeFragment extends ListFragment implements OnItemSelectListener<ExerciseGroup> {
 
-  private static final String TAG = PracticeFragment.class.getSimpleName();
+  public static final String TAG = PracticeFragment.class.getSimpleName();
 
   private Exercise.LevelType level;
   private String description;
@@ -43,6 +48,18 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_practice, container, false);
+
+    AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
+    CoordinatorLayout.LayoutParams lp =
+        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+    lp.height = Utils.dpToPx(220);
+    appBarLayout.setLayoutParams(lp);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      Window window = getActivity().getWindow();
+      //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(getResources().getColor(android.R.color.transparent));
+    }
 
     setHasOptionsMenu(true);
 
@@ -102,8 +119,9 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   }
 
   private void refreshUi() {
-    getActivity()
-        .setTitle(String.format(getString(R.string.fragment_practice_title), level.getValue()));
+    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
+    collapsingToolbar.setTitle(
+        String.format(getString(R.string.fragment_practice_title), level.getValue()));
     description = exerciseModel.getPracticeDescription(level, getContext());
     getActivity().invalidateOptionsMenu();
   }
