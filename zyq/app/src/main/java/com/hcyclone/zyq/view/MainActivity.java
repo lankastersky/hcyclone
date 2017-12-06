@@ -1,19 +1,27 @@
 package com.hcyclone.zyq.view;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
@@ -99,23 +107,28 @@ public class MainActivity extends AppCompatActivity
       case R.id.nav_level_1:
         currentLevel = Exercise.LevelType.LEVEL1;
         setPracticeFragment(currentLevel);
+        expandAppBar(true);
         break;
       case R.id.nav_level_2:
         currentLevel = Exercise.LevelType.LEVEL2;
         setPracticeFragment(currentLevel);
+        expandAppBar(true);
         break;
       case R.id.nav_level_3:
         currentLevel = Exercise.LevelType.LEVEL3;
         setPracticeFragment(currentLevel);
+        expandAppBar(true);
         break;
       case R.id.nav_audio:
         replaceFragment(AudioFragment.class, AudioFragment.TAG);
+        expandAppBar(false);
         break;
 //      case R.id.nav_settings:
 //        replaceFragment(SettingsFragment, SettingsFragment.class);
 //        break;
       case R.id.nav_help:
         replaceFragment(HelpFragment.class, HelpFragment.TAG);
+        expandAppBar(false);
         break;
       case R.id.nav_feedback:
         Utils.sendFeedback(this);
@@ -153,5 +166,48 @@ public class MainActivity extends AppCompatActivity
       }
     }
     fragmentTransaction.replace(R.id.content_container, fragment, tag).commit();
+  }
+
+  private void expandAppBar(boolean expand) {
+    int actionBarHeight = Utils.dpToPx(220);
+    if (!expand) {
+      // Calculate ActionBar height
+      TypedValue tv = new TypedValue();
+      if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+        actionBarHeight =
+            TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics())
+                + getStatusBarHeight();
+      }
+    }
+
+    ImageView appBarImageView = findViewById(R.id.app_bar_image_view);
+    appBarImageView.setVisibility(expand ? View.VISIBLE : View.GONE);
+
+    AppBarLayout appBarLayout = findViewById(R.id.app_bar_layout);
+    CoordinatorLayout.LayoutParams lp =
+        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+    lp.height = actionBarHeight;
+    appBarLayout.setLayoutParams(lp);
+    appBarLayout.setExpanded(expand,true);
+    appBarLayout.setActivated(expand);
+
+    CollapsingToolbarLayout collapsingToolbar = findViewById(R.id.collapsing_toolbar);
+    collapsingToolbar.setTitleEnabled(expand);
+
+    NestedScrollView scrollView = getWindow().getDecorView().findViewById(R.id.nested_scroll_view);
+    scrollView.scrollTo(0, 0);
+  }
+
+  protected int getStatusBarHeight() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+      return 0;
+    }
+    int result = 0;
+    int resourceId =
+        getResources().getIdentifier("status_bar_height", "dimen", "android");
+    if (resourceId > 0) {
+      result = getResources().getDimensionPixelSize(resourceId);
+    }
+    return result;
   }
 }

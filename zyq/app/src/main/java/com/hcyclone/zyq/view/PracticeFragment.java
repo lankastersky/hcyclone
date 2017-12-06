@@ -4,9 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
@@ -48,12 +47,6 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_practice, container, false);
-
-    AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar_layout);
-    CoordinatorLayout.LayoutParams lp =
-        (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-    lp.height = Utils.dpToPx(220);
-    appBarLayout.setLayoutParams(lp);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       Window window = getActivity().getWindow();
@@ -115,6 +108,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
       return;
     }
     this.level = levelType;
+
     refreshUi();
   }
 
@@ -122,6 +116,22 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
     CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
     collapsingToolbar.setTitle(
         String.format(getString(R.string.fragment_practice_title), level.getValue()));
+
+    ImageView appBarImageView = getActivity().findViewById(R.id.app_bar_image_view);
+    switch (level) {
+      case LEVEL1:
+        appBarImageView.setImageDrawable(getResources().getDrawable(R.mipmap.header_level1));
+        break;
+      case LEVEL2:
+        appBarImageView.setImageDrawable(getResources().getDrawable(R.mipmap.header_level2));
+        break;
+      case LEVEL3:
+        appBarImageView.setImageDrawable(getResources().getDrawable(R.mipmap.header_level3));
+        break;
+      default:
+        throw new AssertionError("Wrong level");
+    }
+
     description = exerciseModel.getPracticeDescription(level, getContext());
     getActivity().invalidateOptionsMenu();
   }

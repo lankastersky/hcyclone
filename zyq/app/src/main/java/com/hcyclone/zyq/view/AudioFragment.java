@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -50,8 +51,10 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_audio, container, false);
-    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
-    collapsingToolbar.setTitle(getString(R.string.fragment_audio_title));
+//    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
+//    collapsingToolbar.setTitle(getString(R.string.fragment_audio_title));
+    ((AppCompatActivity) getActivity()).getSupportActionBar()
+        .setTitle(getString(R.string.fragment_audio_title));
 
     setHasOptionsMenu(true);
 

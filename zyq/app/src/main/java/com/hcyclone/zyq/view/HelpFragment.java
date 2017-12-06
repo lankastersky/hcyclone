@@ -3,6 +3,7 @@ package com.hcyclone.zyq.view;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,10 @@ public class HelpFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
-    collapsingToolbar.setTitle(getString(R.string.fragment_help_title));
+//    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
+//    collapsingToolbar.setTitle(getString(R.string.fragment_help_title));
+    ((AppCompatActivity) getActivity()).getSupportActionBar()
+        .setTitle(getString(R.string.fragment_help_title));
 
     return inflater.inflate(R.layout.fragment_help, container, false);
     // TODO: add version from resources.
