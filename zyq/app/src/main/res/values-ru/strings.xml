@@ -1,3 +1,4 @@
 <resources>
-
+    <string name="fragment_help">Помощь</string>
+    <string name="fragment_help_version">Студия \"Гиперборейский циклон\"\nВерсия %s</string>
 </resources>

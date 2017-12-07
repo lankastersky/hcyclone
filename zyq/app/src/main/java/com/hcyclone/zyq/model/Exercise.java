@@ -7,17 +7,19 @@ import com.google.gson.annotations.SerializedName;
  */
 public final class Exercise extends ExerciseGroup {
 
+  public final String id;
   public final String description;
   public final String imageName;
 
   public Exercise(
+      String id,
       String name,
       LevelType level,
       ExerciseType type,
       String description,
-      String imageName
-  ) {
+      String imageName) {
     super(name, level, type);
+    this.id = id;
     this.description = description;
     this.imageName = imageName;
   }

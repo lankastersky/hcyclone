@@ -8,8 +8,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.provider.AlarmClock;
+import android.text.Html;
+import android.text.Spanned;
 
+import com.google.common.io.ByteStreams;
 import com.hcyclone.zyq.view.DescriptionActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public final class Utils {
 
@@ -35,6 +41,13 @@ public final class Utils {
     context.startActivity(intent);
   }
 
+  public static Spanned fromHtml(String text) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+     return Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY);
+    } else {
+      return Html.fromHtml(text);
+    }
+  }
   public static void startTimer(String message, Context context) {
     Intent intent = new Intent(AlarmClock.ACTION_SET_TIMER)
         .putExtra(AlarmClock.EXTRA_MESSAGE, message)
@@ -70,15 +83,17 @@ public final class Utils {
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
 
-  private static String getApplicationName(Context context) {
-    ApplicationInfo applicationInfo = context.getApplicationInfo();
-    int stringId = applicationInfo.labelRes;
-    return stringId == 0
-        ? applicationInfo.nonLocalizedLabel.toString()
-        : context.getString(stringId);
+  public static String readFromAssets(String fileName, Context context) throws IOException {
+    InputStream inputStream = context.getAssets().open(fileName);
+    return new String(ByteStreams.toByteArray(inputStream));
   }
 
-  private static String getVersionName(Context context) {
+  public static String readFromRawResources(int resId, Context context) throws IOException {
+    InputStream inputStream = context.getResources().openRawResource(resId);
+    return new String(ByteStreams.toByteArray(inputStream));
+  }
+
+  public static String getVersionName(Context context) {
     try {
       return context
           .getPackageManager()
@@ -88,6 +103,14 @@ public final class Utils {
       Log.e(TAG, "Couldn't get the version name.", e);
       return "";
     }
+  }
+
+  private static String getApplicationName(Context context) {
+    ApplicationInfo applicationInfo = context.getApplicationInfo();
+    int stringId = applicationInfo.labelRes;
+    return stringId == 0
+        ? applicationInfo.nonLocalizedLabel.toString()
+        : context.getString(stringId);
   }
 
   private static int getVersionCode(Context context) {

@@ -1,6 +1,8 @@
 <resources>
+
     <string name="app_name">ZYQigong</string>
-    <string name="app_description">Becoming Awareness</string>
+    <string name="app_name_full">Zhong Yuan Qigong</string>
+    <string name="app_description">Guideline</string>
 
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -24,8 +26,6 @@
     <string name="pref_reminder_vibrate">Vibrate</string>
 
     <!-- Help -->
-    <string name="fragment_help_text" translatable="false">"text here"
-    </string>
     <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion 0.1</string>
     <string name="fragment_help_title">Help</string>
 
@@ -39,7 +39,7 @@
     <string name="fragment_practice_description_title">Description</string>
 
     <!-- Fragment Exercises -->
-    <string name="fragment_exericses_title">Exercises</string>
+    <string name="fragment_exercises_title">Exercises</string>
 
     <!-- Fragment Audio -->
     <string name="fragment_audio_title">Audio</string>

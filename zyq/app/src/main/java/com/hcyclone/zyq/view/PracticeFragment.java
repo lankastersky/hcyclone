@@ -48,12 +48,6 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
     View view = inflater.inflate(R.layout.fragment_practice, container, false);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      Window window = getActivity().getWindow();
-      //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      window.setStatusBarColor(getResources().getColor(android.R.color.transparent));
-    }
-
     setHasOptionsMenu(true);
 
     recyclerView = view.findViewById(R.id.practice_recycler_view);

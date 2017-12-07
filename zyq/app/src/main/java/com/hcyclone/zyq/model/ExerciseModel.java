@@ -1,19 +1,18 @@
 package com.hcyclone.zyq.model;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.text.TextUtils;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise.LevelType;
 import com.hcyclone.zyq.model.Exercise.ExerciseType;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +29,8 @@ public final class ExerciseModel {
   private static final String TAG = ExerciseModel.class.getSimpleName();
   private static final Gson GSON = new Gson();
   private static final Type EXERCISE_TYPE = new TypeToken<List<Exercise>>() {}.getType();
-  private static final String EXERCISES_ASSETS_LEVEL1_FILENAME = "exercises1.json";
-  private static final String EXERCISES_ASSETS_LEVEL2_FILENAME = "exercises2.json";
-  private static final String EXERCISES_ASSETS_LEVEL3_FILENAME = "exercises3.json";
   private static final String DESCRIPTION_ID_DELIMITER = "_";
-  private static final String DESCRIPTION_FILE_TEMPLATE = "descriptions/%s.html";
+  private static final String DESCRIPTION_FILE_TEMPLATE = "%s_html";
 
   private final Map<String, Exercise> exercisesMap;
   private final Map<String, String> descriptionCache = new HashMap<>();
@@ -42,12 +38,12 @@ public final class ExerciseModel {
   public ExerciseModel(Context context) {
     try {
       ImmutableMap.Builder<String, Exercise> exerciseBuilder = ImmutableMap.builder();
-      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL1_FILENAME, context));
-      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL2_FILENAME, context));
-      exerciseBuilder.putAll(readExercisesFromFile(EXERCISES_ASSETS_LEVEL3_FILENAME, context));
+      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
+      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
+      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_json, context));
       exercisesMap = exerciseBuilder.build();
     } catch (IOException e) {
-      throw new IllegalStateException("Failed to read exercises from file", e);
+      throw new IllegalStateException("Failed to read exercises", e);
     }
   }
 
@@ -81,7 +77,7 @@ public final class ExerciseModel {
   public String getPracticeDescription(Exercise exercise, Context context) {
     return getPracticeDescription(
         getDescriptionId(
-            exercise.level.getValue(), exercise.type.getValue(), exercise.name), context);
+            exercise.level.getValue(), exercise.type.getValue(), exercise.id), context);
   }
 
   public static List<ExerciseGroup> buildExerciseGroups(LevelType level, Context context) {
@@ -135,17 +131,24 @@ public final class ExerciseModel {
     if (descriptionCache.containsKey(id)) {
       return descriptionCache.get(id);
     }
+    String fileName = String.format(DESCRIPTION_FILE_TEMPLATE, id);
+    int resId = context.getResources().getIdentifier(fileName, "raw", context.getPackageName());
+    if (resId == 0) {
+      return "";
+    }
     try {
-      String description = readFromFile(String.format(DESCRIPTION_FILE_TEMPLATE, id), context);
+      String description = Utils.readFromRawResources(resId, context);
       descriptionCache.put(id, description);
       return description;
     } catch (IOException e) {
+      Log.w(TAG, "Failed to read description: " + fileName, e);
       return "";
     }
   }
 
   private String getDescriptionId(Integer level, Integer type, String name) {
     StringBuilder descriptionIdBuilder = new StringBuilder();
+    descriptionIdBuilder.append("ex_");
     descriptionIdBuilder.append(level);
     if (type != null) {
       descriptionIdBuilder.append(DESCRIPTION_ID_DELIMITER);
@@ -158,10 +161,10 @@ public final class ExerciseModel {
     return descriptionIdBuilder.toString();
   }
 
-  private static Map<String, Exercise> readExercisesFromFile(String fileName, Context context)
+  private static Map<String, Exercise> readExercisesFromResources(int resId, Context context)
       throws IOException {
 
-    String fileContent = readFromFile(fileName, context);
+    String fileContent = Utils.readFromRawResources(resId, context);
 
     List<Exercise> exercises = GSON.fromJson(fileContent, EXERCISE_TYPE);
     Map<String, Exercise> exercisesMap = new LinkedHashMap<>();
@@ -169,12 +172,5 @@ public final class ExerciseModel {
       exercisesMap.put(exercise.getId(), exercise);
     }
     return exercisesMap;
-  }
-
-  // TODO: too slow, move resources to raw folder if possible.
-  private static String readFromFile(String fileName, Context context) throws IOException {
-    AssetManager am = context.getAssets();
-    InputStream inputStream = am.open(fileName);
-    return new String(ByteStreams.toByteArray(inputStream));
   }
 }

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
-import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
 
 import java.util.Collection;
@@ -40,7 +39,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
     getActivity()
         .setTitle(type != null
             ? ExerciseModel.exerciseTypeToString(type, getContext())
-            : getString(R.string.fragment_exericses_title));
+            : getString(R.string.fragment_exercises_title));
 
     recyclerView = view.findViewById(R.id.exercises_recycler_view);
     RecyclerView.Adapter adapter = new ExerciseRecyclerViewAdapter(buildListItems(), this);

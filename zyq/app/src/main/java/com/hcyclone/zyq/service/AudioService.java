@@ -195,7 +195,7 @@ public class AudioService extends Service {
                 .setCancelButtonIntent(
                     MediaButtonReceiver.buildMediaButtonPendingIntent(
                         this, PlaybackStateCompat.ACTION_STOP)))
-        .setColor(ContextCompat.getColor(this, R.color.colorAccent))
+        //.setColor(ContextCompat.getColor(this, R.color.colorAccent))
         .setSmallIcon(R.mipmap.ic_play_arrow_white_24dp)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setOnlyAlertOnce(true)

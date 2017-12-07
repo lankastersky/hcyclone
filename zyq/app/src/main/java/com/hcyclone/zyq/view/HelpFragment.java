@@ -1,14 +1,19 @@
 package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.Utils;
+
+import java.io.IOException;
 
 public class HelpFragment extends Fragment {
 
@@ -18,12 +23,25 @@ public class HelpFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
-//    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
-//    collapsingToolbar.setTitle(getString(R.string.fragment_help_title));
     ((AppCompatActivity) getActivity()).getSupportActionBar()
         .setTitle(getString(R.string.fragment_help_title));
 
-    return inflater.inflate(R.layout.fragment_help, container, false);
-    // TODO: add version from resources.
+    View view = inflater.inflate(R.layout.fragment_help, container, false);
+
+    TextView versionView = view.findViewById(R.id.version);
+    versionView.setText(String.format(getString(R.string.fragment_help_version),
+        Utils.getVersionName(getContext())));
+
+    TextView helpTextView = view.findViewById(R.id.help_text);
+    try {
+      String helpText = Utils.readFromRawResources(R.raw.help_html, getContext());
+      helpTextView.setText(Utils.fromHtml(helpText));
+      ((TextView) view.findViewById(R.id.help_text)).setMovementMethod(
+          LinkMovementMethod.getInstance());
+    } catch (IOException e) {
+      Log.w(TAG, "Failed to read text from resources", e);
+    }
+
+    return view;
   }
 }

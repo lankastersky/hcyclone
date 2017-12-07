@@ -21,6 +21,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 
 import com.hcyclone.zyq.Log;
@@ -196,6 +197,14 @@ public class MainActivity extends AppCompatActivity
 
     NestedScrollView scrollView = getWindow().getDecorView().findViewById(R.id.nested_scroll_view);
     scrollView.scrollTo(0, 0);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      Window window = getWindow();
+      //window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+      window.setStatusBarColor(getResources().getColor(expand
+          ? android.R.color.transparent
+          : R.color.colorPrimaryDark));
+    }
   }
 
   protected int getStatusBarHeight() {

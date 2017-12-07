@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.AudioPlayer;
 import com.hcyclone.zyq.BundleConstants;
+import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
@@ -25,12 +26,15 @@ import com.hcyclone.zyq.model.ExerciseModel;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.VerificationError;
 
+import java.util.Locale;
+
 /**
  * Base fragment for the exercise.
  */
 public class ExerciseFragment extends Fragment implements Step {
 
   public static final String TAG = ExerciseFragment.class.getSimpleName();
+  private static final String IMAGE_FILENAME_PREFIX_TEMPLATE = "ex_%d_%d_%s";
 
   private Exercise exercise;
   private AudioPlayer audioPlayer;
@@ -114,21 +118,31 @@ public class ExerciseFragment extends Fragment implements Step {
   private void refreshUi(View view) {
     getActivity().setTitle(exercise.name);
     TextView descriptionTextView = view.findViewById(R.id.exercise_description);
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-      descriptionTextView.setText(Html.fromHtml(exercise.description, Html.FROM_HTML_MODE_LEGACY));
-    } else {
-      descriptionTextView.setText(Html.fromHtml(exercise.description));
-    }
+    descriptionTextView.setText(Utils.fromHtml(exercise.description));
+    refreshExerciseImage(view);
+  }
+
+  private void refreshExerciseImage(View view) {
     if (!TextUtils.isEmpty(exercise.imageName)) {
+      String fileName = String.format(
+          Locale.ENGLISH,
+          IMAGE_FILENAME_PREFIX_TEMPLATE,
+          exercise.level.getValue(),
+          exercise.type.getValue(),
+          exercise.imageName).toLowerCase();
       // Get filename without extension.
-      String fileName = exercise.imageName.substring(0, exercise.imageName.length() - 4);
-      int resID = getResources().getIdentifier(
-          fileName, "mipmap", getContext().getPackageName());
-      ImageView imageView = view.findViewById(R.id.exercise_image_view);
-      if (exercise.imageName.endsWith(".gif")) {
-        Glide.with(getActivity()).load(resID).into(imageView);
+      String fileNameWithoutExt = fileName.substring(0, fileName.length() - 4);
+      int resId = getResources().getIdentifier(
+          fileNameWithoutExt, "mipmap", getContext().getPackageName());
+      if (resId != 0) {
+        ImageView imageView = view.findViewById(R.id.exercise_image_view);
+        if (fileName.endsWith(".gif")) {
+          Glide.with(getActivity()).load(resId).into(imageView);
+        } else {
+          imageView.setImageDrawable(getResources().getDrawable(resId));
+        }
       } else {
-        imageView.setImageDrawable(getResources().getDrawable(resID));
+        Log.w(TAG, "Failed to load image: " + fileName);
       }
     }
   }

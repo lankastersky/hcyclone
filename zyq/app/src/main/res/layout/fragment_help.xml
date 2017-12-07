@@ -9,14 +9,16 @@
     tools:context="com.hcyclone.zyq.view.HelpFragment">
 
     <TextView
+        android:id="@+id/help_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@string/fontFamilyMedium"
         android:padding="16dp"
-        android:text="@string/fragment_help_text"
+        android:text=""
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@string/fontFamilyLight"
