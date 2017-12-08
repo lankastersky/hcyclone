@@ -3,12 +3,17 @@ package com.hcyclone.zyq.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseModel;
 
@@ -24,6 +29,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
 
   private Exercise.LevelType level;
   private Exercise.ExerciseType type;
+  private String description;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -31,21 +37,42 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
 
     View view = inflater.inflate(R.layout.fragment_exercises, container, false);
 
+    setHasOptionsMenu(true);
+
     if (getArguments() != null) {
       level = (Exercise.LevelType) getArguments().get(BundleConstants.EXERCISE_LEVEL_KEY);
       type = (Exercise.ExerciseType) getArguments().get(BundleConstants.EXERCISE_TYPE_KEY);
+      description = exerciseModel.getPracticeDescription(level, type, getContext());
     }
 
-    getActivity()
-        .setTitle(type != null
-            ? ExerciseModel.exerciseTypeToString(type, getContext())
-            : getString(R.string.fragment_exercises_title));
+    getActivity().setTitle(ExerciseModel.exerciseTypeToString(type, getContext()));
 
     recyclerView = view.findViewById(R.id.exercises_recycler_view);
     RecyclerView.Adapter adapter = new ExerciseRecyclerViewAdapter(buildListItems(), this);
     createListLayout(recyclerView, adapter);
 
     return view;
+  }
+
+  @Override
+  public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    inflater.inflate(R.menu.exercise_menu, menu);
+    if (TextUtils.isEmpty(description)) {
+      MenuItem item = menu.findItem(R.id.action_description);
+      item.setVisible(false);
+    }
+    super.onCreateOptionsMenu(menu, inflater);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == R.id.action_description) {
+      Utils.showDescription(description, getContext());
+      return true;
+    }
+
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

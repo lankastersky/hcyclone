@@ -33,7 +33,6 @@ public final class ExerciseModel {
   private static final String DESCRIPTION_FILE_TEMPLATE = "%s_html";
 
   private final Map<String, Exercise> exercisesMap;
-  private final Map<String, String> descriptionCache = new HashMap<>();
 
   public ExerciseModel(Context context) {
     try {
@@ -74,7 +73,15 @@ public final class ExerciseModel {
         getDescriptionId(level.getValue(), null, null), context);
   }
 
+  public String getPracticeDescription(LevelType level, ExerciseType type, Context context) {
+    return getPracticeDescription(
+        getDescriptionId(level.getValue(), type.getValue(), null), context);
+  }
+
   public String getPracticeDescription(Exercise exercise, Context context) {
+    if (!TextUtils.isEmpty(exercise.detailsFileName)) {
+      return getPracticeDescription(exercise.detailsFileName, context);
+    }
     return getPracticeDescription(
         getDescriptionId(
             exercise.level.getValue(), exercise.type.getValue(), exercise.id), context);
@@ -128,18 +135,13 @@ public final class ExerciseModel {
   }
 
   private String getPracticeDescription(String id, Context context) {
-    if (descriptionCache.containsKey(id)) {
-      return descriptionCache.get(id);
-    }
     String fileName = String.format(DESCRIPTION_FILE_TEMPLATE, id);
     int resId = context.getResources().getIdentifier(fileName, "raw", context.getPackageName());
     if (resId == 0) {
       return "";
     }
     try {
-      String description = Utils.readFromRawResources(resId, context);
-      descriptionCache.put(id, description);
-      return description;
+      return Utils.readFromRawResources(resId, context);
     } catch (IOException e) {
       Log.w(TAG, "Failed to read description: " + fileName, e);
       return "";

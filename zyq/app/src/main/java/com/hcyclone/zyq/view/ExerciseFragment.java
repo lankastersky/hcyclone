@@ -37,7 +37,6 @@ public class ExerciseFragment extends Fragment implements Step {
   private static final String IMAGE_FILENAME_PREFIX_TEMPLATE = "ex_%d_%d_%s";
 
   private Exercise exercise;
-  private AudioPlayer audioPlayer;
   private ExerciseModel exerciseModel;
 
   @Override
@@ -61,14 +60,7 @@ public class ExerciseFragment extends Fragment implements Step {
   @Override
   public void onStart() {
     super.onStart();
-    audioPlayer = new AudioPlayer();
     refreshUi(getView());
-  }
-
-  @Override
-  public void onStop() {
-    super.onStop();
-    audioPlayer.reset();
   }
 
   @Override

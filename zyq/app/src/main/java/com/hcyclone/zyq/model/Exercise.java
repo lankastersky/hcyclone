@@ -10,6 +10,8 @@ public final class Exercise extends ExerciseGroup {
   public final String id;
   public final String description;
   public final String imageName;
+  public final String tags;
+  public final String detailsFileName;
 
   public Exercise(
       String id,
@@ -17,11 +19,15 @@ public final class Exercise extends ExerciseGroup {
       LevelType level,
       ExerciseType type,
       String description,
-      String imageName) {
+      String imageName,
+      String tags,
+      String detailsFileName) {
     super(name, level, type);
     this.id = id;
     this.description = description;
     this.imageName = imageName;
+    this.tags = tags;
+    this.detailsFileName = detailsFileName;
   }
 
   public String getId() {

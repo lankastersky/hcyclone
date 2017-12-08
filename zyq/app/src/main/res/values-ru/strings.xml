@@ -1,4 +1,30 @@
 <resources>
-    <string name="fragment_help">Помощь</string>
     <string name="fragment_help_version">Студия \"Гиперборейский циклон\"\nВерсия %s</string>
+
+    <!-- Drawer -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="level_1">Ступень 1</string>
+    <string name="level_2">Ступень 2</string>
+    <string name="level_3">Ступень 3</string>
+    <string name="navigation_drawer_audio">Аудио</string>
+    <string name="navigation_drawer_help">О программе</string>
+    <string name="navigation_drawer_feedback">Обратная связь</string>
+
+    <!-- Exercise groups -->
+    <string name="warmup">Подготовительные упражнения</string>
+    <string name="type_meditation">Основные упражнения</string>
+    <string name="type_additional_meditation">Вспомогательные упражнения</string>
+    <string name="type_final">Заключительные упражнения</string>
+    <string name="type_treatment">Диагностика и лечение</string>
+
+    <!-- Fragment Practice -->
+    <string name="fragment_practice_title">Ступень %d</string>
+    <string name="app_name_full">Чжун Юань Цигун</string>
+    <string name="app_description">Практикум</string>
+    <string name="fragment_audio_title">Аудио</string>
+    <string name="fragment_help_title">О программе</string>
+    <string name="fragment_practice_description_title">Описание</string>
+    <string name="feedback_send_email">Послать по почте</string>
+
 </resources>

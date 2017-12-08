@@ -32,12 +32,11 @@
         />
 
         <TextView
-            android:id="@+id/exercise_type"
+            android:id="@+id/exercise_tags"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
             android:text=""
-            android:visibility="gone"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 

@@ -37,7 +37,7 @@ public class ExerciseFlowActivity
 
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
-      actionBar.setDisplayHomeAsUpEnabled(false);
+      actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     if (getIntent().getExtras() != null) {
@@ -45,21 +45,31 @@ public class ExerciseFlowActivity
       App app = (App) getApplicationContext();
       ExerciseModel exerciseModel = app.getExerciseModel();
       exercise = exerciseModel.getExercise(exerciseId);
-      Collection<Exercise> exercises =
-          exerciseModel.getExercises(exercise.level, exercise.type).values();
+      Collection<Exercise> exercises = getExercises(exercise.level, exercise.type);
       stepperLayout = findViewById(R.id.stepperLayout);
       stepperLayout
           .setAdapter(new ExerciseFlowAdapter(exercises, getSupportFragmentManager(), this));
       stepperLayout.setListener(this);
-
-      int currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
-        @Override
-        public boolean apply(Exercise input) {
-          return input.getId().equals(exercise.getId());
-        }
-      });
-      stepperLayout.setCurrentStepPosition(currentStep);
     }
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    Collection<Exercise> exercises = getExercises(exercise.level, exercise.type);
+    int currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
+      @Override
+      public boolean apply(Exercise input) {
+        return input.getId().equals(exercise.getId());
+      }
+    });
+    stepperLayout.setCurrentStepPosition(currentStep);
+  }
+
+  private Collection<Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
+    App app = (App) getApplicationContext();
+    ExerciseModel exerciseModel = app.getExerciseModel();
+    return exerciseModel.getExercises(level, type).values();
   }
 
   // StepperLayout.StepperListener

@@ -1,6 +1,7 @@
 package com.hcyclone.zyq.view;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,6 @@ import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
-import com.hcyclone.zyq.model.ExerciseGroup;
 
 import java.util.Collection;
 
@@ -34,18 +34,19 @@ public class ExerciseRecyclerViewAdapter
   public void onBindViewHolder(final ViewHolder holder, int position) {
     super.onBindViewHolder(holder, position);
     holder.nameView.setText(holder.item.name);
-    holder.typeView.setText(String.valueOf(holder.item.type));
+    holder.tagsView.setVisibility(!TextUtils.isEmpty(holder.item.tags) ? View.VISIBLE : View.GONE);
+    holder.tagsView.setText(String.valueOf(holder.item.tags));
   }
 
   static class ViewHolder extends ListAdapter.ViewHolder<Exercise> {
 
     final TextView nameView;
-    final TextView typeView;
+    final TextView tagsView;
 
     ViewHolder(View view) {
       super(view);
       nameView = view.findViewById(R.id.exercise_name);
-      typeView = view.findViewById(R.id.exercise_type);
+      tagsView = view.findViewById(R.id.exercise_tags);
     }
   }
 }
