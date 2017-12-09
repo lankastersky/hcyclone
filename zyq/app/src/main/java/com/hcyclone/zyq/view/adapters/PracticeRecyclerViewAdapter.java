@@ -1,4 +1,4 @@
-package com.hcyclone.zyq.view;
+package com.hcyclone.zyq.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,16 +8,17 @@ import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.ExerciseGroup;
+import com.hcyclone.zyq.view.OnItemSelectListener;
 
 import java.util.Collection;
 
 /**
  * {@link RecyclerView.Adapter} that can display practice items.
  */
-class PracticeRecyclerViewAdapter
+public class PracticeRecyclerViewAdapter
     extends ListAdapter<ExerciseGroup, PracticeRecyclerViewAdapter.ViewHolder> {
 
-  PracticeRecyclerViewAdapter(
+  public PracticeRecyclerViewAdapter(
       Collection<ExerciseGroup> items, OnItemSelectListener<ExerciseGroup> listener) {
     super(items, listener);
   }

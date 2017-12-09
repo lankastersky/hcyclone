@@ -30,6 +30,11 @@
     <!-- Fragment Audio -->
     <string name="fragment_audio_title">Audio</string>
 
+    <!-- Stepper Exercise -->
+    <string name="stepper_back">Back</string>
+    <string name="stepper_next">Next</string>
+    <string name="stepper_complete">Complete</string>
+
     <!-- Exercise groups -->
     <string name="warmup">Warm Up</string>
     <string name="type_meditation">Meditations</string>

@@ -1,4 +1,4 @@
-package com.hcyclone.zyq.view;
+package com.hcyclone.zyq.view.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import com.google.common.collect.Iterables;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.view.ExerciseFragment;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.adapter.AbstractFragmentStepAdapter;
 
@@ -19,7 +20,7 @@ public class ExerciseFlowAdapter extends AbstractFragmentStepAdapter {
 
   private final Collection<Exercise> exercises;
 
-  ExerciseFlowAdapter(Collection<Exercise> exercises, FragmentManager fm, Context context) {
+  public ExerciseFlowAdapter(Collection<Exercise> exercises, FragmentManager fm, Context context) {
     super(fm, context);
     this.exercises = exercises;
   }

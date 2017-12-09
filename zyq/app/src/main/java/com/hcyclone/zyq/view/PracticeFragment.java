@@ -2,7 +2,6 @@ package com.hcyclone.zyq.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 
 import com.hcyclone.zyq.BundleConstants;
@@ -22,6 +20,7 @@ import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
+import com.hcyclone.zyq.view.adapters.PracticeRecyclerViewAdapter;
 
 import java.util.Collection;
 

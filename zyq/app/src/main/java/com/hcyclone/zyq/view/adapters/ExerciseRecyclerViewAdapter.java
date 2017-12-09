@@ -1,4 +1,4 @@
-package com.hcyclone.zyq.view;
+package com.hcyclone.zyq.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.view.OnItemSelectListener;
 
 import java.util.Collection;
 
@@ -18,7 +19,7 @@ import java.util.Collection;
 public class ExerciseRecyclerViewAdapter
     extends ListAdapter<Exercise, ExerciseRecyclerViewAdapter.ViewHolder> {
 
-  ExerciseRecyclerViewAdapter(
+  public ExerciseRecyclerViewAdapter(
       Collection<Exercise> items, OnItemSelectListener<Exercise> listener) {
     super(items, listener);
   }
@@ -36,6 +37,22 @@ public class ExerciseRecyclerViewAdapter
     holder.nameView.setText(holder.item.name);
     holder.tagsView.setVisibility(!TextUtils.isEmpty(holder.item.tags) ? View.VISIBLE : View.GONE);
     holder.tagsView.setText(String.valueOf(holder.item.tags));
+
+    int bgResId;
+    switch(holder.item.level) {
+      case LEVEL1:
+        bgResId = R.color.bg_level1;
+        break;
+      case LEVEL2:
+        bgResId = R.color.bg_level2;
+        break;
+      case LEVEL3:
+        bgResId = R.color.bg_level3;
+        break;
+      default:
+        throw new AssertionError("Wrong level " + holder.item.level);
+    }
+    holder.view.setBackgroundColor(holder.view.getResources().getColor(bgResId));
   }
 
   static class ViewHolder extends ListAdapter.ViewHolder<Exercise> {

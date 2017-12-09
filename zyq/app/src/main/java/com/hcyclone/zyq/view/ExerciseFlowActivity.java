@@ -14,6 +14,7 @@ import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseModel;
+import com.hcyclone.zyq.view.adapters.ExerciseFlowAdapter;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 

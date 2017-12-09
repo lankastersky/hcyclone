@@ -16,6 +16,7 @@ import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
 import com.hcyclone.zyq.model.ExerciseModel;
+import com.hcyclone.zyq.view.adapters.ExerciseRecyclerViewAdapter;
 
 import java.util.Collection;
 import java.util.Map;

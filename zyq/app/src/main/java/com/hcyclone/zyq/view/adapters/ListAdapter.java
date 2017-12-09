@@ -1,9 +1,10 @@
-package com.hcyclone.zyq.view;
+package com.hcyclone.zyq.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.google.common.collect.Iterables;
+import com.hcyclone.zyq.view.OnItemSelectListener;
 
 import java.util.Collection;
 

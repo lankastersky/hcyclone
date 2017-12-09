@@ -26,5 +26,8 @@
     <string name="fragment_help_title">О программе</string>
     <string name="fragment_practice_description_title">Описание</string>
     <string name="feedback_send_email">Послать по почте</string>
+    <string name="stepper_back">Назад</string>
+    <string name="stepper_next">Вперед</string>
+    <string name="stepper_complete">Закончить</string>
 
 </resources>

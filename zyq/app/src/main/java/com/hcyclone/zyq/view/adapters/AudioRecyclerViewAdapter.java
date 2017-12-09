@@ -1,4 +1,4 @@
-package com.hcyclone.zyq.view;
+package com.hcyclone.zyq.view.adapters;
 
 
 import android.graphics.Color;
@@ -9,18 +9,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.view.OnItemSelectListener;
 
 import java.util.Collection;
 
 /**
  * {@link RecyclerView.Adapter} that can display audio list.
  */
-class AudioRecyclerViewAdapter
+public class AudioRecyclerViewAdapter
     extends ListAdapter<String, AudioRecyclerViewAdapter.ViewHolder> {
 
   private int selectedPosition = 0;
 
-  AudioRecyclerViewAdapter(
+  public AudioRecyclerViewAdapter(
       Collection<String> items, OnItemSelectListener<String> listener) {
     super(items, listener);
   }

@@ -4,4 +4,9 @@
     <color name="colorPrimary">#d45f63</color>
     <color name="colorPrimaryDark">#d4353a</color>
     <color name="colorAccent">#FF4500</color>
+
+    <color name="bg_level1">#fafafa</color>
+    <color name="bg_level2">#f7f5f2</color>
+    <color name="bg_level3">#fcfffa</color>
+
 </resources>
