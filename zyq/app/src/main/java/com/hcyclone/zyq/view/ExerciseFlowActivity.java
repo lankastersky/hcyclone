@@ -13,6 +13,7 @@ import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.Exercise.LevelType;
 import com.hcyclone.zyq.model.ExerciseModel;
 import com.hcyclone.zyq.view.adapters.ExerciseFlowAdapter;
 import com.stepstone.stepper.StepperLayout;
@@ -27,9 +28,9 @@ public class ExerciseFlowActivity
     extends AppCompatActivity implements StepperLayout.StepperListener {
 
   public static final String TAG = DescriptionFragment.class.getSimpleName();
+  private static final String CURRENT_STEP_KEY = "currentStep";
 
   private StepperLayout stepperLayout;
-  private Exercise exercise;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +43,30 @@ public class ExerciseFlowActivity
     }
 
     if (getIntent().getExtras() != null) {
-      String exerciseId = getIntent().getExtras().getString(BundleConstants.EXERCISE_ID_KEY);
+      Bundle extras = getIntent().getExtras();
+      final String exerciseId = extras.getString(BundleConstants.EXERCISE_ID_KEY);
+      LevelType level = (LevelType) extras.getSerializable(BundleConstants.EXERCISE_LEVEL_KEY);
       App app = (App) getApplicationContext();
       ExerciseModel exerciseModel = app.getExerciseModel();
-      exercise = exerciseModel.getExercise(exerciseId);
-      Collection<Exercise> exercises = getExercises(exercise.level, exercise.type);
+      Exercise exercise = exerciseModel.getExercise(exerciseId);
+      // It's possible that current flow level can be more than exercise level.
+      Collection<Exercise> exercises = getExercises(level, exercise.type);
+
       stepperLayout = findViewById(R.id.stepperLayout);
       stepperLayout
           .setAdapter(new ExerciseFlowAdapter(exercises, getSupportFragmentManager(), this));
+      int currentStep;
+      if (savedInstanceState == null) {
+        currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
+          @Override
+          public boolean apply(Exercise input) {
+            return input.getId().equals(exerciseId);
+          }
+        });
+      } else {
+        currentStep = savedInstanceState.getInt(CURRENT_STEP_KEY);
+      }
+      stepperLayout.setCurrentStepPosition(currentStep);
       stepperLayout.setListener(this);
     }
   }
@@ -57,20 +74,24 @@ public class ExerciseFlowActivity
   @Override
   protected void onStart() {
     super.onStart();
-    Collection<Exercise> exercises = getExercises(exercise.level, exercise.type);
-    int currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
-      @Override
-      public boolean apply(Exercise input) {
-        return input.getId().equals(exercise.getId());
-      }
-    });
-    stepperLayout.setCurrentStepPosition(currentStep);
+    // Refresh visible fragment this way. E.g. after showing the description activity.
+    stepperLayout.setCurrentStepPosition(stepperLayout.getCurrentStepPosition());
   }
 
-  private Collection<Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
-    App app = (App) getApplicationContext();
-    ExerciseModel exerciseModel = app.getExerciseModel();
-    return exerciseModel.getExercises(level, type).values();
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt(CURRENT_STEP_KEY, stepperLayout.getCurrentStepPosition());
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    int id = item.getItemId();
+    if (id == android.R.id.home) {
+      finish();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
   }
 
   // StepperLayout.StepperListener
@@ -98,13 +119,9 @@ public class ExerciseFlowActivity
     finish();
   }
 
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
-    if (id == android.R.id.home) {
-      finish();
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
+  private Collection<Exercise> getExercises(Exercise.LevelType level, Exercise.ExerciseType type) {
+    App app = (App) getApplicationContext();
+    ExerciseModel exerciseModel = app.getExerciseModel();
+    return exerciseModel.getExercises(level, type).values();
   }
 }

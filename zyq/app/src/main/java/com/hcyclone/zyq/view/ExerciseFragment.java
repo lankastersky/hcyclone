@@ -62,6 +62,12 @@ public class ExerciseFragment extends Fragment implements Step {
   }
 
   @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putString(BundleConstants.EXERCISE_ID_KEY, exercise.id);
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(
         exercise.type == Exercise.ExerciseType.MEDITATION
@@ -97,7 +103,9 @@ public class ExerciseFragment extends Fragment implements Step {
 
   @Override
   public void onSelected() {
-    refreshUi(getView());
+    if (isVisible()) {
+      refreshUi(getView());
+    }
   }
 
   @Override

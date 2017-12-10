@@ -123,6 +123,7 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
   private void showExerciseFlow(Exercise exercise) {
     Intent intent = new Intent(getContext(), ExerciseFlowActivity.class);
     intent.putExtra(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
+    intent.putExtra(BundleConstants.EXERCISE_LEVEL_KEY, level);
     startActivity(intent);
   }
 }
