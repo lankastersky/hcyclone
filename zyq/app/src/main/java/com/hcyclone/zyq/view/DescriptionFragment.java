@@ -27,8 +27,7 @@ public class DescriptionFragment extends Fragment {
     if (getArguments() != null) {
       String description = getArguments().getString(BundleConstants.DESCRIPTION_KEY);
       WebView descriptionView = view.findViewById(R.id.description_view);
-      //descriptionView.loadUrl("file:///android_asset/" + descriptionFileName);
-      descriptionView.loadData(description, "text/html", null);
+      descriptionView.loadData(description, "text/html; charset=UTF-8", null);
     }
 
     return view;

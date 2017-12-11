@@ -16,8 +16,8 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
 
@@ -43,6 +43,7 @@ public class AudioService extends Service {
 
   private AudioPlayer player;
   private Handler updateNotificationHandler;
+  private int startId;
 
   private final Runnable updateNotificationRunnable = new Runnable() {
     @Override
@@ -72,6 +73,7 @@ public class AudioService extends Service {
   }
 
   public int onStartCommand(Intent intent, int flags, final int startId) {
+    this.startId = startId;
     KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
     if (keyEvent != null) {
       int keyCode = keyEvent.getKeyCode();
@@ -88,40 +90,51 @@ public class AudioService extends Service {
             sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PAUSE);
           }
           updateNotification();
-          return START_STICKY;
+          break;
         case KeyEvent.KEYCODE_MEDIA_PLAY:
-          if (player.isInitied()) {
-            player.play();
-            if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
-              sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PLAY);
-            }
-            updateNotification();
-            return START_STICKY;
-          } // else initialise player further.
+          // Can be empty when called from notification.
+          String audioName = intent.getStringExtra(BundleConstants.AUDIO_NAME_KEY);
+          try {
+            play(audioName);
+          } catch (IOException e) {
+            Log.e(AudioService.TAG, "Failed to play audio", e);
+            break;
+          }
+          startForeground(AUDIO_NOTIFICATION_ID, buildNotification());
+          updateNotificationHandler.post(updateNotificationRunnable);
+          // Avoid broadcasting back to playback controls.
+          if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
+            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PLAY);
+          }
           break;
         default:
           throw new AssertionError("Wrong key event: " + keyCode);
       }
     }
-
-    String audioName = intent.getStringExtra(BundleConstants.AUDIO_NAME_KEY);
-
-    try {
-      player.play(audioName, new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-          Log.d(TAG, "Completed playing audio");
-          stopSelf(startId);
-        }
-      });
-      startForeground(AUDIO_NOTIFICATION_ID, buildNotification());
-      updateNotificationHandler.post(updateNotificationRunnable);
-    } catch (IOException e) {
-      Log.e(AudioService.TAG, "Failed to play audio", e);
-      return START_NOT_STICKY;
-    }
-
     return START_STICKY;
+  }
+
+  private void play(String audioName) throws IOException {
+    if (player.isInitied()) {
+      if (player.getCurrentAudioName().equals(audioName) || TextUtils.isEmpty(audioName)) {
+        player.play();
+        return;
+      }
+    }
+    player.play(audioName, new MediaPlayer.OnCompletionListener() {
+      @Override
+      public void onCompletion(MediaPlayer mp) {
+        Log.d(TAG, "Completed playing audio");
+        stopSelf(startId);
+      }
+    }, new MediaPlayer.OnErrorListener() {
+      @Override
+      public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        Log.d(TAG, "Failed playing audio");
+        stopSelf(startId);
+        return true;
+      }
+    });
   }
 
   private void sendAudioBroadCast(int keyEvent) {

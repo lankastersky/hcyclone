@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.hcyclone.zyq.R;
+import com.hcyclone.zyq.view.AudioFragment;
 import com.hcyclone.zyq.view.OnItemSelectListener;
 
 import java.util.Collection;
@@ -19,7 +20,7 @@ import java.util.Collection;
 public class AudioRecyclerViewAdapter
     extends ListAdapter<String, AudioRecyclerViewAdapter.ViewHolder> {
 
-  private int selectedPosition = 0;
+  private int selectedPosition = AudioFragment.NOT_SELECTED_STATE;
 
   public AudioRecyclerViewAdapter(
       Collection<String> items, OnItemSelectListener<String> listener) {
@@ -51,6 +52,16 @@ public class AudioRecyclerViewAdapter
         }
       }
     });
+  }
+
+  public int getSelectedPosition() {
+    return selectedPosition;
+  }
+
+  public void setSelectedPosition(int position) {
+    notifyItemChanged(selectedPosition);
+    selectedPosition = position;
+    notifyItemChanged(selectedPosition);
   }
 
   static class ViewHolder extends ListAdapter.ViewHolder<String> {

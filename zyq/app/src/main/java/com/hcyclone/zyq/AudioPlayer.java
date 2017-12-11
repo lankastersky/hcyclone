@@ -18,6 +18,7 @@ public final class AudioPlayer {
   private MediaPlayer mediaPlayer;
   private int currentPosition;
   private String currentAudioName;
+  private volatile boolean preparing;
 
   static {
     ImmutableSortedMap.Builder<String, String> builder
@@ -48,14 +49,18 @@ public final class AudioPlayer {
     if (mediaPlayer == null) {
       return false;
     }
-    return mediaPlayer.isPlaying();
+    return mediaPlayer.isPlaying() || preparing;
   }
 
   public boolean isInitied() {
     return !TextUtils.isEmpty(getCurrentAudioName());
   }
 
-  public void play(String audioName, MediaPlayer.OnCompletionListener listener) throws IOException {
+  public void play(
+      String audioName,
+      MediaPlayer.OnCompletionListener completionListener,
+      final MediaPlayer.OnErrorListener errorListener) throws IOException {
+    reset();
     currentAudioName = audioName;
     String uri = AUDIO_TO_URI_MAP.get(audioName);
     if (TextUtils.isEmpty(uri)) {
@@ -65,14 +70,23 @@ public final class AudioPlayer {
     mediaPlayer.setDataSource(uri);
     // TODO: change loop mode in UI.
     mediaPlayer.setLooping(true);
+    preparing = true;
     mediaPlayer.prepareAsync();
     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
       @Override
       public void onPrepared(MediaPlayer mp) {
+        preparing = false;
         mediaPlayer.start();
       }
     });
-    mediaPlayer.setOnCompletionListener(listener);
+    mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+      @Override
+      public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+        preparing = false;
+        return errorListener.onError(mediaPlayer, i, i1);
+      }
+    });
+    mediaPlayer.setOnCompletionListener(completionListener);
 
     // TODO: check wake lock and call setWakeMode if required http://shortn/_bsfpGBhTux .
   }
@@ -92,6 +106,7 @@ public final class AudioPlayer {
       mediaPlayer.release();
       currentPosition = 0;
       currentAudioName = null;
+      preparing = false;
     }
   }
 }

@@ -5,9 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,12 +36,14 @@ import java.util.Collection;
 public class AudioFragment extends ListFragment implements OnItemSelectListener<String> {
 
   private enum ControlsState {
-    STOP,
-    PLAY,
-    PAUSE
+    NOT_SELECTED,
+    STOPPED,
+    PLAYING,
+    PAUSED
   }
 
   public static final String TAG = AudioFragment.class.getSimpleName();
+  public static final int NOT_SELECTED_STATE = -1;
 
   private String currentAudioName;
   private ControlsState controlsState;
@@ -51,18 +54,22 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
                            Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_audio, container, false);
-//    CollapsingToolbarLayout collapsingToolbar = getActivity().findViewById(R.id.collapsing_toolbar);
-//    collapsingToolbar.setTitle(getString(R.string.fragment_audio_title));
     ((AppCompatActivity) getActivity()).getSupportActionBar()
         .setTitle(getString(R.string.fragment_audio_title));
 
     setHasOptionsMenu(true);
 
-    recyclerView = view.findViewById(R.id.audio_recycler_view);
     Collection<String> items = buildListItems();
-    currentAudioName = Iterables.get(items, 0);
-    RecyclerView.Adapter adapter = new AudioRecyclerViewAdapter(items, this);
+    int selectedPosition = PreferenceManager.getDefaultSharedPreferences(getContext())
+        .getInt(BundleConstants.CURRENT_ITEM_KEY, NOT_SELECTED_STATE);
+    if (selectedPosition != NOT_SELECTED_STATE) {
+      currentAudioName = Iterables.get(items, selectedPosition);
+    }
+
+    recyclerView = view.findViewById(R.id.audio_recycler_view);
+    AudioRecyclerViewAdapter adapter = new AudioRecyclerViewAdapter(items, this);
     createListLayout(recyclerView, adapter);
+    adapter.setSelectedPosition(selectedPosition);
 
     audioBroadcastReceiver = new AudioBroadcastReceiver();
 
@@ -82,6 +89,9 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
   public void onPause() {
     super.onPause();
     getContext().unregisterReceiver(audioBroadcastReceiver);
+    AudioRecyclerViewAdapter adapter = (AudioRecyclerViewAdapter) recyclerView.getAdapter();
+    PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
+        .putInt(BundleConstants.CURRENT_ITEM_KEY, adapter.getSelectedPosition()).apply();
   }
 
   @Override
@@ -92,21 +102,28 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
     MenuItem stopItem = menu.findItem(R.id.action_stop);
     MenuItem pauseItem = menu.findItem(R.id.action_pause);
     switch (controlsState) {
-      case STOP:
+      case NOT_SELECTED:
+        playItem.setVisible(false);
+        stopItem.setVisible(false);
+        pauseItem.setVisible(false);
+        break;
+      case STOPPED:
         playItem.setVisible(true);
         stopItem.setVisible(false);
         pauseItem.setVisible(false);
         break;
-      case PLAY:
+      case PLAYING:
         playItem.setVisible(false);
         stopItem.setVisible(true);
         pauseItem.setVisible(true);
         break;
-      case PAUSE:
+      case PAUSED:
         playItem.setVisible(true);
         stopItem.setVisible(true);
         pauseItem.setVisible(false);
         break;
+      default:
+        throw new AssertionError("Not allowed state: " + controlsState);
     }
     super.onCreateOptionsMenu(menu, inflater);
   }
@@ -117,20 +134,22 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
     switch(id) {
       case R.id.action_play:
         if (play()) {
-          controlsState = ControlsState.PLAY;
+          controlsState = ControlsState.PLAYING;
         }
         break;
       case R.id.action_pause:
         pause();
-        controlsState = ControlsState.PAUSE;
+        controlsState = ControlsState.PAUSED;
         break;
       case R.id.action_stop:
         stop();
-        controlsState = ControlsState.STOP;
+        controlsState = ControlsState.STOPPED;
         break;
       case R.id.action_set_timer:
         Utils.startTimer(getContext().getString(R.string.app_name), getContext());
         break;
+      default:
+        throw new AssertionError("No icon handler: " + id);
     }
     getActivity().invalidateOptionsMenu();
     return super.onOptionsItemSelected(item);
@@ -143,26 +162,34 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
 
   @Override
   public void onItemSelected(String audioName) {
+    if (audioName.equals(currentAudioName)) {
+      return;
+    }
     currentAudioName = audioName;
+    controlsState = calcControlState();
+    getActivity().invalidateOptionsMenu();
   }
 
   private ControlsState calcControlState() {
     App app = (App) getContext().getApplicationContext();
     AudioPlayer player = app.getPlayer();
+    if (TextUtils.isEmpty(currentAudioName)) {
+      return ControlsState.NOT_SELECTED;
+    }
     if (!player.isInitied()) {
-      return ControlsState.STOP;
+      return ControlsState.STOPPED;
     }
     if (player.isPlaying()) {
-      return ControlsState.PLAY;
+      return ControlsState.PLAYING;
     }
-    return  ControlsState.PAUSE;
+    return  ControlsState.PAUSED;
   }
 
   private boolean play() {
     if (!Utils.isInternetConnected(getContext())) {
       Log.w(TAG, "Can't play without internet");
       Toast
-          .makeText(getContext(), "No internet connection. Try later.", Toast.LENGTH_LONG)
+          .makeText(getContext(), getString(R.string.notif_no_internet), Toast.LENGTH_LONG)
           .show();
       return false;
     }
@@ -201,13 +228,13 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
         int keyCode = keyEvent.getKeyCode();
         switch (keyCode) {
           case KeyEvent.KEYCODE_MEDIA_STOP:
-            controlsState = ControlsState.STOP;
+            controlsState = ControlsState.STOPPED;
             break;
           case KeyEvent.KEYCODE_MEDIA_PLAY:
-            controlsState = ControlsState.PLAY;
+            controlsState = ControlsState.PLAYING;
             break;
           case KeyEvent.KEYCODE_MEDIA_PAUSE:
-            controlsState = ControlsState.PAUSE;
+            controlsState = ControlsState.PAUSED;
             break;
           default:
             throw new AssertionError("Wrong key event: " + keyCode);

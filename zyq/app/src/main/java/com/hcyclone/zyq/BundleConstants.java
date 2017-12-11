@@ -9,6 +9,7 @@ public final class BundleConstants {
   public static final String EXERCISE_LEVEL_KEY = "exerciseLevel";
   public static final String EXERCISE_TYPE_KEY = "exerciseType";
   public static final String DESCRIPTION_KEY = "description";
+  public static final String CURRENT_ITEM_KEY = "currentItem";
 
   /** Used to send audio name to audio service. */
   public static final String AUDIO_NAME_KEY = "audioNameKey";

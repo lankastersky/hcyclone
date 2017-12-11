@@ -30,4 +30,6 @@
     <string name="stepper_next">Вперед</string>
     <string name="stepper_complete">Закончить</string>
 
+    <!-- Notifications -->
+    <string name="notif_no_internet">Нет подключения к интернету. Попробуйте позднее.</string>
 </resources>

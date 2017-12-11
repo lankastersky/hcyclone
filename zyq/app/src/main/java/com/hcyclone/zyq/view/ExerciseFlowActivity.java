@@ -28,7 +28,6 @@ public class ExerciseFlowActivity
     extends AppCompatActivity implements StepperLayout.StepperListener {
 
   public static final String TAG = DescriptionFragment.class.getSimpleName();
-  private static final String CURRENT_STEP_KEY = "currentStep";
 
   private StepperLayout stepperLayout;
 
@@ -64,7 +63,7 @@ public class ExerciseFlowActivity
           }
         });
       } else {
-        currentStep = savedInstanceState.getInt(CURRENT_STEP_KEY);
+        currentStep = savedInstanceState.getInt(BundleConstants.CURRENT_ITEM_KEY);
       }
       stepperLayout.setCurrentStepPosition(currentStep);
       stepperLayout.setListener(this);
@@ -81,7 +80,7 @@ public class ExerciseFlowActivity
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putInt(CURRENT_STEP_KEY, stepperLayout.getCurrentStepPosition());
+    outState.putInt(BundleConstants.CURRENT_ITEM_KEY, stepperLayout.getCurrentStepPosition());
   }
 
   @Override
