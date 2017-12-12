@@ -1,5 +1,6 @@
 package com.hcyclone.zyq.view;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ public class DescriptionFragment extends Fragment {
     if (getArguments() != null) {
       String description = getArguments().getString(BundleConstants.DESCRIPTION_KEY);
       WebView descriptionView = view.findViewById(R.id.description_view);
+      descriptionView.setBackgroundColor(Color.TRANSPARENT);
       descriptionView.loadData(description, "text/html; charset=UTF-8", null);
     }
 

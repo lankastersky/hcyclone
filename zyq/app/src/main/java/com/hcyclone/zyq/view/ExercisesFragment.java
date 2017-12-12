@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hcyclone.zyq.Analytics;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
@@ -53,6 +54,12 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
     createListLayout(recyclerView, adapter);
 
     return view;
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    Analytics.getInstance().sendExerciseType(type);
   }
 
   @Override

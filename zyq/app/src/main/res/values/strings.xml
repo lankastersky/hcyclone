@@ -15,7 +15,7 @@
     <string name="navigation_drawer_feedback">Feedback</string>
 
     <!-- Help -->
-    <string name="fragment_help_version">notif_no_internet</string>
+    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion 0.1</string>
     <string name="fragment_help_title">About</string>
 
     <!-- Feedback -->

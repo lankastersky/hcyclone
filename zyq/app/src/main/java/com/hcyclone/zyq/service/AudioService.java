@@ -17,7 +17,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
 
@@ -115,11 +114,9 @@ public class AudioService extends Service {
   }
 
   private void play(String audioName) throws IOException {
-    if (player.isInitied()) {
-      if (player.getCurrentAudioName().equals(audioName) || TextUtils.isEmpty(audioName)) {
+    if (player.isInitied()) { // Continue playing what we played.
         player.play();
         return;
-      }
     }
     player.play(audioName, new MediaPlayer.OnCompletionListener() {
       @Override

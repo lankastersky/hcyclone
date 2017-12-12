@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.hcyclone.zyq.Analytics;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.Log;
@@ -59,6 +60,7 @@ public class ExerciseFragment extends Fragment implements Step {
   public void onStart() {
     super.onStart();
     refreshUi(getView());
+    Analytics.getInstance().sendExercise(exercise.getId());
   }
 
   @Override

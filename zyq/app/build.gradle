@@ -27,7 +27,7 @@ android {
 }
 
 def uiVersion = "26.1.0"
-def gmsVersion = "11.6.0"
+def gmsVersion = "11.6.2"
 
 dependencies {
     compile "com.android.support:preference-v7:${uiVersion}"

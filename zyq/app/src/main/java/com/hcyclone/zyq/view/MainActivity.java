@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
+import com.hcyclone.zyq.Analytics;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
@@ -146,6 +147,8 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void setPracticeFragment(Exercise.LevelType levelType) {
+    Analytics.getInstance().sendExerciseLevel(levelType);
+
     Fragment newFragment = getSupportFragmentManager().findFragmentByTag(
         PracticeFragment.class.getSimpleName());
     if (newFragment != null) {
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void expandAppBar(boolean expand) {
-    int actionBarHeight = Utils.dpToPx(220);
+    int actionBarHeight = (int) getResources().getDimension(R.dimen.action_bar_height);
     if (!expand) {
       // Calculate ActionBar height
       TypedValue tv = new TypedValue();

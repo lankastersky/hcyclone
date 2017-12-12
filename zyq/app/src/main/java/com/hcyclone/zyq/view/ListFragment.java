@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.hcyclone.zyq.App;
-import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
 
 import java.util.Collection;

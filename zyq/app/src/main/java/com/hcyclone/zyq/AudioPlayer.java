@@ -60,12 +60,18 @@ public final class AudioPlayer {
       String audioName,
       MediaPlayer.OnCompletionListener completionListener,
       final MediaPlayer.OnErrorListener errorListener) throws IOException {
+
+    Analytics.getInstance().sendAudio(audioName);
+
     reset();
-    currentAudioName = audioName;
+
     String uri = AUDIO_TO_URI_MAP.get(audioName);
     if (TextUtils.isEmpty(uri)) {
       throw new AssertionError("No audio with name " + audioName);
     }
+
+    currentAudioName = audioName;
+
     mediaPlayer = new MediaPlayer();
     mediaPlayer.setDataSource(uri);
     // TODO: change loop mode in UI.
@@ -87,8 +93,6 @@ public final class AudioPlayer {
       }
     });
     mediaPlayer.setOnCompletionListener(completionListener);
-
-    // TODO: check wake lock and call setWakeMode if required http://shortn/_bsfpGBhTux .
   }
 
   public void play() {
