@@ -20,7 +20,7 @@
 
     <!-- Fragment Practice -->
     <string name="fragment_practice_title">Ступень %d</string>
-    <string name="app_name_full">Чжун Юань Цигун</string>
+    <string name="app_name_full">Чжун Юань цигун</string>
     <string name="app_description">Практикум</string>
     <string name="fragment_audio_title">Аудио</string>
     <string name="fragment_help_title">О программе</string>

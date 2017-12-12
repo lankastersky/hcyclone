@@ -24,6 +24,9 @@ android {
     }
     productFlavors {
     }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 def uiVersion = "26.1.0"

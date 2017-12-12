@@ -2,7 +2,7 @@
 
     <string name="app_name" translatable="false">ZYQigong</string>
     <string name="app_name_full">Zhong Yuan Qigong</string>
-    <string name="app_description">Guideline</string>
+    <string name="app_description">Practice</string>
 
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -36,11 +36,11 @@
     <string name="stepper_complete">Complete</string>
 
     <!-- Exercise groups -->
-    <string name="warmup">Warm Up</string>
-    <string name="type_meditation">Meditations</string>
-    <string name="type_additional_meditation">Additional meditations</string>
-    <string name="type_final">Final</string>
-    <string name="type_treatment">Treatment</string>
+    <string name="warmup">Preliminary exericses</string>
+    <string name="type_meditation">Main exercises</string>
+    <string name="type_additional_meditation">Supporting exercises</string>
+    <string name="type_final">Closing exercises</string>
+    <string name="type_treatment">Diagnosis and treatment</string>
 
     <!-- Notifications -->
     <string name="notif_no_internet">No internet connection. Try later.</string>
