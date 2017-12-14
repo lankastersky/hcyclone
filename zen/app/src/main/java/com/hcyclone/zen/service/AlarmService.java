@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -9,6 +9,11 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
 
 import java.util.Calendar;
 import java.util.Date;

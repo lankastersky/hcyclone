@@ -1,8 +1,10 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.hcyclone.zen.Log;
 
 public final class AlarmReceiver extends BroadcastReceiver {
 

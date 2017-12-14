@@ -1,8 +1,12 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.model;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import com.hcyclone.zen.ChallengeArchiver;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -225,8 +229,13 @@ public final class ChallengeModel {
     challengeArchiver.storeChallengeData(challengeMap);
     challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
     challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
-    Log.d(TAG, "Current challenge id:" + currentChallengeId + ": "
-            + getCurrentChallenge().getContent());
+    Challenge currentChallenge = getCurrentChallenge();
+    if (currentChallenge == null) {
+      Log.e(TAG, "Failed to get current challenge with id " + currentChallengeId);
+    } else {
+      Log.d(TAG, "Current challenge id:" + currentChallengeId + ": "
+          + currentChallenge.getContent());
+    }
   }
 
   /**

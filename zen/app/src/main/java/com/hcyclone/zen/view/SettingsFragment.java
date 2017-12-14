@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.hcyclone.zen.AppLifecycleManager;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.service.PreferencesService;
 
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 

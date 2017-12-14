@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.model;
 
 public class ChallengeData {
 

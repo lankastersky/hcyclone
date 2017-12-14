@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -14,6 +14,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge;
 
 import java.util.ArrayList;
 import java.util.List;

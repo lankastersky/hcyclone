@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -7,6 +7,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.model.ChallengeModel;
 
 public class ChallengeActivity extends AppCompatActivity {
 
@@ -31,7 +35,7 @@ public class ChallengeActivity extends AppCompatActivity {
   }
 
   private void setupActionBar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {

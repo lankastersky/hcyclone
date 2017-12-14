@@ -1,23 +1,24 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.model;
 
 import android.text.TextUtils;
+
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.Log;
+
 import java.util.Date;
 
 public class Challenge {
-
-  private static final String TAG = Challenge.class.getSimpleName();
 
   public static final int UNKNOWN = 0;
   public static final int SHOWN = 1;
   public static final int ACCEPTED = 2;
   public static final int FINISHED = 3;
   public static final int DECLINED = 4;
-
   // Levels
   public static final int LEVEL_LOW = 1;
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
-
+  private static final String TAG = Challenge.class.getSimpleName();
   private String id;
   private String content;
   private String details;
@@ -87,16 +88,16 @@ public class Challenge {
     return finishedTime;
   }
 
+  public void setFinishedTime(long finishedTime) {
+    this.finishedTime = finishedTime;
+  }
+
   public float getRating() {
     return rating;
   }
 
   public void setRating(float rating) {
     this.rating = rating;
-  }
-
-  public void setFinishedTime(long finishedTime) {
-    this.finishedTime = finishedTime;
   }
 
   public void updateStatus() {

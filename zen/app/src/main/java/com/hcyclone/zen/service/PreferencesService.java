@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
+
+import com.hcyclone.zen.AppLifecycleManager;
 
 public final class PreferencesService {
 

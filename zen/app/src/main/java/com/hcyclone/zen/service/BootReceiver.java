@@ -1,8 +1,12 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
 
 public final class BootReceiver extends BroadcastReceiver {
   @Override

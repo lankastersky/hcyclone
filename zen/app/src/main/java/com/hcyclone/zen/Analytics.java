@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.hcyclone.zen.model.Challenge;
 
 /**
  * Google analytics facade.

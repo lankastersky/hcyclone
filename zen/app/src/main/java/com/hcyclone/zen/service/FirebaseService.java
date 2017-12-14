@@ -1,8 +1,12 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
+
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

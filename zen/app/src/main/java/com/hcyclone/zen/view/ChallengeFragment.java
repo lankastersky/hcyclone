@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
+import com.hcyclone.zen.service.AlarmService;
 
 public class ChallengeFragment extends Fragment {
 
@@ -73,7 +81,7 @@ public class ChallengeFragment extends Fragment {
 
     updateUI();
     // TODO: find better way to scroll to the top.
-    NestedScrollView scrollView = (NestedScrollView) getActivity().getWindow().getDecorView()
+    NestedScrollView scrollView = getActivity().getWindow().getDecorView()
         .findViewById(R.id.nested_scroll_view);
     if (scrollView != null) {
       scrollView.fullScroll(View.FOCUS_UP);
@@ -81,7 +89,7 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void createUI(View view) {
-    ratingBar = (RatingBar) view.findViewById(R.id.rating_bar);
+    ratingBar = view.findViewById(R.id.rating_bar);
     rankDialog = view.findViewById(R.id.rank_dialog);
     if (!showFromJournal) {
       // Show current challenge.
@@ -166,7 +174,7 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void createChallengeButton(View view) {
-    challengeButton = (Button) view.findViewById(R.id.accept_button);
+    challengeButton = view.findViewById(R.id.accept_button);
     challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -194,13 +202,13 @@ public class ChallengeFragment extends Fragment {
 
   private void showRankView() {
     rankDialog.setVisibility(View.VISIBLE);
-    RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.rank_dialog_ratingbar);
+    RatingBar ratingBar = rankDialog.findViewById(R.id.rank_dialog_ratingbar);
     ratingBar.setRating(0);
   }
 
   private void rate() {
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-    RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.rank_dialog_ratingbar);
+    RatingBar ratingBar = rankDialog.findViewById(R.id.rank_dialog_ratingbar);
     challenge.setRating(ratingBar.getRating());
     Analytics.getInstance().sendChallengeRating(challenge);
   }

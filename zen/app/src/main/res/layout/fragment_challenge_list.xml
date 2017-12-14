@@ -9,5 +9,5 @@
     android:layout_height="wrap_content"
     android:scrollbars="vertical"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.hcyclone.zen.ChallengeListFragment"
+    tools:context="com.hcyclone.zen.view.ChallengeListFragment"
     tools:listitem="@layout/fragment_challenge_summary"/>

@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,6 +8,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
 
 import java.util.List;
 

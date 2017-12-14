@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context="com.hcyclone.zen.ChallengeActivity">
+    tools:context="com.hcyclone.zen.view.ChallengeActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

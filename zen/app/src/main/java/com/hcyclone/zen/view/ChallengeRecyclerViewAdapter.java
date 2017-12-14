@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hcyclone.zen.ChallengeListFragment.OnListFragmentInteractionListener;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.model.Challenge;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,16 +16,16 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Challenge} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link ChallengeListFragment.OnListFragmentInteractionListener}.
  */
 public class ChallengeRecyclerViewAdapter
     extends RecyclerView.Adapter<ChallengeRecyclerViewAdapter.ViewHolder> {
 
   private final List<Challenge> values;
-  private final OnListFragmentInteractionListener listener;
+  private final ChallengeListFragment.OnListFragmentInteractionListener listener;
 
   public ChallengeRecyclerViewAdapter(List<Challenge> items,
-                                      OnListFragmentInteractionListener listener) {
+                                      ChallengeListFragment.OnListFragmentInteractionListener listener) {
     values = items;
     this.listener = listener;
   }
@@ -76,9 +77,9 @@ public class ChallengeRecyclerViewAdapter
     public ViewHolder(View view) {
       super(view);
       this.view = view;
-      finishedTime = (TextView) view.findViewById(R.id.finishedTime);
-      contentView = (TextView) view.findViewById(R.id.content);
-      detailsView = (TextView) view.findViewById(R.id.details);
+      finishedTime = view.findViewById(R.id.finishedTime);
+      contentView = view.findViewById(R.id.content);
+      detailsView = view.findViewById(R.id.details);
     }
   }
 }

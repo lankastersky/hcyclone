@@ -1,11 +1,11 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -13,6 +13,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.AppLifecycleManager;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
+import com.hcyclone.zen.view.MainActivity;
 
 public final class NotificationService implements OnSharedPreferenceChangeListener {
 
@@ -31,6 +39,12 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
 
   public static NotificationService getInstance() {
     return instance;
+  }
+
+  private static int getNotificationIcon() {
+    boolean useBlackIcon = (android.os.Build.VERSION.SDK_INT >=
+        android.os.Build.VERSION_CODES.LOLLIPOP);
+    return useBlackIcon ? R.mipmap.ic_menu_challenge : R.mipmap.ic_menu_challenge_white;
   }
 
   public void init(@NonNull Context context) {
@@ -133,11 +147,5 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
     }
     builder.setSound(soundUri);
     notificationManager.notify(NOTIFICATION_ID, builder.build());
-  }
-
-  private static int getNotificationIcon() {
-    boolean useBlackIcon = (android.os.Build.VERSION.SDK_INT >=
-        android.os.Build.VERSION_CODES.LOLLIPOP);
-    return useBlackIcon ? R.mipmap.ic_menu_challenge : R.mipmap.ic_menu_challenge_white;
   }
 }

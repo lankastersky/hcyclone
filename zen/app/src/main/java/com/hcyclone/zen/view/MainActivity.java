@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeModel;
+import com.hcyclone.zen.service.AlarmService;
+import com.hcyclone.zen.service.FirebaseService;
 
 import java.lang.ref.WeakReference;
 
@@ -43,19 +51,19 @@ public class MainActivity extends AppCompatActivity
     setTheme(R.style.AppTheme_NoActionBar);
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
     toggle.syncState();
 
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    NavigationView navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
-    progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    progressBar = findViewById(R.id.progressBar);
 
     if (savedInstanceState == null) {
       selectChallengeMenuItem();
@@ -92,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onBackPressed() {
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     if (drawer.isDrawerOpen(GravityCompat.START)) {
       drawer.closeDrawer(GravityCompat.START);
     } else {
@@ -104,7 +112,7 @@ public class MainActivity extends AppCompatActivity
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
     selectedMenuItemId = item.getItemId();
     selectMenuItem(selectedMenuItemId);
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
   }
@@ -141,7 +149,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void selectChallengeMenuItem() {
-    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+    NavigationView navigationView = findViewById(R.id.nav_view);
     Menu menu = navigationView.getMenu();
     MenuItem menuItem = menu.findItem(R.id.nav_challenge);
     menuItem.setChecked(true);
@@ -194,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
   private void onChallengesLoaded(int resultCode) {
     progressBar.setVisibility(View.GONE);
-    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+    DrawerLayout drawer = findViewById(R.id.drawer_layout);
     drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
     switch (resultCode) {

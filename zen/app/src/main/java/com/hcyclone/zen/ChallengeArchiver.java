@@ -7,6 +7,8 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.model.ChallengeData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.Map;
  */
 public class ChallengeArchiver {
 
-  public static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.ChallengeModel";
+  public static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.model.ChallengeModel";
   private static final String TAG = ChallengeArchiver.class.getSimpleName();
   private static final String KEY_CHALLENGE_DATA = "challenge_data";
   private static final String KEY_CHALLENGES = "challenges";
