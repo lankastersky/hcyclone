@@ -7,7 +7,6 @@ import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -18,15 +17,8 @@ import java.util.Date;
 public final class Utils {
 
   private static final String TAG = Utils.class.getSimpleName();
-  private static final Utils instance = new Utils();
-
-  private Context context;
 
   private Utils() {}
-
-  public static Utils getInstance() {
-    return instance;
-  }
 
   public static String getApplicationName(Context context) {
     ApplicationInfo applicationInfo = context.getApplicationInfo();
@@ -34,30 +26,26 @@ public final class Utils {
     return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
-  public void init(@NonNull Context context) {
-    this.context = context;
-  }
-
-  public boolean isDebug() {
+  public static boolean isDebug() {
     return BuildConfig.DEBUG;
   }
 
-  public long getDebugAlarmRepeatTime() {
+  public static long getDebugAlarmRepeatTime() {
     return 10_000;
   }
 
-  public long getDebugDailyAlarmTime() {
+  public static long getDebugDailyAlarmTime() {
     return 50_000;
   }
 
-  public boolean isTimeLess6pm(Calendar date) {
+  public static boolean isTimeLess6pm(Calendar date) {
     if (isDebug()) {
       return true;
     }
     return date.get(Calendar.HOUR_OF_DAY) < 18;
   }
 
-  public Date get6PM(long time) {
+  public static Date get6PM(long time) {
     // Today.
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
@@ -73,7 +61,7 @@ public final class Utils {
     return date.getTime();
   }
 
-  public Date getNextMidnight(long time) {
+  public static Date getNextMidnight(long time) {
     // Today.
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(time);
@@ -91,16 +79,16 @@ public final class Utils {
     return date.getTime();
   }
 
-  public void sendFeedback(Context activityContext) {
+  public static void sendFeedback(Context context) {
     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
         "mailto","lankastersky@gmail.com", null));
-    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getApplicationName(activityContext) + " feedback "
-        + getVersionName() + " (" + getVersionCode() + ")");
-    activityContext.startActivity(Intent.createChooser(emailIntent,
-        activityContext.getString(R.string.feedback_send_email)));
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getApplicationName(context) + " feedback "
+        + getVersionName(context) + " (" + getVersionCode(context) + ")");
+    context.startActivity(Intent.createChooser(emailIntent,
+        context.getString(R.string.feedback_send_email)));
   }
 
-  public String getVersionName() {
+  public static String getVersionName(Context context) {
     try {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {
@@ -109,7 +97,7 @@ public final class Utils {
     }
   }
 
-  private int getVersionCode() {
+  private static int getVersionCode(Context context) {
     try {
       return context.getPackageManager()
           .getPackageInfo(context.getPackageName(), 0).versionCode;
@@ -122,28 +110,43 @@ public final class Utils {
   /**
    * Checks network connectivity.
    */
-  public boolean isConnected() {
+  public static boolean isConnected(Context context) {
     ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
         Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
 
-  public Dialog buildDialog(String title, String text, Context context) {
+  public static Dialog buildDialog(
+      String title, String text, Context context, View.OnClickListener listener) {
     final Dialog dialog = new Dialog(context, R.style.AlertDialogCustom);
     dialog.setContentView(R.layout.alert_dialog);
-    TextView titleView = (TextView) dialog.findViewById(R.id.alert_dialog_title);
+    TextView titleView = dialog.findViewById(R.id.alert_dialog_title);
     titleView.setText(title);
-    TextView textView = (TextView) dialog.findViewById(R.id.alert_dialog_text);
+    TextView textView = dialog.findViewById(R.id.alert_dialog_text);
     textView.setText(text);
 
-    Button updateButton = (Button) dialog.findViewById(R.id.alert_dialog_button);
-    updateButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        dialog.dismiss();
-      }
-    });
+    Button updateButton = dialog.findViewById(R.id.alert_dialog_button);
+    if (listener == null) {
+      updateButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+          dialog.dismiss();
+        }
+      });
+    } else {
+      updateButton.setOnClickListener(listener);
+    }
     return dialog;
+  }
+
+  public static int challengeRatingToStars(float rate, Context context) {
+    int starsAmount = context.getResources().getInteger(R.integer.stars_amount);
+    return (int) rate * starsAmount;
+  }
+
+  public static float starsToChallengeRating(int stars, Context context) {
+    int starsAmount = context.getResources().getInteger(R.integer.stars_amount);
+    return (float) stars / starsAmount;
   }
 }

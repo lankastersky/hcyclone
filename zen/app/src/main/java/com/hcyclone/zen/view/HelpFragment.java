@@ -20,7 +20,7 @@ public class HelpFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_help, container, false);
     TextView versionView = view.findViewById(R.id.version);
     versionView.setText(String.format(getString(R.string.fragment_help_version),
-        Utils.getInstance().getVersionName()));
+        Utils.getVersionName(getContext())));
     return view;
   }
 }

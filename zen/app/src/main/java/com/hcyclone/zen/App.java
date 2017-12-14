@@ -36,7 +36,7 @@ public class App extends Application {
   public void onCreate() {
     super.onCreate();
     initSingletons();
-    if (Utils.getInstance().isDebug()) {
+    if (Utils.isDebug()) {
       enableStrictMode();
     }
     registerActivityLifecycleCallbacks(AppLifecycleManager.getInstance());
@@ -47,7 +47,6 @@ public class App extends Application {
     AlarmService.getInstance().init(this);
     NotificationService.getInstance().init(this);
     PreferencesService.getInstance().init(this);
-    Utils.getInstance().init(this);
     Analytics.getInstance().init(this);
     AppLifecycleManager.getInstance().init(this);
   }

@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(HelpFragment.class);
         break;
       case R.id.nav_feedback:
-        Utils.getInstance().sendFeedback(this);
+        Utils.sendFeedback(this);
         break;
       default:
         Log.d(TAG, "Wrong menu item " + menuItemId);
@@ -218,8 +218,8 @@ public class MainActivity extends AppCompatActivity
         }
         break;
       case FirebaseService.RESULT_CODE_ERROR:
-        Utils.getInstance().buildDialog(getString(R.string.dialog_title_something_wrong),
-            getString(R.string.dialog_text_failed_to_connect), this).show();
+        Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+            getString(R.string.dialog_text_failed_to_connect), this, null).show();
         break;
     }
   }

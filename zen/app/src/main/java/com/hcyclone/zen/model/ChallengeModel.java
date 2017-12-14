@@ -128,7 +128,7 @@ public final class ChallengeModel {
   public boolean isTimeToAcceptChallenge() {
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(currentChallengeShownTime);
-    return Utils.getInstance().isTimeLess6pm(date);
+    return Utils.isTimeLess6pm(date);
   }
 
   /**
@@ -138,7 +138,7 @@ public final class ChallengeModel {
     boolean result = false;
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
-      Date timeToFinish = Utils.getInstance().get6PM(currentChallengeShownTime);
+      Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
       Calendar date = Calendar.getInstance();
       date.setTimeInMillis(currentChallengeShownTime);
 //      Date now = new Date();
@@ -165,7 +165,8 @@ public final class ChallengeModel {
     return false;
   }
 
-  public int getLevel() {
+  public @Challenge.LevelType
+  int getLevel() {
     return level;
   }
 
@@ -176,7 +177,7 @@ public final class ChallengeModel {
   /** Challenge expires at midnight of this day. */
   private boolean isChallengeTimeExpired() {
     boolean result;
-    Date timeToDecline = Utils.getInstance().getNextMidnight(currentChallengeShownTime);
+    Date timeToDecline = Utils.getNextMidnight(currentChallengeShownTime);
     Calendar date = Calendar.getInstance();
     date.setTimeInMillis(currentChallengeShownTime);
     Date now = new Date();

@@ -87,10 +87,10 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
   private static long getAlarmTime(int hoursToAddToMidnight, boolean today) {
     Calendar calendar = Calendar.getInstance();
     long alarmTime;
-    if (Utils.getInstance().isDebug()) {
-      alarmTime = calendar.getTimeInMillis() + Utils.getInstance().getDebugAlarmRepeatTime();
+    if (Utils.isDebug()) {
+      alarmTime = calendar.getTimeInMillis() + Utils.getDebugAlarmRepeatTime();
     } else {
-      Date midnight = Utils.getInstance().getNextMidnight(calendar.getTimeInMillis());
+      Date midnight = Utils.getNextMidnight(calendar.getTimeInMillis());
       calendar.setTime(midnight);
       calendar.set(Calendar.HOUR_OF_DAY, hoursToAddToMidnight);
       if (today) {
@@ -241,8 +241,8 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
       return;
     }
     long msToAdd;
-    if (Utils.getInstance().isDebug()) {
-      msToAdd = Utils.getInstance().getDebugDailyAlarmTime();
+    if (Utils.isDebug()) {
+      msToAdd = Utils.getDebugDailyAlarmTime();
     } else {
       msToAdd = AlarmManager.INTERVAL_HOUR * Integer.parseInt(settingsHours);
     }

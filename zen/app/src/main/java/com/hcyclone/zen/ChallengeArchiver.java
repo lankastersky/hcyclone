@@ -10,6 +10,7 @@ import com.google.gson.reflect.TypeToken;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeData;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,17 +28,22 @@ public class ChallengeArchiver {
   private static final String KEY_CURRENT_CHALLENGE = "current_challenge";
   private static final String KEY_CURRENT_LEVEL = "current_challenge_level";
 
-  private final Gson gson;
+  private static final Gson GSON = new Gson();
+  private static final Type CHALLENGE_DATA_LIST_TYPE =
+      new TypeToken<List<ChallengeData>>() {
+      }.getType();
+  private static final Type CHALLENGE_LIST_TYPE = new TypeToken<List<Challenge>>() {
+  }.getType();
+
   private final SharedPreferences sharedPreferences;
 
   public ChallengeArchiver(@NonNull Context context) {
     sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    gson = new Gson();
   }
 
   public Challenge restoreCurrentChallenge() {
     String currentChallengeString = sharedPreferences.getString(KEY_CURRENT_CHALLENGE, null);
-    return gson.fromJson(currentChallengeString, Challenge.class);
+    return GSON.fromJson(currentChallengeString, Challenge.class);
   }
 
   public void storeCurrentChallenge(Challenge challenge) {
@@ -45,7 +51,7 @@ public class ChallengeArchiver {
       Log.e(TAG, "Failed to store current challenge because it's null");
       return;
     }
-    String currentChallengeString = gson.toJson(challenge);
+    String currentChallengeString = GSON.toJson(challenge);
     sharedPreferences.edit().putString(KEY_CURRENT_CHALLENGE, currentChallengeString).apply();
     requestBackup();
   }
@@ -60,7 +66,7 @@ public class ChallengeArchiver {
     return sharedPreferences.getLong(KEY_CURRENT_CHALLENGE_SHOWN_TIME, 0);
   }
 
-  public void storeLevel(int level) {
+  public void storeLevel(@Challenge.LevelType int level) {
     sharedPreferences.edit().putInt(KEY_CURRENT_LEVEL, level).apply();
     requestBackup();
   }
@@ -75,7 +81,7 @@ public class ChallengeArchiver {
       data.add(new ChallengeData(challenge.getId(), challenge.getStatus(),
           challenge.getFinishedTime(), challenge.getRating()));
     }
-    String dataString = gson.toJson(data);
+    String dataString = GSON.toJson(data);
     sharedPreferences.edit().putString(KEY_CHALLENGE_DATA, dataString).apply();
     requestBackup();
   }
@@ -84,8 +90,7 @@ public class ChallengeArchiver {
     String dataString = sharedPreferences.getString(KEY_CHALLENGE_DATA, null);
 
     if (!TextUtils.isEmpty(dataString)) {
-      List<ChallengeData> data = gson.fromJson(dataString,
-          new TypeToken<List<ChallengeData>>(){}.getType());
+      List<ChallengeData> data = GSON.fromJson(dataString, CHALLENGE_DATA_LIST_TYPE);
 
       for (ChallengeData challengeData : data) {
         Challenge challenge = challengeMap.get(challengeData.id);
@@ -101,7 +106,7 @@ public class ChallengeArchiver {
   }
 
   public void storeChallenges(List<Challenge> challenges) {
-    String dataString = gson.toJson(challenges);
+    String dataString = GSON.toJson(challenges);
     sharedPreferences.edit().putString(KEY_CHALLENGES, dataString).apply();
     requestBackup();
   }
@@ -111,8 +116,7 @@ public class ChallengeArchiver {
     String dataString = sharedPreferences.getString(KEY_CHALLENGES, null);
 
     if (!TextUtils.isEmpty(dataString)) {
-      challenges = gson.fromJson(dataString,
-          new TypeToken<List<Challenge>>(){}.getType());
+      challenges = GSON.fromJson(dataString, CHALLENGE_LIST_TYPE);
     }
     return challenges;
   }

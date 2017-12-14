@@ -117,9 +117,12 @@ public class ChallengeFragment extends Fragment {
     }
     int level = ChallengeModel.getInstance().getLevel();
 
-    Utils.getInstance().buildDialog(getString(R.string.dialog_title_next_level_available),
+    Utils.buildDialog(
+        getString(R.string.dialog_title_next_level_available),
         String.format(getString(R.string.dialog_text_next_level_available),
-            localizedChallengeLevel(level)), getContext()).show();
+            localizedChallengeLevel(level)),
+        getContext(),
+        null).show();
 
     Analytics.getInstance().sendLevelUp(level);
   }
@@ -155,7 +158,7 @@ public class ChallengeFragment extends Fragment {
     ratingBar.setRating(challenge.getRating());
   }
 
-  private String localizedChallengeLevel(int level) {
+  private String localizedChallengeLevel(@Challenge.LevelType int level) {
     String result = "";
     switch (level) {
       case Challenge.LEVEL_LOW:

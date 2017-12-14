@@ -73,7 +73,7 @@ public class FirebaseAdapter {
     return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
   }
 
-  private void authenticate(Context context) {
+  private void authenticate(final Context context) {
     String firebaseUsername = context.getString(R.string.firebase_login);
     String firebasePassword = context.getString(R.string.firebase_password);
     Log.d(TAG, "signInWithEmailAndPassword");
@@ -86,7 +86,7 @@ public class FirebaseAdapter {
             if (firebaseAuthListener != null) {
               if (task.isSuccessful()) {
                 firebaseAuthListener.onAuthSuccess();
-              } else if (!Utils.getInstance().isConnected()) {
+              } else if (!Utils.isConnected(context)) {
                 // Use cached data.
                 Log.d(TAG, "Offline, try use cached data");
                 firebaseAuthListener.onAuthSuccess();

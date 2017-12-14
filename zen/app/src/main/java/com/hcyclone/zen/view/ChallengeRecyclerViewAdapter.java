@@ -8,11 +8,14 @@ import android.widget.TextView;
 
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.view.ChallengeListFragment.OnListFragmentInteractionListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Challenge} and makes a call to the
@@ -22,12 +25,23 @@ public class ChallengeRecyclerViewAdapter
     extends RecyclerView.Adapter<ChallengeRecyclerViewAdapter.ViewHolder> {
 
   private final List<Challenge> values;
-  private final ChallengeListFragment.OnListFragmentInteractionListener listener;
+  private final List<Challenge> originalValues;
+  private final OnListFragmentInteractionListener listener;
+
+  private Set<Integer> levels;
+  private Set<Float> ratings;
 
   public ChallengeRecyclerViewAdapter(List<Challenge> items,
-                                      ChallengeListFragment.OnListFragmentInteractionListener listener) {
+                                      Set<Integer> levels,
+                                      Set<Float> ratings,
+                                      OnListFragmentInteractionListener listener) {
     values = items;
+    originalValues = new ArrayList<>(values);
+    this.levels = levels;
+    this.ratings = ratings;
     this.listener = listener;
+
+    filter();
   }
 
   @Override
@@ -64,6 +78,27 @@ public class ChallengeRecyclerViewAdapter
   @Override
   public int getItemCount() {
     return values.size();
+  }
+
+  public void filterByLevels(Set<Integer> levels) {
+    this.levels = levels;
+    filter();
+    notifyDataSetChanged();
+  }
+
+  public void filterByRating(Set<Float> ratings) {
+    this.ratings = ratings;
+    filter();
+    notifyDataSetChanged();
+  }
+
+  private void filter() {
+    values.clear();
+    for (Challenge challenge : originalValues) {
+      if (levels.contains(challenge.getLevel()) && ratings.contains(challenge.getRating())) {
+        values.add(challenge);
+      }
+    }
   }
 
   public static class ViewHolder extends RecyclerView.ViewHolder {

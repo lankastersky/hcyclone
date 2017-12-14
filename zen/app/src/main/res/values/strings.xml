@@ -84,6 +84,20 @@
         <item>4</item>
     </string-array>
 
+    <string-array name="levels">
+        <item>Level 1</item>
+        <item>Level 2</item>
+        <item>Level 3</item>
+    </string-array>
+
+    <string-array name="rates">
+        <item>☆☆☆☆</item>
+        <item>★☆☆☆</item>
+        <item>★★☆☆</item>
+        <item>★★★☆</item>
+        <item>★★★★</item>
+    </string-array>
+
     <!-- Fragment Challenge -->
     <string name="fragment_challenge_current">Current Challenge</string>
     <string name="fragment_challenge_journal_entry">Journal Entry</string>
@@ -108,6 +122,12 @@
     <!-- Fragment Challenge List -->
     <string name="fragment_challenge_list">Finished Challenges</string>
     <string name="fragment_challenge_list_empty_text">There are no finished challenges yet</string>
+    <string name="challenges_filter">Filter</string>
+
+    <!-- Filter challenges Fragment -->
+    <string name="filter_challenges_title">Choose filter</string>
+    <string name="filter_challenges_by_rating">Filter by rating</string>
+    <string name="filter_challenges_by_level">Filter by difficulty</string>
 
     <!-- Help -->
     <string name="fragment_help_text" translatable="false">"Каждое утро вам доступно новое задание в разделе \"Задание\". Вы можете начать его выполнять, нажав на кнопку \"Принять\". Задание выполняется в течение дня. После шести вечера, если вы готовы завершить задание, нажмите на кнопку \"Завершить\". Завершенные задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет считаться пропущенным и не появится в журнале.\n\nКаждое задание имеет уровень сложности. Постепенно будут даваться все более сложные задания.\n\nДля того чтобы не забывать брать, выполнять и завершать задания, можно использовать напоминания в разделе \"Настройки\"."
