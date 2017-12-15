@@ -57,4 +57,5 @@
         раз позже.
     </string>
     <string name="dialog_title_something_wrong">Что-то не так</string>
+    <string name="challenges_filter">Фильтр</string>
 </resources>

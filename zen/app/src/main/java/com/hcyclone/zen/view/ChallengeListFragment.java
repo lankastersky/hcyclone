@@ -74,6 +74,12 @@ public class ChallengeListFragment extends Fragment {
     }
   }
 
+//  private void showFilterDialog() {
+//    FilterChallengesFragment fragment = new FilterChallengesFragment();
+//    fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.FilterDialogCustom);
+//    fragment.show(getActivity().getSupportFragmentManager(), FilterChallengesFragment.TAG);
+//  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
@@ -103,15 +109,11 @@ public class ChallengeListFragment extends Fragment {
           finishedChallenges,
           levelsToSet(levels),
           ratingsToSet(ratings),
-          onListFragmentInteractionListener));
+          onListFragmentInteractionListener,
+          getContext()));
       recyclerView.setNestedScrollingEnabled(false);
     }
     return view;
-  }
-
-  @Override
-  public void onStart() {
-    super.onStart();
   }
 
   @Override
@@ -119,12 +121,6 @@ public class ChallengeListFragment extends Fragment {
     super.onDetach();
     onListFragmentInteractionListener = null;
   }
-
-//  private void showFilterDialog() {
-//    FilterChallengesFragment fragment = new FilterChallengesFragment();
-//    fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.FilterDialogCustom);
-//    fragment.show(getActivity().getSupportFragmentManager(), FilterChallengesFragment.TAG);
-//  }
 
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -155,7 +151,6 @@ public class ChallengeListFragment extends Fragment {
 
   private void showFilterByLevelDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-    challengeFilterModel.restoreLevels(levels);
     builder.setMultiChoiceItems(
         R.array.levels, levels, new DialogInterface.OnMultiChoiceClickListener() {
           @Override
@@ -177,9 +172,8 @@ public class ChallengeListFragment extends Fragment {
 
   private void showFilterByRatingDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-    challengeFilterModel.restoreRatings(ratings);
     builder.setMultiChoiceItems(
-        R.array.rates, ratings, new DialogInterface.OnMultiChoiceClickListener() {
+        R.array.ratings, ratings, new DialogInterface.OnMultiChoiceClickListener() {
           @Override
           public void onClick(DialogInterface dialog, int which, boolean isChecked) {
             ratings[which] = isChecked;
@@ -196,6 +190,7 @@ public class ChallengeListFragment extends Fragment {
     });
     builder.create().show();
   }
+
   /**
    * This interface must be implemented by activities that contain this
    * fragment to allow an interaction in this fragment to be communicated

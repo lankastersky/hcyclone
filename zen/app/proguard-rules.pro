@@ -16,4 +16,5 @@
 #   public *;
 #}
 -dontobfuscate
+-ignorewarnings
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable

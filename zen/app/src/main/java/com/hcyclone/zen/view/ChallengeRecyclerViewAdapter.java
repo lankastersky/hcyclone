@@ -1,12 +1,15 @@
 package com.hcyclone.zen.view;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.view.ChallengeListFragment.OnListFragmentInteractionListener;
 
@@ -27,6 +30,7 @@ public class ChallengeRecyclerViewAdapter
   private final List<Challenge> values;
   private final List<Challenge> originalValues;
   private final OnListFragmentInteractionListener listener;
+  private final Context context;
 
   private Set<Integer> levels;
   private Set<Float> ratings;
@@ -34,12 +38,14 @@ public class ChallengeRecyclerViewAdapter
   public ChallengeRecyclerViewAdapter(List<Challenge> items,
                                       Set<Integer> levels,
                                       Set<Float> ratings,
-                                      OnListFragmentInteractionListener listener) {
+                                      OnListFragmentInteractionListener listener,
+                                      Context context) {
     values = items;
     originalValues = new ArrayList<>(values);
     this.levels = levels;
     this.ratings = ratings;
     this.listener = listener;
+    this.context = context;
 
     filter();
   }
@@ -62,6 +68,11 @@ public class ChallengeRecyclerViewAdapter
 
     holder.contentView.setText(values.get(position).getContent());
     holder.detailsView.setText(values.get(position).getDetails());
+    holder.levelView.setText(String.format(
+        context.getString(R.string.fragment_challenge_level),
+        Utils.localizedChallengeLevel(holder.item.getLevel(), context)));
+    holder.ratingBar.setRating(holder.item.getRating());
+
 
     holder.view.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -107,14 +118,18 @@ public class ChallengeRecyclerViewAdapter
     public final TextView contentView;
     public final TextView detailsView;
     public final TextView finishedTime;
+    public final TextView levelView;
+    public final RatingBar ratingBar;
     public Challenge item;
 
     public ViewHolder(View view) {
       super(view);
       this.view = view;
       finishedTime = view.findViewById(R.id.finishedTime);
-      contentView = view.findViewById(R.id.content);
-      detailsView = view.findViewById(R.id.details);
+      contentView = view.findViewById(R.id.fragment_challenge_summary_content);
+      detailsView = view.findViewById(R.id.fragment_challenge_summary_details);
+      levelView = view.findViewById(R.id.fragment_challenge_summary_level);
+      ratingBar = view.findViewById(R.id.fragment_challenge_summary_rating_bar);
     }
   }
 }

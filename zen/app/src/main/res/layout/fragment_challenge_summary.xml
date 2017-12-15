@@ -30,7 +30,7 @@
             android:textSize="16sp"/>
 
         <TextView
-            android:id="@+id/content"
+            android:id="@+id/fragment_challenge_summary_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
@@ -41,13 +41,44 @@
         />
 
         <TextView
-            android:id="@+id/details"
+            android:id="@+id/fragment_challenge_summary_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
+            android:paddingBottom="@dimen/text_margin"
             android:text="Some details stub"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true">
+
+            <TextView
+                android:id="@+id/fragment_challenge_summary_level"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/fontFamilyLight"
+                android:paddingBottom="@dimen/text_margin"
+                android:text="level stub level stub level stub"
+                android:textAppearance="?attr/textAppearanceListItem"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="16sp"/>
+
+            <RatingBar
+                android:id="@+id/fragment_challenge_summary_rating_bar"
+                style="@style/CustomRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:isIndicator="true"
+                android:numStars="4"
+                android:rating="2.0"
+                android:stepSize="1.0"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

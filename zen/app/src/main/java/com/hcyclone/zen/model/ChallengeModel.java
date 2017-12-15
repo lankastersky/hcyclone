@@ -303,7 +303,8 @@ public final class ChallengeModel {
     if (challenges.isEmpty()) {
       return new ArrayList<>();
     }
-    double finishedProportion = (challenges.size() - nonfinished.size()) / challenges.size();
+    double finishedProportion =
+        (double) (challenges.size() - nonfinished.size()) / challenges.size();
     boolean acceptMedium = finishedProportion >= 1D / 3;
     boolean acceptHigh = finishedProportion >= 2D / 3;
 

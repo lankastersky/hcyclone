@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.hcyclone.zen.model.Challenge;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -140,13 +142,21 @@ public final class Utils {
     return dialog;
   }
 
-  public static int challengeRatingToStars(float rate, Context context) {
-    int starsAmount = context.getResources().getInteger(R.integer.stars_amount);
-    return (int) rate * starsAmount;
-  }
-
-  public static float starsToChallengeRating(int stars, Context context) {
-    int starsAmount = context.getResources().getInteger(R.integer.stars_amount);
-    return (float) stars / starsAmount;
+  public static String localizedChallengeLevel(@Challenge.LevelType int level, Context context) {
+    String result = "";
+    switch (level) {
+      case Challenge.LEVEL_LOW:
+        result = context.getString(R.string.challenge_level_low);
+        break;
+      case Challenge.LEVEL_MEDIUM:
+        result = context.getString(R.string.challenge_level_medium);
+        break;
+      case Challenge.LEVEL_HIGH:
+        result = context.getString(R.string.challenge_level_high);
+        break;
+      default:
+        break;
+    }
+    return result;
   }
 }

@@ -27,7 +27,7 @@
             android:padding="@dimen/text_margin">
 
             <TextView
-                android:id="@+id/content"
+                android:id="@+id/fragment_challenge_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyMedium"
@@ -37,7 +37,7 @@
             />
 
             <TextView
-                android:id="@+id/details"
+                android:id="@+id/fragment_challenge_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:autoLink="web"
@@ -47,7 +47,7 @@
                 android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/quote"
+                android:id="@+id/fragment_challenge_quote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyLight"
@@ -57,7 +57,7 @@
                 android:textSize="14sp"/>
 
             <TextView
-                android:id="@+id/source"
+                android:id="@+id/fragment_challenge_source"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyMedium"
@@ -66,7 +66,7 @@
                 android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/type"
+                android:id="@+id/fragment_challenge_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyLight"
@@ -75,7 +75,7 @@
                 android:textSize="16sp"/>
 
             <TextView
-                android:id="@+id/level"
+                android:id="@+id/fragment_challenge_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@string/fontFamilyLight"
@@ -85,7 +85,7 @@
                 android:textSize="16sp"/>
 
             <RatingBar
-                android:id="@+id/rating_bar"
+                android:id="@+id/fragment_challenge_rating_bar"
                 style="@style/CustomRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -97,14 +97,14 @@
                 android:visibility="gone"/>
 
             <include
-                android:id="@+id/rank_dialog"
+                android:id="@+id/fragment_challenge_rank_dialog"
                 layout="@layout/rank_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
             <Button
-                android:id="@+id/accept_button"
+                android:id="@+id/fragment_challenge_accept_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/text_margin"

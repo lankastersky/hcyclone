@@ -89,8 +89,8 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void createUI(View view) {
-    ratingBar = view.findViewById(R.id.rating_bar);
-    rankDialog = view.findViewById(R.id.rank_dialog);
+    ratingBar = view.findViewById(R.id.fragment_challenge_rating_bar);
+    rankDialog = view.findViewById(R.id.fragment_challenge_rank_dialog);
     if (!showFromJournal) {
       // Show current challenge.
       getActivity().setTitle(getString(R.string.fragment_challenge_current));
@@ -120,7 +120,7 @@ public class ChallengeFragment extends Fragment {
     Utils.buildDialog(
         getString(R.string.dialog_title_next_level_available),
         String.format(getString(R.string.dialog_text_next_level_available),
-            localizedChallengeLevel(level)),
+            Utils.localizedChallengeLevel(level, getContext())),
         getContext(),
         null).show();
 
@@ -130,54 +130,36 @@ public class ChallengeFragment extends Fragment {
   private void showChallengeData() {
     View view = getView();
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-    ((TextView) view.findViewById(R.id.content)).setText(challenge.getContent());
-    ((TextView) view.findViewById(R.id.details)).setText(challenge.getDetails());
-    ((TextView) view.findViewById(R.id.quote)).setText(challenge.getQuote());
+    ((TextView) view.findViewById(R.id.fragment_challenge_content)).setText(challenge.getContent());
+    ((TextView) view.findViewById(R.id.fragment_challenge_details)).setText(challenge.getDetails());
+    ((TextView) view.findViewById(R.id.fragment_challenge_quote)).setText(challenge.getQuote());
     if (!TextUtils.isEmpty(challenge.getQuote())) {
-      view.findViewById(R.id.quote).setVisibility(View.VISIBLE);
+      view.findViewById(R.id.fragment_challenge_quote).setVisibility(View.VISIBLE);
     } else {
-      view.findViewById(R.id.quote).setVisibility(View.GONE);
+      view.findViewById(R.id.fragment_challenge_quote).setVisibility(View.GONE);
     }
 
     if (!TextUtils.isEmpty(challenge.getSourceAsHtml())) {
-      ((TextView) view.findViewById(R.id.source)).setText(
+      ((TextView) view.findViewById(R.id.fragment_challenge_source)).setText(
           Html.fromHtml(challenge.getSourceAsHtml()));
-      ((TextView) view.findViewById(R.id.source)).setMovementMethod(
+      ((TextView) view.findViewById(R.id.fragment_challenge_source)).setMovementMethod(
           LinkMovementMethod.getInstance());
-      view.findViewById(R.id.source).setVisibility(View.VISIBLE);
+      view.findViewById(R.id.fragment_challenge_source).setVisibility(View.VISIBLE);
     } else {
-      view.findViewById(R.id.source).setVisibility(View.GONE);
+      view.findViewById(R.id.fragment_challenge_source).setVisibility(View.GONE);
     }
 
-    ((TextView) view.findViewById(R.id.type)).setText(String.format(
+    ((TextView) view.findViewById(R.id.fragment_challenge_type)).setText(String.format(
         getString(R.string.fragment_challenge_type), challenge.getType()));
-    ((TextView) view.findViewById(R.id.level)).setText(String.format(
+    ((TextView) view.findViewById(R.id.fragment_challenge_level)).setText(String.format(
         getString(R.string.fragment_challenge_level),
-        localizedChallengeLevel(challenge.getLevel())));
+        Utils.localizedChallengeLevel(challenge.getLevel(), getContext())));
 
     ratingBar.setRating(challenge.getRating());
   }
 
-  private String localizedChallengeLevel(@Challenge.LevelType int level) {
-    String result = "";
-    switch (level) {
-      case Challenge.LEVEL_LOW:
-        result = getString(R.string.challenge_level_low);
-        break;
-      case Challenge.LEVEL_MEDIUM:
-        result = getString(R.string.challenge_level_medium);
-        break;
-      case Challenge.LEVEL_HIGH:
-        result = getString(R.string.challenge_level_high);
-        break;
-      default:
-        break;
-    }
-    return result;
-  }
-
   private void createChallengeButton(View view) {
-    challengeButton = view.findViewById(R.id.accept_button);
+    challengeButton = view.findViewById(R.id.fragment_challenge_accept_button);
     challengeButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {

@@ -75,10 +75,10 @@ public class MainActivity extends AppCompatActivity
       intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
           new ChallengesResultReceiver(new Handler(), this));
       startService(intent);
+      replaceFragment(ChallengeFragment.class);
     } else {
       ChallengeModel.getInstance().loadChallenges();
     }
-    replaceFragment(ChallengeFragment.class);
   }
 
   @Override
