@@ -58,4 +58,12 @@
     </string>
     <string name="dialog_title_something_wrong">Что-то не так</string>
     <string name="challenges_filter">Фильтр</string>
+    <string name="filter_challenges_by_rating">Фильтровать по уровню осознанности</string>
+    <string name="filter_challenges_by_level">Фильтровать по сложности</string>
+    <string name="navigation_drawer_statistics">Статистика</string>
+    <string name="fragment_statistics">Статистика</string>
+    <string name="fragment_statistics_level">Сложность: %s</string>
+    <string name="fragment_statistics_average_rating">Средний уровень осознанности: %d%%</string>
+    <string name="fragment_statistics_finished_challenges_number">Выполнено заданий: %d из %d
+    </string>
 </resources>

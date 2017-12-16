@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
+import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 
 import java.util.ArrayList;
@@ -172,6 +173,25 @@ public final class ChallengeModel {
 
   private void setLevel(int level) {
     this.level = level;
+  }
+
+  /**
+   * Returns average rating among finished challenges.
+   */
+  public float getAverageRating(Context context) {
+    float averageRating = 0;
+    List<Challenge> finishedChallenges = getFinishedChallenges();
+    for (Challenge challenge : finishedChallenges) {
+      averageRating += challenge.getRating();
+    }
+    int maxRating = context.getResources().getInteger(R.integer.stars_amount);
+    averageRating = averageRating / finishedChallenges.size() / maxRating;
+    return averageRating;
+  }
+
+  public int getShownChallengesNumber() {
+    int shown = getChallengesMap(Challenge.SHOWN).size();
+    return shown + getFinishedChallenges().size();
   }
 
   /** Challenge expires at midnight of this day. */

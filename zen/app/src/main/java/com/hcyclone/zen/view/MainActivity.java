@@ -164,6 +164,9 @@ public class MainActivity extends AppCompatActivity
       case R.id.nav_journal:
         replaceFragment(ChallengeListFragment.class);
         break;
+      case R.id.nav_statistics:
+        replaceFragment(StatisticsFragment.class);
+        break;
       case R.id.nav_settings:
         replaceFragment(SettingsFragment.class);
         break;
