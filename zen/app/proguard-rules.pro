@@ -17,4 +17,5 @@
 #}
 -dontobfuscate
 -ignorewarnings
+-keep class com.androidplot.** { *; }
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable

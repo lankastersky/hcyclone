@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context="com.hcyclone.zen.view.StatisticsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/statistics_level"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="@string/fragment_statistics_level"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/statistics_finished_challenges_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="@string/fragment_statistics_finished_challenges_number"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/statistics_average_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:paddingBottom="8dp"
+            android:text="@string/fragment_statistics_average_rating"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/plot"
+        style="@style/APDefacto.Light"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginBottom="40dp"
+        ap:backgroundColor="@android:color/white"
+        ap:lineLabelRotationBottom="-45"
+        ap:lineLabels="left|bottom"
+        ap:rangeTitle="range"
+        ap:title="A Simple XY Plot"/>
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/plot2"
+        style="@style/APDefacto.Light"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginBottom="@dimen/text_margin"
+        ap:backgroundColor="@android:color/white"
+        ap:domainTitle="domain"
+        ap:lineLabelRotationBottom="-45"
+        ap:lineLabels="left|bottom"
+        ap:rangeTitle="range"
+        ap:title="A Simple XY Plot2"/>
+
+</LinearLayout>

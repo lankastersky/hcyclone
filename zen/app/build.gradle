@@ -49,6 +49,9 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
+
+    // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
+    compile "com.androidplot:androidplot-core:1.5.2"
 }
 
 apply plugin: 'com.google.gms.google-services'
