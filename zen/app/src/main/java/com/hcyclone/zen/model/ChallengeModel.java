@@ -45,8 +45,8 @@ public final class ChallengeModel {
     return getChallengesMap().get(currentChallengeId);
   }
 
-  public List<Challenge> getFinishedChallenges() {
-    List<Challenge> challenges = getChallengesMap(Challenge.FINISHED);
+  public List<Challenge> getFinishedChallengesSortedDesc() {
+    List<Challenge> challenges = getFinishedChallenges();
     // Sort by finished time in reverse order.
     Collections.sort(challenges, new Comparator<Challenge>() {
       @Override
@@ -55,6 +55,22 @@ public final class ChallengeModel {
       }
     });
     return challenges;
+  }
+
+  public List<Challenge> getFinishedChallengesSorted() {
+    List<Challenge> challenges = getFinishedChallenges();
+    // Sort by finished time.
+    Collections.sort(challenges, new Comparator<Challenge>() {
+      @Override
+      public int compare(Challenge challenge1, Challenge challenge2) {
+        return Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime());
+      }
+    });
+    return challenges;
+  }
+
+  public List<Challenge> getFinishedChallenges() {
+    return getChallengesMap(Challenge.FINISHED);
   }
 
   public Challenge getChallenge(String challengeId) {

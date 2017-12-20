@@ -19,6 +19,7 @@ import java.util.Date;
 public final class Utils {
 
   private static final String TAG = Utils.class.getSimpleName();
+  private static final Calendar CALENDAR = Calendar.getInstance();
 
   private Utils() {}
 
@@ -49,36 +50,34 @@ public final class Utils {
 
   public static Date get6PM(long time) {
     // Today.
-    Calendar date = Calendar.getInstance();
-    date.setTimeInMillis(time);
+    CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      date.add(Calendar.SECOND, 5);
+      CALENDAR.add(Calendar.SECOND, 10);
     } else {
-      date.set(Calendar.HOUR_OF_DAY, 18);
+      CALENDAR.set(Calendar.HOUR_OF_DAY, 18);
       // Reset minutes, seconds and millis.
-      date.set(Calendar.MINUTE, 0);
-      date.set(Calendar.SECOND, 0);
-      date.set(Calendar.MILLISECOND, 0);
+      CALENDAR.set(Calendar.MINUTE, 0);
+      CALENDAR.set(Calendar.SECOND, 0);
+      CALENDAR.set(Calendar.MILLISECOND, 0);
     }
-    return date.getTime();
+    return CALENDAR.getTime();
   }
 
   public static Date getNextMidnight(long time) {
     // Today.
-    Calendar date = Calendar.getInstance();
-    date.setTimeInMillis(time);
+    CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      date.add(Calendar.SECOND, 10);
+      CALENDAR.add(Calendar.SECOND, 10);
     } else {
       // Reset hour, minutes, seconds and millis.
-      date.set(Calendar.HOUR_OF_DAY, 0);
-      date.set(Calendar.MINUTE, 0);
-      date.set(Calendar.SECOND, 0);
-      date.set(Calendar.MILLISECOND, 0);
+      CALENDAR.set(Calendar.HOUR_OF_DAY, 0);
+      CALENDAR.set(Calendar.MINUTE, 0);
+      CALENDAR.set(Calendar.SECOND, 0);
+      CALENDAR.set(Calendar.MILLISECOND, 0);
       // Midnight of next day.
-      date.add(Calendar.DAY_OF_MONTH, 1);
+      CALENDAR.add(Calendar.DAY_OF_MONTH, 1);
     }
-    return date.getTime();
+    return CALENDAR.getTime();
   }
 
   public static void sendFeedback(Context context) {

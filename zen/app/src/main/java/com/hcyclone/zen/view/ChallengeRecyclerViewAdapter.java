@@ -27,6 +27,9 @@ import java.util.Set;
 public class ChallengeRecyclerViewAdapter
     extends RecyclerView.Adapter<ChallengeRecyclerViewAdapter.ViewHolder> {
 
+  private static final DateFormat FINISHED_CHALLENGE_TIME_DATE_FORMAT =
+      SimpleDateFormat.getDateInstance();
+
   private final List<Challenge> values;
   private final List<Challenge> originalValues;
   private final OnListFragmentInteractionListener listener;
@@ -61,9 +64,8 @@ public class ChallengeRecyclerViewAdapter
   public void onBindViewHolder(final ViewHolder holder, int position) {
     holder.item = values.get(position);
 
-    DateFormat dateFormat = SimpleDateFormat.getDateInstance();
     Date date = new Date(holder.item.getFinishedTime());
-    String dateString = dateFormat.format(date);
+    String dateString = FINISHED_CHALLENGE_TIME_DATE_FORMAT.format(date);
     holder.finishedTime.setText(dateString);
 
     holder.contentView.setText(values.get(position).getContent());

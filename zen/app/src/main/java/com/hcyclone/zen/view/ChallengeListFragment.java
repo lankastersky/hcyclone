@@ -89,7 +89,8 @@ public class ChallengeListFragment extends Fragment {
     setHasOptionsMenu(true);
 
     View view;
-    List<Challenge> finishedChallenges = ChallengeModel.getInstance().getFinishedChallenges();
+    List<Challenge> finishedChallenges =
+        ChallengeModel.getInstance().getFinishedChallengesSortedDesc();
 //    for (int i = 0; i < 9; i++) {
 //      finishedChallenges.addAll(ChallengeModel.getInstance().getFinishedChallenges());
 //    }
@@ -125,7 +126,8 @@ public class ChallengeListFragment extends Fragment {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.challenge_list_menu, menu);
-    List<Challenge> finishedChallenges = ChallengeModel.getInstance().getFinishedChallenges();
+    List<Challenge> finishedChallenges =
+        ChallengeModel.getInstance().getFinishedChallenges();
     if (finishedChallenges.isEmpty()) {
       MenuItem item = menu.findItem(R.id.action_filter_rate);
       item.setVisible(false);
