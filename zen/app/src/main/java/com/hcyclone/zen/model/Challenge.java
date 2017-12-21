@@ -33,6 +33,7 @@ public class Challenge {
   private float rating;
   private int status;
   private long finishedTime;
+
   public Challenge(String id, String content, String details, String type, long level,
                    String source, String url, String quote) {
     this.id = id;

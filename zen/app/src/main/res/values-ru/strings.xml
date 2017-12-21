@@ -66,4 +66,6 @@
     <string name="fragment_statistics_average_rating">Средний уровень осознанности: %d%%</string>
     <string name="fragment_statistics_finished_challenges_number">Выполнено заданий: %d из %d
     </string>
+    <string name="fragment_statistics_finished_challenges_plot_title">Выполнено заданий</string>
+    <string name="fragment_statistics_consciousness_plot_title">Уровень осознанности, %</string>
 </resources>

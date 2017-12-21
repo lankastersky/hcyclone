@@ -69,6 +69,29 @@ public final class ChallengeModel {
     return challenges;
   }
 
+  /**
+   * Returns normalized (divided by {@link #getMaxRating(Context)}) average rating among finished
+   * challenges.
+   */
+  public float getAverageRating(Context context) {
+    float averageRating = 0;
+    List<Challenge> finishedChallenges = getFinishedChallenges();
+    for (Challenge challenge : finishedChallenges) {
+      averageRating += challenge.getRating();
+    }
+    averageRating = averageRating / finishedChallenges.size() / getMaxRating(context);
+    return averageRating;
+  }
+
+  public int getMaxRating(Context context) {
+    return context.getResources().getInteger(R.integer.stars_amount);
+  }
+
+  public int getShownChallengesNumber() {
+    int shown = getChallengesMap(Challenge.SHOWN).size();
+    return shown + getFinishedChallenges().size();
+  }
+
   public List<Challenge> getFinishedChallenges() {
     return getChallengesMap(Challenge.FINISHED);
   }
@@ -189,25 +212,6 @@ public final class ChallengeModel {
 
   private void setLevel(int level) {
     this.level = level;
-  }
-
-  /**
-   * Returns average rating among finished challenges.
-   */
-  public float getAverageRating(Context context) {
-    float averageRating = 0;
-    List<Challenge> finishedChallenges = getFinishedChallenges();
-    for (Challenge challenge : finishedChallenges) {
-      averageRating += challenge.getRating();
-    }
-    int maxRating = context.getResources().getInteger(R.integer.stars_amount);
-    averageRating = averageRating / finishedChallenges.size() / maxRating;
-    return averageRating;
-  }
-
-  public int getShownChallengesNumber() {
-    int shown = getChallengesMap(Challenge.SHOWN).size();
-    return shown + getFinishedChallenges().size();
   }
 
   /** Challenge expires at midnight of this day. */

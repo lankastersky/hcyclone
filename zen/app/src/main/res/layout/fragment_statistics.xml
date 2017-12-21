@@ -43,28 +43,39 @@
     </LinearLayout>
 
     <com.androidplot.xy.XYPlot
-        android:id="@+id/plot"
+        android:id="@+id/plot_challenges"
         style="@style/APDefacto.Light"
+        androidPlot.graph.backgroundPaint.color="white"
+        androidPlot.legend.visible="false"
+        androidPlot.plotMarginBottom="0dp"
+        androidPlot.plotMarginLeft="0dp"
+        androidPlot.plotMarginRight="0dp"
+        androidPlot.plotMarginTop="0dp"
+        androidPlot.rangeTitle.visible="false"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="20dp"
         ap:backgroundColor="@android:color/white"
         ap:lineLabelRotationBottom="-45"
         ap:lineLabels="left|bottom"
-        ap:rangeTitle="range"
-        ap:title="A Simple XY Plot"/>
+        ap:title="@string/fragment_statistics_finished_challenges_plot_title"/>
 
     <com.androidplot.xy.XYPlot
-        android:id="@+id/plot2"
+        android:id="@+id/plot_cosciousness"
         style="@style/APDefacto.Light"
+        androidPlot.graph.backgroundPaint.color="white"
+        androidPlot.legend.visible="false"
+        androidPlot.plotMarginBottom="0dp"
+        androidPlot.plotMarginLeft="0dp"
+        androidPlot.plotMarginRight="0dp"
+        androidPlot.plotMarginTop="0dp"
+        androidPlot.rangeTitle.visible="false"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_marginBottom="@dimen/text_margin"
         ap:backgroundColor="@android:color/white"
-        ap:domainTitle="domain"
         ap:lineLabelRotationBottom="-45"
         ap:lineLabels="left|bottom"
-        ap:rangeTitle="range"
-        ap:title="A Simple XY Plot2"/>
+        ap:title="@string/fragment_statistics_consciousness_plot_title"/>
 
 </LinearLayout>
