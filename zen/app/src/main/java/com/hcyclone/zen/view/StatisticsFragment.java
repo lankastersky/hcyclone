@@ -128,6 +128,7 @@ public class StatisticsFragment extends Fragment {
     ChallengesValuesBuilder challengesValuesBuilder = new ChallengesValuesBuilder();
     challengesValuesBuilder.build(getPlotChallenges(getContext()), getContext());
 
+    // TODO: plots inflate too long and produce skipped frames. Find a way to fix this.
     challengesLinePlot = view.findViewById(R.id.line_plot_challenges);
     challengesBarPlot = view.findViewById(R.id.bar_plot_challenges);
     ratesLinePlot = view.findViewById(R.id.line_plot_rates);
