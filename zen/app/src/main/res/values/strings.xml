@@ -142,6 +142,8 @@
     </string>
     <string name="fragment_statistics_finished_challenges_plot_title">Finished challenges</string>
     <string name="fragment_statistics_consciousness_plot_title">Level of consciousness, %</string>
+    <string name="fragment_statistics_line_chart">Line chart</string>
+    <string name="fragment_statistics_bar_chart">Bar chart</string>
 
     <!-- Notifications -->
     <string name="notification_challenge_start">New challenge available</string>

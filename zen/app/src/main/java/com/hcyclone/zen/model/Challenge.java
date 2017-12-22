@@ -21,11 +21,12 @@ public class Challenge {
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
   private static final String TAG = Challenge.class.getSimpleName();
+
   private String id;
   private String content;
   private String details;
-  private @LevelType
-  int level;
+  @LevelType
+  private int level;
   private String quote;
   private String source;
   private String type;

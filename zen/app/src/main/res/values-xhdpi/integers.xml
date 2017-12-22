@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="statistics_plot_margin_left">50</integer>
-    <integer name="statistics_plot_margin_bottom">60</integer>
+    <integer name="statistics_plot_margin_top">34</integer>
+    <integer name="statistics_plot_margin_right">60</integer>
+    <integer name="statistics_plot_margin_bottom">66</integer>
+    <integer name="statistics_bar_plot_group_with">40</integer>
+    <integer name="statistics_line_plot_point_label_offset">16</integer>
 </resources>

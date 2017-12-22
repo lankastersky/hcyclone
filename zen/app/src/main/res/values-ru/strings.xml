@@ -68,4 +68,6 @@
     </string>
     <string name="fragment_statistics_finished_challenges_plot_title">Выполнено заданий</string>
     <string name="fragment_statistics_consciousness_plot_title">Уровень осознанности, %</string>
+    <string name="fragment_statistics_line_chart">Линейный чарт</string>
+    <string name="fragment_statistics_bar_chart">Бар чарт</string>
 </resources>
