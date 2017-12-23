@@ -52,35 +52,42 @@ public class Analytics {
       default:
         return;
     }
-    tracker.send(new HitBuilders.EventBuilder()
-        .setCategory("Challenge Status Update")
-        .setAction(action)
-        .setLabel(challenge.getId())
-        .build());
+    send("Challenge Status Update", action, challenge.getId());
   }
 
   public void sendChallengeRating(@NonNull Challenge challenge) {
-    tracker.send(new HitBuilders.EventBuilder()
-        .setCategory("Challenge Rating Update")
-        .setAction("rated")
-        .setLabel(challenge.getId())
-        .setValue((long) challenge.getRating())
-        .build());
+    send("Challenge Rating Update", "rated", challenge.getId(), (long) challenge.getRating());
   }
 
   public void sendSettings(@NonNull String action, String value) {
-    tracker.send(new HitBuilders.EventBuilder()
-        .setCategory("Settings Update")
-        .setAction(action)
-        .setLabel(value)
-        .build());
+    send("Settings Update", action, value);
   }
 
   public void sendLevelUp(int value) {
+    send("Level Up", "Level Up", String.valueOf(value));
+  }
+
+  public void sendFilterChallenges(String action, String value) {
+    send("Filter challenges", action, value);
+  }
+
+  public void sendStatisticsChart(String value) {
+    send("Statistics chart", "View", value);
+  }
+
+  private void send(String category, String action, String label) {
     tracker.send(new HitBuilders.EventBuilder()
-        .setCategory("Level Up")
-        .setAction("Level Up")
-        .setLabel(String.valueOf(value))
+        .setCategory(category)
+        .setAction(action)
+        .setLabel(label)
+        .build());
+  }
+
+  private void send(String category, String action, String label, long value) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory(category)
+        .setAction(action)
+        .setLabel(label)
         .build());
   }
 }

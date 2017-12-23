@@ -50,6 +50,8 @@ public class ChallengeRecyclerViewAdapter
     this.listener = listener;
     this.context = context;
 
+    setHasStableIds(true);
+
     filter();
   }
 

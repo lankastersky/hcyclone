@@ -7,7 +7,6 @@ import com.androidplot.xy.BarFormatter;
 import com.androidplot.xy.BarRenderer;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.StepMode;
-import com.androidplot.xy.XYGraphWidget;
 import com.androidplot.xy.XYPlot;
 import com.hcyclone.zen.R;
 
@@ -31,7 +30,7 @@ public class BarPlotBuilder extends PlotBuilder {
     setAxes(
         plot,
         challengesValuesBuilder.challengesDates,
-        challengesValuesBuilder.maxChallengeNumber);
+        challengesValuesBuilder.getMaxChallengesNumber());
   }
 
   public void buildRatesPlot(XYPlot plot) {
@@ -42,9 +41,8 @@ public class BarPlotBuilder extends PlotBuilder {
     setAxes(
         plot,
         challengesValuesBuilder.challengesDates,
-        100 // or challengesValuesBuilder.maxChallengeRate
+        challengesValuesBuilder.getMaxChallengesRate()
     );
-    plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(PERCENT_FORMAT);
   }
 
   private void setSeries(XYPlot plot, List<? extends Number> values) {

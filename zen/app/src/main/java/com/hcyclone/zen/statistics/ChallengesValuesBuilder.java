@@ -35,17 +35,37 @@ public class ChallengesValuesBuilder {
       CHALLENGES_TIME_BY_MONTHS_DATE_FORMAT;
   private static final DateFormat DOMAIN_BY_YEARS_DATE_FORMAT =
       CHALLENGES_TIME_BY_YEARS_DATE_FORMAT;
+
   Map<String, Integer> challengeTimeToNumber;
   Map<String, Float> challengeTimeToRates;
   List<String> challengesDates;
-  int maxChallengeNumber;
-  float maxChallengeRate;
   private DateFormat mergeDateFormat = CHALLENGES_TIME_BY_YEARS_DATE_FORMAT;
   private DateFormat domainDateFormat = DOMAIN_BY_YEARS_DATE_FORMAT;
   private MergeDatesType mergeDatesType = MergeDatesType.YEARS;
 
   public int getValuesSize() {
     return challengesDates.size();
+  }
+
+  public double getMaxChallengesRate() {
+//    float maxChallengeRate = 0;
+//    for (Float rate : challengeTimeToRates.values()) {
+//      if (maxChallengeRate < rate) {
+//        maxChallengeRate = rate;
+//      }
+//    }
+    return 100;
+  }
+
+  public double getMaxChallengesNumber() {
+//    return ChallengeModel.getInstance().getShownChallengesNumber();
+    int maxChallengeNumber = 0;
+    for (Integer challengeNumber : challengeTimeToNumber.values()) {
+      if (maxChallengeNumber < challengeNumber) {
+        maxChallengeNumber = challengeNumber;
+      }
+    }
+    return maxChallengeNumber;
   }
 
   public void build(List<Challenge> plotChallenges, Context context) {
@@ -80,20 +100,6 @@ public class ChallengesValuesBuilder {
               / ChallengeModel.getInstance().getMaxRating(context);
       normalizedRate = (float) Math.round(normalizedRate * 10) / 10; // round up to 1 digit.
       challengeTimeToRates.put(dateString, normalizedRate);
-    }
-
-    maxChallengeNumber = 0;
-    for (Integer challengeNumber : challengeTimeToNumber.values()) {
-      if (maxChallengeNumber < challengeNumber) {
-        maxChallengeNumber = challengeNumber;
-      }
-    }
-
-    maxChallengeRate = 0;
-    for (Float rate : challengeTimeToRates.values()) {
-      if (maxChallengeRate < rate) {
-        maxChallengeRate = rate;
-      }
     }
   }
 

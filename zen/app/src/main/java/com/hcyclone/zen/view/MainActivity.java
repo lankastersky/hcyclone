@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     if (savedInstanceState == null) {
       selectChallengeMenuItem();
 
-      if (!Utils.isDebug()) {
+//      if (!Utils.isDebug()) {
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -76,9 +76,9 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
             new ChallengesResultReceiver(new Handler(), this));
         startService(intent);
-      } else {
-        ChallengeModel.getInstance().loadChallenges();
-      }
+//      } else {
+//        ChallengeModel.getInstance().loadChallenges();
+//      }
       replaceFragment(ChallengeFragment.class);
     } else {
       ChallengeModel.getInstance().loadChallenges();

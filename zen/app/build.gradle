@@ -8,7 +8,7 @@ android {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 6
+        versionCode 7
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -53,6 +53,11 @@ dependencies {
 
     // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
     compile "com.androidplot:androidplot-core:1.5.2"
+
+    testImplementation 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.4.2'
+    testCompile 'com.google.truth:truth:0.35'
+    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

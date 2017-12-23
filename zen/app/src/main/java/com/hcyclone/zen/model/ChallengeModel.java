@@ -21,6 +21,8 @@ import java.util.Map;
 
 public final class ChallengeModel {
 
+  private static final Calendar CALENDAR = Calendar.getInstance();
+
   private static final String TAG = ChallengeModel.class.getSimpleName();
   private static final ChallengeModel instance = new ChallengeModel();
 
@@ -107,12 +109,56 @@ public final class ChallengeModel {
   public void loadChallenges() {
     Log.d(TAG, "Load challenges");
     if (challengeMap.isEmpty()) {
-      List<Challenge> challenges = challengeArchiver.restoreChallenges();
+      List<Challenge> challenges;
+      //if (!Utils.isDebug()) {
+        challenges = challengeArchiver.restoreChallenges();
+//      } else {
+//        challenges = generateChallenges();
+//      }
       for (Challenge challenge : challenges) {
         challengeMap.put(challenge.getId(), challenge);
       }
     }
     restoreState();
+    selectChallengeIfNeeded();
+  }
+
+  private List<Challenge> generateChallenges() {
+    List<Challenge> challenges = new ArrayList<>();
+//      int days = 1;
+//      int days = 2;
+//      int days = 13;
+//      int days = 14;
+//      int days = 14 * 7 - 1;
+//      int days = 14 * 7;
+//      int days = 14 * 30 - 1;
+    int days = 14 * 30;
+//    int days = 200;
+    for (int i = 0; i < days; i++) {
+      Challenge challenge = new Challenge(
+          "id" + i,
+          "content" + i,
+          "details" + i,
+          "type" + i,
+          i % 3, // level
+          "source" + i,
+          "url" + i,
+          "quote" + i
+      );
+      int status = Challenge.FINISHED;
+//      do {
+//        status = (int) (Math.random() * Challenge.STATUSES_LENGTH);
+//      } while (status == Challenge.ACCEPTED);
+      challenge.setStatus(status);
+      //challenge.setRating((float) Math.random() * getMaxRating(context));
+      challenge.setRating(i % 5);
+      CALENDAR.setTime(new Date());
+      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) (Math.random() * days));
+      //CALENDAR.add(Calendar.DAY_OF_YEAR, i + 1);
+      challenge.setFinishedTime(CALENDAR.getTimeInMillis());
+      challenges.add(challenge);
+    }
+    return challenges;
   }
 
   public void saveChallenges(List<Challenge> challenges) {
@@ -123,6 +169,7 @@ public final class ChallengeModel {
     }
     challengeArchiver.storeChallenges(challenges);
     restoreState();
+    selectChallengeIfNeeded();
   }
 
   private void restoreState() {
@@ -133,7 +180,6 @@ public final class ChallengeModel {
     }
     currentChallengeShownTime = challengeArchiver.restoreCurrentChallengeShownTime();
     level = challengeArchiver.restoreLevel();
-    selectChallengeIfNeeded();
   }
 
   public void setCurrentChallengeShown() {
@@ -197,7 +243,8 @@ public final class ChallengeModel {
 
   public boolean checkLevelUp() {
     Challenge challenge = getCurrentChallenge();
-    if (challenge.getLevel() > getLevel()) {
+    int currentLevel = challenge.getLevel();
+    if (currentLevel > getLevel() && currentLevel >= Challenge.LEVEL_LOW) {
       setLevel(challenge.getLevel());
       challengeArchiver.storeLevel(getLevel());
       return true;
@@ -205,8 +252,8 @@ public final class ChallengeModel {
     return false;
   }
 
-  public @Challenge.LevelType
-  int getLevel() {
+  @Challenge.LevelType
+  public int getLevel() {
     return level;
   }
 
@@ -238,8 +285,13 @@ public final class ChallengeModel {
       currentChallengeId = getNewChallengeId();
     } else {
       boolean newChallengeRequired = false;
+      if (!getChallengesMap().containsKey(currentChallengeId)) {
+        Log.e(TAG, "Failed to select current challenge with id " + currentChallengeId);
+        return;
+      }
       Challenge challenge = getChallengesMap().get(currentChallengeId);
-      switch (challenge.getStatus()) {
+      @Challenge.StatusType int status = challenge.getStatus();
+      switch (status) {
         case Challenge.UNKNOWN:
           break;
         case Challenge.SHOWN:
@@ -267,16 +319,17 @@ public final class ChallengeModel {
         currentChallengeId = getNewChallengeId();
       }
     }
-    challengeArchiver.storeChallengeData(challengeMap);
-    challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
-    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
-    Challenge currentChallenge = getCurrentChallenge();
+    Challenge currentChallenge = getChallengesMap().get(currentChallengeId);
     if (currentChallenge == null) {
       Log.e(TAG, "Failed to get current challenge with id " + currentChallengeId);
+      return;
     } else {
       Log.d(TAG, "Current challenge id:" + currentChallengeId + ": "
           + currentChallenge.getContent());
     }
+    challengeArchiver.storeChallengeData(challengeMap);
+    challengeArchiver.storeCurrentChallenge(currentChallenge);
+    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
   }
 
   /**

@@ -10,29 +10,35 @@ import java.util.Date;
 
 public class Challenge {
 
+  private static final String TAG = Challenge.class.getSimpleName();
+
   public static final int UNKNOWN = 0;
   public static final int SHOWN = 1;
   public static final int ACCEPTED = 2;
   public static final int FINISHED = 3;
   public static final int DECLINED = 4;
+  public static final int STATUSES_LENGTH = 5;
+  @IntDef({UNKNOWN, SHOWN, ACCEPTED, FINISHED, DECLINED})
+  public @interface StatusType {}
 
   // Levels
   public static final int LEVEL_LOW = 1;
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
-  private static final String TAG = Challenge.class.getSimpleName();
+  @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
+  public @interface LevelType {}
+
 
   private String id;
   private String content;
   private String details;
-  @LevelType
-  private int level;
+  @LevelType private int level;
   private String quote;
   private String source;
   private String type;
   private String url;
   private float rating;
-  private int status;
+  @StatusType private int status;
   private long finishedTime;
 
   public Challenge(String id, String content, String details, String type, long level,
@@ -60,11 +66,11 @@ public class Challenge {
     return details;
   }
 
-  public int getStatus() {
+  public @StatusType int getStatus() {
     return status;
   }
 
-  public void setStatus(int status) {
+  public void setStatus(@StatusType int status) {
     this.status = status;
   }
 
@@ -72,7 +78,7 @@ public class Challenge {
     return type;
   }
 
-  public int getLevel() {
+  public @LevelType int getLevel() {
     return level;
   }
 
@@ -142,9 +148,5 @@ public class Challenge {
     status = UNKNOWN;
     finishedTime = 0;
     rating = 0;
-  }
-
-  @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
-  public @interface LevelType {
   }
 }

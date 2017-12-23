@@ -116,7 +116,7 @@ public class ChallengeFragment extends Fragment {
       return;
     }
     int level = ChallengeModel.getInstance().getLevel();
-
+    Log.i(TAG, "LevelUp: " + level);
     Utils.buildDialog(
         getString(R.string.dialog_title_next_level_available),
         String.format(getString(R.string.dialog_text_next_level_available),
@@ -164,7 +164,8 @@ public class ChallengeFragment extends Fragment {
       @Override
       public void onClick(View view) {
         Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-        switch (challenge.getStatus()) {
+        @Challenge.StatusType int status = challenge.getStatus();
+        switch (status) {
           case Challenge.SHOWN:
             ChallengeModel.getInstance().setCurrentChallengeAccepted();
             AlarmService.getInstance().setDailyAlarm();
@@ -177,7 +178,8 @@ public class ChallengeFragment extends Fragment {
             rankDialog.setVisibility(View.GONE);
             break;
           default:
-            Log.e(TAG, "Wrong challenge status: " + challenge.getStatus());
+            Log.e(TAG, "Wrong challenge status: " + status);
+            break;
         }
         updateChallengeButton();
         updateRatingBar();
@@ -200,7 +202,7 @@ public class ChallengeFragment extends Fragment {
 
   private void updateRatingBar() {
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-    int status = challenge.getStatus();
+    @Challenge.StatusType int status = challenge.getStatus();
     switch (status) {
       case Challenge.FINISHED:
         ratingBar.setVisibility(View.VISIBLE);
@@ -214,7 +216,8 @@ public class ChallengeFragment extends Fragment {
 
   private void updateChallengeButton() {
     Challenge challenge = ChallengeModel.getInstance().getChallenge(challengeId);
-    switch (challenge.getStatus()) {
+    @Challenge.StatusType int status = challenge.getStatus();
+    switch (status) {
       case Challenge.SHOWN:
         challengeButton.setVisibility(View.VISIBLE);
         if (ChallengeModel.getInstance().isTimeToAcceptChallenge()) {
@@ -249,7 +252,7 @@ public class ChallengeFragment extends Fragment {
         challengeButton.setVisibility(View.GONE);
         break;
       default:
-        Log.e(TAG, "Wrong status to show on button: " + challenge.getStatus());
+        Log.e(TAG, "Wrong status to show on button: " + status);
         break;
     }
   }

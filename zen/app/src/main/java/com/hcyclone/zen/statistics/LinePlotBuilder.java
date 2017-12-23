@@ -5,7 +5,6 @@ import android.content.Context;
 import com.androidplot.xy.CatmullRomInterpolator;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.StepMode;
-import com.androidplot.xy.XYGraphWidget;
 import com.androidplot.xy.XYPlot;
 import com.hcyclone.zen.R;
 
@@ -29,7 +28,7 @@ public class LinePlotBuilder extends PlotBuilder {
     setAxes(
         plot,
         challengesValuesBuilder.challengesDates,
-        challengesValuesBuilder.maxChallengeNumber);
+        challengesValuesBuilder.getMaxChallengesNumber());
   }
 
   public void buildRatesPlot(XYPlot plot) {
@@ -40,9 +39,15 @@ public class LinePlotBuilder extends PlotBuilder {
     setAxes(
         plot,
         challengesValuesBuilder.challengesDates,
-        100 //or challengesValuesBuilder.maxChallengeRate
+        challengesValuesBuilder.getMaxChallengesRate()
     );
-    plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(PERCENT_FORMAT);
+  }
+
+  @Override
+  protected void decorate(XYPlot plot) {
+    super.decorate(plot);
+    plot.getGraph().setMarginLeft(
+        context.getResources().getInteger(R.integer.statistics_plot_margin_left));
   }
 
   private void setSeries(XYPlot plot, List<? extends Number> values) {

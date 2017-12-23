@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeFilterModel;
@@ -31,13 +32,20 @@ import java.util.Set;
  */
 public class ChallengeListFragment extends Fragment {
 
+  enum FilterType {
+    BY_LEVEL,
+    BY_RATING
+  }
+
   // Size of @LevelType.
   final boolean[] levels = {true, true, true};
   // Size of getContext().getResources().getInteger(R.integer.stars_amount) + 1;
   final boolean[] ratings = {true, true, true, true, true};
+
   private OnListFragmentInteractionListener onListFragmentInteractionListener;
   private RecyclerView recyclerView;
   private ChallengeFilterModel challengeFilterModel;
+  private List<Challenge> finishedChallenges;
 
   private static Set<Integer> levelsToSet(boolean[] items) {
     Set<Integer> levelsSet = new HashSet<>();
@@ -89,8 +97,7 @@ public class ChallengeListFragment extends Fragment {
     setHasOptionsMenu(true);
 
     View view;
-    List<Challenge> finishedChallenges =
-        ChallengeModel.getInstance().getFinishedChallengesSortedDesc();
+    finishedChallenges = ChallengeModel.getInstance().getFinishedChallengesSortedDesc();
 //    for (int i = 0; i < 9; i++) {
 //      finishedChallenges.addAll(ChallengeModel.getInstance().getFinishedChallenges());
 //    }
@@ -102,17 +109,7 @@ public class ChallengeListFragment extends Fragment {
 
     // Set the adapter
     if (view instanceof RecyclerView) {
-      Context context = view.getContext();
-      recyclerView = (RecyclerView) view;
-      recyclerView.setHasFixedSize(true);
-      recyclerView.setLayoutManager(new LinearLayoutManager(context));
-      recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
-          finishedChallenges,
-          levelsToSet(levels),
-          ratingsToSet(ratings),
-          onListFragmentInteractionListener,
-          getContext()));
-      recyclerView.setNestedScrollingEnabled(false);
+      initRecyclerView(view);
     }
     return view;
   }
@@ -151,6 +148,23 @@ public class ChallengeListFragment extends Fragment {
     return super.onOptionsItemSelected(item);
   }
 
+  private void initRecyclerView(View view) {
+    Context context = view.getContext();
+    recyclerView = (RecyclerView) view;
+    recyclerView.setHasFixedSize(true);
+//    recyclerView.setItemViewCacheSize(20);
+//    recyclerView.setDrawingCacheEnabled(true);
+//    recyclerView.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+//    recyclerView.setNestedScrollingEnabled(false);
+    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+    recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
+        finishedChallenges,
+        levelsToSet(levels),
+        ratingsToSet(ratings),
+        onListFragmentInteractionListener,
+        context));
+  }
+
   private void showFilterByLevelDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
     builder.setMultiChoiceItems(
@@ -167,6 +181,8 @@ public class ChallengeListFragment extends Fragment {
         challengeFilterModel.storeLevels(levels);
         ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
             .filterByLevels(levelsToSet(levels));
+        Analytics.getInstance().sendFilterChallenges(
+            FilterType.BY_LEVEL.toString(), levels.toString());
       }
     });
     builder.create().show();
@@ -188,6 +204,8 @@ public class ChallengeListFragment extends Fragment {
         challengeFilterModel.storeRatings(ratings);
         ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
             .filterByRating(ratingsToSet(ratings));
+        Analytics.getInstance().sendFilterChallenges(
+            FilterType.BY_RATING.toString(), ratings.toString());
       }
     });
     builder.create().show();
