@@ -88,6 +88,7 @@ public class Analytics {
         .setCategory(category)
         .setAction(action)
         .setLabel(label)
+        .setValue(value)
         .build());
   }
 }

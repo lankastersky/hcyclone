@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * This class is responsible for Firebase connection and handling Firebase database reference.
- */
+/** This class is responsible for Firebase connection and handling Firebase database reference. */
 public class FirebaseAdapter {
 
   private static final String TAG = FirebaseAdapter.class.getSimpleName();
@@ -37,9 +35,7 @@ public class FirebaseAdapter {
     firebaseConfig.setLogLevel(Logger.Level.WARN);
   }
 
-  /**
-   * Reference to Firebase backend.
-   */
+  /** Reference to Firebase backend. */
   private FirebaseAuth firebaseAuth;
   private FirebaseAuthListener firebaseAuthListener;
 
@@ -50,7 +46,7 @@ public class FirebaseAdapter {
   /**
    * Signs in to the server if firebase is enabled.
    */
-  public void signIn(FirebaseAuthListener listener, Context context) {
+  void signIn(FirebaseAuthListener listener, Context context) {
     Log.d(TAG, "Sign in");
     firebaseAuthListener = listener;
     FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -69,7 +65,7 @@ public class FirebaseAdapter {
     authenticate(context);
   }
 
-  public boolean isSignedIn() {
+  boolean isSignedIn() {
     return firebaseAuth != null && firebaseAuth.getCurrentUser() != null;
   }
 
@@ -78,6 +74,10 @@ public class FirebaseAdapter {
     String firebasePassword = context.getString(R.string.firebase_password);
     Log.d(TAG, "signInWithEmailAndPassword");
     FirebaseAuth auth = FirebaseAuth.getInstance();
+    if (auth == null) {
+      Log.w(TAG, "Failed to get auth instance");
+      return;
+    }
     auth.signInWithEmailAndPassword(firebaseUsername, firebasePassword)
         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
           @Override
@@ -99,7 +99,7 @@ public class FirebaseAdapter {
         });
   }
 
-  public void getChallenges(final FirebaseDataListener listener) {
+  void getChallenges(final FirebaseDataListener listener) {
     Log.d(TAG, "getChallenges");
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     reference.child("challenges").addListenerForSingleValueEvent(
@@ -136,18 +136,16 @@ public class FirebaseAdapter {
     reference.child("challenges").keepSynced(true);
   }
 
+  /** Firebase authentication process listener. */
   public interface FirebaseAuthListener {
-    /**
-     * Calls if auth was successful.
-     */
+    /** Calls if auth was successful. */
     void onAuthSuccess();
 
-    /**
-     * Calls if auth was unsuccessful.
-     */
+    /** Calls if auth was unsuccessful. */
     void onAuthError(Exception exception);
   }
 
+  /** Listens to Firebase Database references changes. */
   public interface FirebaseDataListener {
     void onError(Exception e);
     void onChallenges(List<Challenge> challenges);

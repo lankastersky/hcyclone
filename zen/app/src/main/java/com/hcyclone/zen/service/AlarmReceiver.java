@@ -3,7 +3,9 @@ package com.hcyclone.zen.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
+import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
 
 public final class AlarmReceiver extends BroadcastReceiver {
@@ -16,7 +18,16 @@ public final class AlarmReceiver extends BroadcastReceiver {
     Log.d(TAG, "Alarm received with id: " + alarmId);
     switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
-          context.startService(new Intent(context, FirebaseService.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          // avoid IllegalStateException: Not allowed to start service Intent.
+          // See https://developer.android.com/about/versions/oreo/background.html.
+          // TODO: use JobScheduler instead.
+          if (AppLifecycleManager.isAppVisible()) {
+            context.startService(new Intent(context, FirebaseService.class));
+          } else {
+            Log.d(TAG, "Don't start service in background for Android O+");
+          }
+        }
         // Restart alarm to make it random.
         AlarmService.getInstance().setServiceAlarm();
         break;

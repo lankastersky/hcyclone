@@ -20,6 +20,7 @@ import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeFilterModel;
 import com.hcyclone.zen.model.ChallengeModel;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -182,7 +183,7 @@ public class ChallengeListFragment extends Fragment {
         ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
             .filterByLevels(levelsToSet(levels));
         Analytics.getInstance().sendFilterChallenges(
-            FilterType.BY_LEVEL.toString(), levels.toString());
+            FilterType.BY_LEVEL.toString(), Arrays.toString(levels));
       }
     });
     builder.create().show();
@@ -205,7 +206,7 @@ public class ChallengeListFragment extends Fragment {
         ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
             .filterByRating(ratingsToSet(ratings));
         Analytics.getInstance().sendFilterChallenges(
-            FilterType.BY_RATING.toString(), ratings.toString());
+            FilterType.BY_RATING.toString(), Arrays.toString(ratings));
       }
     });
     builder.create().show();
