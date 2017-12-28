@@ -11,9 +11,7 @@ import com.hcyclone.zen.R;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Builds line charts.
- */
+/** Builds line charts. */
 public class LinePlotBuilder extends PlotBuilder {
 
   public LinePlotBuilder(ChallengesValuesBuilder challengesValuesBuilder, Context context) {

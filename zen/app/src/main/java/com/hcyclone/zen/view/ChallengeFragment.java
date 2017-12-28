@@ -97,20 +97,21 @@ public class ChallengeFragment extends Fragment {
     MenuItem shareItem = menu.findItem(R.id.action_menu_share);
     shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
     shareActionProvider.setOnShareTargetSelectedListener(
-        new ShareActionProvider.OnShareTargetSelectedListener() {
-      @Override
-      public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
-        if (intent.hasExtra(Intent.EXTRA_SUBJECT)) {
-          Analytics.getInstance().sendShare(intent.getStringExtra(Intent.EXTRA_SUBJECT));
-        }
-        return false;
+      (ShareActionProvider source, Intent intent) -> {
+      if (intent.hasExtra(Intent.EXTRA_SUBJECT)) {
+        Analytics.getInstance().sendShare(intent.getStringExtra(Intent.EXTRA_SUBJECT));
       }
+      return false;
     });
     setShareIntent(createShareIntent(challengeId));
   }
 
   protected void refreshChallengeData() {
     Challenge challenge = challengeModel.getCurrentChallenge();
+    if (challenge == null) {
+      Log.d(TAG, "Can't refresh challenge data: challenge is null");
+      return;
+    }
     challengeId = challenge.getId();
     Log.d(TAG, "Current challenge id: " + challengeId);
 
@@ -205,40 +206,37 @@ public class ChallengeFragment extends Fragment {
     ratingBar.setRating(challenge.getRating());
   }
 
-  private void createChallengeButton(View view) {
-    challengeButton = view.findViewById(R.id.fragment_challenge_accept_button);
-    challengeButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View view) {
-        Challenge currentChallenge = challengeModel.getCurrentChallenge();
-        if (!challengeId.equals(currentChallenge.getId())) {
-          Log.w(TAG, "Current challenge changed: " + currentChallenge.getId());
-          refreshChallengeData();
-          return;
-        }
-        Challenge challenge = challengeModel.getChallenge(challengeId);
-        @Challenge.StatusType int status = challenge.getStatus();
-        switch (status) {
-          case Challenge.SHOWN:
-            challengeModel.setChallengeAccepted(challengeId);
-            AlarmService.getInstance().setDailyAlarm();
-            break;
-          case Challenge.ACCEPTED:
-            // Rate before setting the challenge finished.
-            rate();
-            challenge.setComments(commentsEditText.getText().toString());
-            challengeModel.setChallengeFinished(challengeId);
-            AlarmService.getInstance().stopDailyAlarm();
-            break;
-          default:
-            Log.e(TAG, "Wrong challenge status: " + status);
-            break;
-        }
-        updateRatingBar();
-        updateRankDialog();
-        updateComments();
-        updateChallengeButton();
+  private void createChallengeButton(View rootView) {
+    challengeButton = rootView.findViewById(R.id.fragment_challenge_accept_button);
+    challengeButton.setOnClickListener(view -> {
+      Challenge currentChallenge = challengeModel.getCurrentChallenge();
+      if (!challengeId.equals(currentChallenge.getId())) {
+        Log.w(TAG, "Current challenge changed: " + currentChallenge.getId());
+        refreshChallengeData();
+        return;
       }
+      Challenge challenge = challengeModel.getChallenge(challengeId);
+      @Challenge.StatusType int status = challenge.getStatus();
+      switch (status) {
+        case Challenge.SHOWN:
+          challengeModel.setChallengeAccepted(challengeId);
+          AlarmService.getInstance().setDailyAlarm();
+          break;
+        case Challenge.ACCEPTED:
+          // Rate before setting the challenge finished.
+          rate();
+          challenge.setComments(commentsEditText.getText().toString());
+          challengeModel.setChallengeFinished(challengeId);
+          AlarmService.getInstance().stopDailyAlarm();
+          break;
+        default:
+          Log.e(TAG, "Wrong challenge status: " + status);
+          break;
+      }
+      updateRatingBar();
+      updateRankDialog();
+      updateComments();
+      updateChallengeButton();
     });
   }
 
@@ -296,7 +294,7 @@ public class ChallengeFragment extends Fragment {
         if (timeToFinish && !TextUtils.isEmpty(comments)) {
           // Show previous comments for the current challenge if any.
           commentsEditText.setText(comments);
-          Analytics.getInstance().sendChallengeComments(comments);
+          Analytics.getInstance().sendChallengeComments(challenge);
         }
         break;
       case Challenge.FINISHED:

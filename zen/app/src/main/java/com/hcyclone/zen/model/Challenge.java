@@ -3,10 +3,11 @@ package com.hcyclone.zen.model;
 import android.support.annotation.IntDef;
 import android.text.TextUtils;
 
-import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /** Challenge data. */
 public class Challenge {
@@ -38,10 +39,14 @@ public class Challenge {
   private final String type;
   private final String url;
 
-  private float rating;
   @StatusType private int status;
   private long finishedTime;
+  private float rating;
   private String comments;
+
+  private List<Integer> prevStatuses = new ArrayList<>();
+  private List<Long> prevFinishedTimes = new ArrayList<>();
+  private List<Float> prevRatings = new ArrayList<>();
 
   public Challenge(String id, String content, String details, String type, long level,
                    String source, String url, String quote) {
@@ -119,6 +124,42 @@ public class Challenge {
     this.comments = comments;
   }
 
+  public List<Float> getPrevRatings() {
+    return prevRatings;
+  }
+
+  public void setPrevRatings(List<Float> ratings) {
+    if (ratings == null) {
+      prevRatings.clear();
+      return;
+    }
+    prevRatings = ratings;
+  }
+
+  public List<Integer> getPrevStatuses() {
+    return prevStatuses;
+  }
+
+  public void setPrevStatuses(List<Integer> statuses) {
+    if (statuses == null) {
+      prevStatuses.clear();
+      return;
+    }
+    prevStatuses = statuses;
+  }
+
+  public List<Long> getPrevFinishedTimes() {
+    return prevFinishedTimes;
+  }
+
+  public void setPrevFinishedTimes(List<Long> finishedTimes) {
+    if (finishedTimes == null) {
+      prevFinishedTimes.clear();
+      return;
+    }
+    prevFinishedTimes = finishedTimes;
+  }
+
   void updateStatus() {
     Log.d(TAG, "Update status for challenge " + id + " from " + status);
     switch (status) {
@@ -136,7 +177,6 @@ public class Challenge {
         Log.e(TAG, "Wrong status to update: " + status);
         break;
     }
-    Analytics.getInstance().sendChallengeStatus(this);
   }
 
   void decline() {
@@ -151,12 +191,22 @@ public class Challenge {
         Log.e(TAG, "Wrong status to decline: " + status);
         break;
     }
-    Analytics.getInstance().sendChallengeStatus(this);
   }
 
   void reset() {
     status = UNKNOWN;
     finishedTime = 0;
     rating = 0;
+  }
+
+  /** Back up the data in case if the challenge will be taken again. */
+  boolean backup() {
+    if (status != UNKNOWN && finishedTime != 0) {
+      prevStatuses.add(status);
+      prevFinishedTimes.add(finishedTime);
+      prevRatings.add(rating);
+      return true;
+    }
+    return false;
   }
 }

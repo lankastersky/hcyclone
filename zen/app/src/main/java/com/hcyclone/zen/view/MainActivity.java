@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity
         startService(intent);
 //      } else {
 //        ChallengeModel.getInstance().loadChallenges();
+//        replaceFragment(ChallengeFragment.class);
 //      }
     } else {
       loadingChallenges = false;

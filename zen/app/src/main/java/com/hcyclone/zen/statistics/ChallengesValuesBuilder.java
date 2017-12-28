@@ -75,6 +75,10 @@ public class ChallengesValuesBuilder {
     challengeTimeToRates = new LinkedHashMap<>();
     challengesDates = new ArrayList<>();
     for (Challenge challenge : plotChallenges) {
+      /**
+       * TODO: we loose statistics if the challenge was taken before.
+       * To solve this, we need to use {@link Challenge.getPrevFinishedTimes()}.
+       */
       long finishedTime = challenge.getFinishedTime();
       Date date = new Date(finishedTime);
       String dateString = mergeDateFormat.format(date);
@@ -82,6 +86,10 @@ public class ChallengesValuesBuilder {
         int challengesNumber = challengeTimeToNumber.get(dateString);
         challengeTimeToNumber.put(dateString, ++challengesNumber);
         float challengesRate = challengeTimeToRates.get(dateString);
+        /**
+         * TODO: we loose statistics if the challenge was taken before.
+         * To solve this, we need to use {@link Challenge.getPrevRatings()}.
+         */
         challengeTimeToRates.put(dateString, challengesRate + challenge.getRating());
       } else {
         challengeTimeToNumber.put(dateString, 1);

@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.common.collect.Iterables;
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
@@ -14,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,12 @@ public final class ChallengeModel {
   private static final Calendar CALENDAR = Calendar.getInstance();
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
+
   private static final ChallengeModel instance = new ChallengeModel();
+
+  private static final double PROBABILITY_GET_DECLINED_CHALLENGE = 1D / 6;
+  private static final double PROPORTION_ACCEPT_MEDIUM_LEVEL_CHALLENGE = 1D / 3;
+  private static final double PROPORTION_ACCEPT_HIGH_LEVEL_CHALLENGE = 2D / 3;
 
   private final Map<String, Challenge> challengeMap = new HashMap<>();
 
@@ -41,7 +47,7 @@ public final class ChallengeModel {
   }
 
   public void init(@NonNull Context context) {
-    challengeArchiver = new ChallengeArchiver(context);
+    challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
   }
 
   @Challenge.LevelType
@@ -60,24 +66,18 @@ public final class ChallengeModel {
   public List<Challenge> getFinishedChallengesSortedDesc() {
     List<Challenge> challenges = getFinishedChallenges();
     // Sort by finished time in reverse order.
-    Collections.sort(challenges, new Comparator<Challenge>() {
-      @Override
-      public int compare(Challenge challenge1, Challenge challenge2) {
-        return -Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime());
-      }
-    });
+    Collections.sort(challenges, (Challenge challenge1, Challenge challenge2) ->
+      -Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime())
+    );
     return challenges;
   }
 
   public List<Challenge> getFinishedChallengesSorted() {
     List<Challenge> challenges = getFinishedChallenges();
     // Sort by finished time.
-    Collections.sort(challenges, new Comparator<Challenge>() {
-      @Override
-      public int compare(Challenge challenge1, Challenge challenge2) {
-        return Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime());
-      }
-    });
+    Collections.sort(challenges, (Challenge challenge1, Challenge challenge2) ->
+     Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime())
+    );
     return challenges;
   }
 
@@ -121,7 +121,7 @@ public final class ChallengeModel {
     Log.d(TAG, "Load challenges");
     if (challengeMap.isEmpty()) {
       List<Challenge> challenges;
-      //if (!Utils.isDebug()) {
+//      if (!Utils.isDebug()) {
         challenges = challengeArchiver.restoreChallenges();
 //      } else {
 //        challenges = generateChallenges();
@@ -286,6 +286,7 @@ public final class ChallengeModel {
         case Challenge.SHOWN:
           if (isChallengeTimeExpired()) {
             challenge.decline();
+            Analytics.getInstance().sendChallengeStatus(challenge);
             newChallengeRequired = true;
           }
           break;
@@ -322,7 +323,7 @@ public final class ChallengeModel {
 
   /**
    * If there are nonfinished challenges, get random challenge from them taking into account levels.
-   * Else if there are declined challenges, get random challenge from them with 1/3 probability.
+   * Else if there are declined challenges, get random challenge from them with some probability.
    * Else get random challenge from all not equal to previous one.
    */
   @NonNull
@@ -343,7 +344,7 @@ public final class ChallengeModel {
       if (declinedChallenges.size() > 0) {
         // Don't force user to take a declined challenge again. Show declined challenges with some
         // probability.
-        if (Math.random() < 1D / 3) {
+        if (Math.random() < PROBABILITY_GET_DECLINED_CHALLENGE) {
           challenge = getRandomChallenge(declinedChallenges);
         } else {
           challenge = getRandomChallenge(nonfinishedChallenges);
@@ -353,7 +354,7 @@ public final class ChallengeModel {
         // All challenges are finished. Return random old one.
         challenge = getRandomChallenge(getChallengesMap().values());
         Challenge currentChallenge = getCurrentChallenge();
-        if (currentChallenge != null) {
+        if (currentChallenge != null && getChallengesMap().size() > 1) {
           while (challenge.getId().equals(currentChallenge.getId())) {
             challenge = getRandomChallenge(getChallengesMap().values());
           }
@@ -362,8 +363,9 @@ public final class ChallengeModel {
       }
     }
     if (challenge != null) {
-      // TODO: we loose statistics here about the challenge if it was taken before.
-      // To solve this, we need to store its previous finished time and status somewhere.
+      if (challenge.backup()) {
+        Analytics.getInstance().sendChallengeBackupData(challenge);
+      }
       challenge.reset();
     }
     return challengeId;
@@ -389,8 +391,8 @@ public final class ChallengeModel {
     }
     double finishedProportion =
         (double) (challenges.size() - nonfinished.size()) / challenges.size();
-    boolean acceptMedium = finishedProportion >= 1D / 3;
-    boolean acceptHigh = finishedProportion >= 2D / 3;
+    boolean acceptMedium = finishedProportion >= PROPORTION_ACCEPT_MEDIUM_LEVEL_CHALLENGE;
+    boolean acceptHigh = finishedProportion >= PROPORTION_ACCEPT_HIGH_LEVEL_CHALLENGE;
 
     List<Challenge> filteredChallenges = new ArrayList<>();
     for (Challenge challenge : nonfinished) {
@@ -433,18 +435,19 @@ public final class ChallengeModel {
     Log.d(TAG, "updateCurrentChallenge");
     Challenge challenge = getCurrentChallenge();
     challenge.updateStatus();
+    Analytics.getInstance().sendChallengeStatus(challenge);
   }
 
   private List<Challenge> generateChallenges() {
     List<Challenge> challenges = new ArrayList<>();
-//      int days = 1;
+      int days = 1;
 //      int days = 2;
 //      int days = 13;
 //      int days = 14;
 //      int days = 14 * 7 - 1;
 //      int days = 14 * 7;
 //      int days = 14 * 30 - 1;
-    int days = 14 * 30;
+//    int days = 14 * 30;
 //    int days = 200;
     for (int i = 0; i < days; i++) {
       Challenge challenge = new Challenge(

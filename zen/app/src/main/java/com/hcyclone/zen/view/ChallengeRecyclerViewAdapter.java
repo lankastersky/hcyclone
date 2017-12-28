@@ -13,10 +13,7 @@ import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.view.ChallengeListFragment.OnListFragmentInteractionListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +23,6 @@ import java.util.Set;
  */
 public class ChallengeRecyclerViewAdapter
     extends RecyclerView.Adapter<ChallengeRecyclerViewAdapter.ViewHolder> {
-
-  private static final DateFormat FINISHED_CHALLENGE_TIME_DATE_FORMAT =
-      SimpleDateFormat.getDateInstance();
 
   private final List<Challenge> values;
   private final List<Challenge> originalValues;
@@ -64,9 +58,7 @@ public class ChallengeRecyclerViewAdapter
   public void onBindViewHolder(final ViewHolder holder, int position) {
     holder.item = values.get(position);
 
-    Date date = new Date(holder.item.getFinishedTime());
-    String dateString = FINISHED_CHALLENGE_TIME_DATE_FORMAT.format(date);
-    holder.finishedTime.setText(dateString);
+    holder.finishedTime.setText(Utils.timeToString(holder.item.getFinishedTime()));
 
     holder.contentView.setText(values.get(position).getContent());
     holder.detailsView.setText(values.get(position).getDetails());
@@ -76,14 +68,11 @@ public class ChallengeRecyclerViewAdapter
     holder.ratingBar.setRating(holder.item.getRating());
 
 
-    holder.view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (listener != null) {
-          // Notify the active callbacks interface (the activity, if the
-          // fragment is attached to one) that an item has been selected.
-          listener.onListFragmentInteraction(holder.item);
-        }
+    holder.view.setOnClickListener(v -> {
+      if (listener != null) {
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+        listener.onListFragmentInteraction(holder.item);
       }
     });
   }

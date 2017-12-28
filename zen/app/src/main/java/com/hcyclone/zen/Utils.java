@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.hcyclone.zen.model.Challenge;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -20,6 +22,7 @@ public final class Utils {
 
   private static final String TAG = Utils.class.getSimpleName();
   private static final Calendar CALENDAR = Calendar.getInstance();
+  private static final DateFormat SIMPLE_DATE_FORMAT = SimpleDateFormat.getDateInstance();
 
   private Utils() {}
 
@@ -157,5 +160,15 @@ public final class Utils {
         break;
     }
     return result;
+  }
+
+
+  public static String timeToString(long time) {
+    return timeToString(time, SIMPLE_DATE_FORMAT);
+  }
+
+  public static String timeToString(long time, DateFormat dateFormat) {
+    Date date = new Date(time);
+    return dateFormat.format(date);
   }
 }

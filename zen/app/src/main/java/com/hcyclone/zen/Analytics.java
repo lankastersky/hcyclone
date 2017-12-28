@@ -8,10 +8,17 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.hcyclone.zen.model.Challenge;
 
-/**
- * Google analytics facade.
- */
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+/** Google analytics facade. */
 public class Analytics {
+
+  private static final DateFormat CHALLENGES_TIME_DATE_FORMAT =
+      new SimpleDateFormat("yyyy.MM.dd", Locale.US);
 
   public static final String SETTINGS_UPDATE_INITIAL_ALARM = "Initial alarm";
   public static final String SETTINGS_UPDATE_FINAL_ALARM = "Final alarm";
@@ -55,12 +62,16 @@ public class Analytics {
     send("Challenge Status Update", action, challenge.getId());
   }
 
-  public void sendChallengeRating(@NonNull Challenge challenge) {
+  public void sendChallengeRating(Challenge challenge) {
     send("Challenge Rating Update", "rated", challenge.getId(), (long) challenge.getRating());
   }
 
-  public void sendChallengeComments(String comments) {
-    send("Challenge Comments", "comment", comments != null ? comments.length() : 0);
+  public void sendChallengeComments(Challenge challenge) {
+    send(
+        "Challenge Comments",
+        "comment",
+        challenge.getId(),
+        challenge.getComments() != null ? challenge.getComments().length() : 0);
   }
 
   public void sendSettings(@NonNull String action, String value) {
@@ -83,19 +94,21 @@ public class Analytics {
     send("Share challenge", "share", value);
   }
 
+  public void sendChallengeBackupData(Challenge challenge) {
+    send("Challenge backup", "Statuses", challenge.getPrevStatuses().toString());
+    List<String> finishedTimesAsString = new ArrayList<>();
+    for (long time : challenge.getPrevFinishedTimes()) {
+      finishedTimesAsString.add(Utils.timeToString(time, CHALLENGES_TIME_DATE_FORMAT));
+    }
+    send("Challenge backup", "Finished times", finishedTimesAsString.toString());
+    send("Challenge backup", "Ratings", challenge.getPrevRatings().toString());
+  }
+
   private void send(String category, String action, String label) {
     tracker.send(new HitBuilders.EventBuilder()
         .setCategory(category)
         .setAction(action)
         .setLabel(label)
-        .build());
-  }
-
-  private void send(String category, String action, long value) {
-    tracker.send(new HitBuilders.EventBuilder()
-        .setCategory(category)
-        .setAction(action)
-        .setValue(value)
         .build());
   }
 

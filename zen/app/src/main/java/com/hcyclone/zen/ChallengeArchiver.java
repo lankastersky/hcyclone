@@ -2,7 +2,6 @@ package com.hcyclone.zen;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -35,8 +34,10 @@ public class ChallengeArchiver {
   }.getType();
 
   private final SharedPreferences sharedPreferences;
+  private final AppLifecycleManager appLifecycleManager;
 
-  public ChallengeArchiver(@NonNull Context context) {
+  public ChallengeArchiver(Context context, AppLifecycleManager appLifecycleManager) {
+    this.appLifecycleManager = appLifecycleManager;
     sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
   }
 
@@ -77,8 +78,16 @@ public class ChallengeArchiver {
   public void storeChallengeData(Map<String, Challenge> challengeMap) {
     List<ChallengeData> data = new ArrayList<>();
     for (Challenge challenge : challengeMap.values()) {
-      data.add(new ChallengeData(challenge.getId(), challenge.getStatus(),
-          challenge.getFinishedTime(), challenge.getRating(), challenge.getComments()));
+      data.add(new ChallengeData(
+          challenge.getId(),
+          challenge.getStatus(),
+          challenge.getFinishedTime(),
+          challenge.getRating(),
+          challenge.getComments(),
+          challenge.getPrevStatuses(),
+          challenge.getPrevFinishedTimes(),
+          challenge.getPrevRatings()
+      ));
     }
     String dataString = GSON.toJson(data);
     sharedPreferences.edit().putString(KEY_CHALLENGE_DATA, dataString).apply();
@@ -101,6 +110,9 @@ public class ChallengeArchiver {
         challenge.setFinishedTime(challengeData.finishedTime);
         challenge.setRating(challengeData.rating);
         challenge.setComments(challengeData.comments);
+        challenge.setPrevStatuses(challengeData.prevStatuses);
+        challenge.setPrevFinishedTimes(challengeData.prevFinishedTimes);
+        challenge.setPrevRatings(challengeData.prevRatings);
       }
     }
   }
@@ -122,6 +134,6 @@ public class ChallengeArchiver {
   }
 
   private void requestBackup() {
-    AppLifecycleManager.getInstance().requestBackup();
+    appLifecycleManager.requestBackup();
   }
 }
