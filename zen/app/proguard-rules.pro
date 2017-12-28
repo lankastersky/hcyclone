@@ -18,4 +18,5 @@
 -dontobfuscate
 -ignorewarnings
 -keep class com.androidplot.** { *; }
+-keep class android.support.v7.widget.ShareActionProvider { *; }
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable

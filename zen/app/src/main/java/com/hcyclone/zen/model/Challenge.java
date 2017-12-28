@@ -8,16 +8,17 @@ import com.hcyclone.zen.Log;
 
 import java.util.Date;
 
+/** Challenge data. */
 public class Challenge {
 
   private static final String TAG = Challenge.class.getSimpleName();
 
+  // Statuses
   public static final int UNKNOWN = 0;
   public static final int SHOWN = 1;
   public static final int ACCEPTED = 2;
   public static final int FINISHED = 3;
   public static final int DECLINED = 4;
-  public static final int STATUSES_LENGTH = 5;
   @IntDef({UNKNOWN, SHOWN, ACCEPTED, FINISHED, DECLINED})
   public @interface StatusType {}
 
@@ -28,15 +29,15 @@ public class Challenge {
   @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
   public @interface LevelType {}
 
+  private final String id;
+  private final String content;
+  private final String details;
+  @LevelType private final int level;
+  private final String quote;
+  private final String source;
+  private final String type;
+  private final String url;
 
-  private String id;
-  private String content;
-  private String details;
-  @LevelType private int level;
-  private String quote;
-  private String source;
-  private String type;
-  private String url;
   private float rating;
   @StatusType private int status;
   private long finishedTime;
@@ -109,7 +110,7 @@ public class Challenge {
     this.rating = rating;
   }
 
-  public void updateStatus() {
+  void updateStatus() {
     Log.d(TAG, "Update status for challenge " + id + " from " + status);
     switch (status) {
       case UNKNOWN:
@@ -123,13 +124,13 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(Challenge.class.getSimpleName(), "Wrong status to update: " + status);
+        Log.e(TAG, "Wrong status to update: " + status);
         break;
     }
     Analytics.getInstance().sendChallengeStatus(this);
   }
 
-  public void decline() {
+  void decline() {
     Log.d(TAG, "Decline challenge: " + id);
     switch (status) {
       case SHOWN:
@@ -138,13 +139,13 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(Challenge.class.getSimpleName(), "Wrong status to decline: " + status);
+        Log.e(TAG, "Wrong status to decline: " + status);
         break;
     }
     Analytics.getInstance().sendChallengeStatus(this);
   }
 
-  public void reset() {
+  void reset() {
     status = UNKNOWN;
     finishedTime = 0;
     rating = 0;

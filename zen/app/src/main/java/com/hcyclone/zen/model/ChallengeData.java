@@ -1,11 +1,10 @@
 package com.hcyclone.zen.model;
 
-/**
- * Stores modifiable challenge data.
- */
+/** Modifiable challenge data for serialization etc. */
 public class ChallengeData {
 
   public final String id;
+
   public final int status;
   public final long finishedTime;
   public final float rating;

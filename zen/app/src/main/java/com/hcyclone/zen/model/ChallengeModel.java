@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.google.common.collect.Iterables;
 import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
@@ -41,6 +42,15 @@ public final class ChallengeModel {
 
   public void init(@NonNull Context context) {
     challengeArchiver = new ChallengeArchiver(context);
+  }
+
+  @Challenge.LevelType
+  public int getLevel() {
+    return level;
+  }
+
+  private void setLevel(int level) {
+    this.level = level;
   }
 
   public Challenge getCurrentChallenge() {
@@ -90,20 +100,21 @@ public final class ChallengeModel {
   }
 
   public int getShownChallengesNumber() {
-    int shown = getChallengesMap(Challenge.SHOWN).size();
+    int shown = getChallengesByStatus(Challenge.SHOWN).size();
     return shown + getFinishedChallenges().size();
   }
 
   public List<Challenge> getFinishedChallenges() {
-    return getChallengesMap(Challenge.FINISHED);
+    return getChallengesByStatus(Challenge.FINISHED);
+  }
+
+  /** Gets persistently stored current challenge. */
+  public Challenge getSerializedCurrentChallenge() {
+    return challengeArchiver.restoreCurrentChallenge();
   }
 
   public Challenge getChallenge(String challengeId) {
     return challengeMap.get(challengeId);
-  }
-
-  private Map<String, Challenge> getChallengesMap() {
-    return challengeMap;
   }
 
   public void loadChallenges() {
@@ -119,46 +130,9 @@ public final class ChallengeModel {
         challengeMap.put(challenge.getId(), challenge);
       }
     }
+    // Update loaded challenges with history data.
     restoreState();
     selectChallengeIfNeeded();
-  }
-
-  private List<Challenge> generateChallenges() {
-    List<Challenge> challenges = new ArrayList<>();
-//      int days = 1;
-//      int days = 2;
-//      int days = 13;
-//      int days = 14;
-//      int days = 14 * 7 - 1;
-//      int days = 14 * 7;
-//      int days = 14 * 30 - 1;
-    int days = 14 * 30;
-//    int days = 200;
-    for (int i = 0; i < days; i++) {
-      Challenge challenge = new Challenge(
-          "id" + i,
-          "content" + i,
-          "details" + i,
-          "type" + i,
-          i % 3, // level
-          "source" + i,
-          "url" + i,
-          "quote" + i
-      );
-      int status = Challenge.FINISHED;
-//      do {
-//        status = (int) (Math.random() * Challenge.STATUSES_LENGTH);
-//      } while (status == Challenge.ACCEPTED);
-      challenge.setStatus(status);
-      //challenge.setRating((float) Math.random() * getMaxRating(context));
-      challenge.setRating(i % 5);
-      CALENDAR.setTime(new Date());
-      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) (Math.random() * days));
-      //CALENDAR.add(Calendar.DAY_OF_YEAR, i + 1);
-      challenge.setFinishedTime(CALENDAR.getTimeInMillis());
-      challenges.add(challenge);
-    }
-    return challenges;
   }
 
   public void saveChallenges(List<Challenge> challenges) {
@@ -168,20 +142,17 @@ public final class ChallengeModel {
       challengeMap.put(challenge.getId(), challenge);
     }
     challengeArchiver.storeChallenges(challenges);
+    // If new challenges arrived, we don't need to update them.
+    // But old challenges need to be restored and updated if the app wasn't running when this method
+    // is called to select new challenge if needed.
     restoreState();
     selectChallengeIfNeeded();
   }
 
-  private void restoreState() {
-    challengeArchiver.restoreChallengeData(challengeMap);
-    Challenge challenge = challengeArchiver.restoreCurrentChallenge();
-    if (challenge != null) {
-      currentChallengeId = challenge.getId();
-    }
-    currentChallengeShownTime = challengeArchiver.restoreCurrentChallengeShownTime();
-    level = challengeArchiver.restoreLevel();
-  }
-
+  /**
+   * Sets challenge status as {@link Challenge.SHOWN} if current status is
+   * {@link Challenge.UNKNOWN}.
+   */
   public void setChallengeShown(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -193,8 +164,10 @@ public final class ChallengeModel {
     }
     currentChallengeShownTime = new Date().getTime();
     updateCurrentChallenge();
+    storeState();
   }
 
+  /** Sets challenge status as {@link Challenge.ACCEPTED}. */
   public void setChallengeAccepted(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -202,8 +175,10 @@ public final class ChallengeModel {
       return;
     }
     updateCurrentChallenge();
+    storeState();
   }
 
+  /** Sets challenge status as {@link Challenge.FINISHED}. */
   public void setChallengeFinished(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -211,37 +186,22 @@ public final class ChallengeModel {
       return;
     }
     updateCurrentChallenge();
+    storeState();
   }
 
-  public Challenge getSerializedCurrentChallenge() {
-    return challengeArchiver.restoreCurrentChallenge();
-  }
-
-  private void updateCurrentChallenge() {
-    Log.d(TAG, "updateCurrentChallenge");
-    getCurrentChallenge().updateStatus();
-    challengeArchiver.storeChallengeData(challengeMap);
-    challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
-    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
-    challengeArchiver.storeLevel(level);
-  }
-
+  /** Challenge is ready to be accepted before 6pm. */
   public boolean isTimeToAcceptChallenge() {
-    Calendar date = Calendar.getInstance();
-    date.setTimeInMillis(currentChallengeShownTime);
-    return Utils.isTimeLess6pm(date);
+    CALENDAR.setTimeInMillis(currentChallengeShownTime);
+    return Utils.isTimeLess6pm(CALENDAR);
   }
 
-  /**
-   * Challenge is ready to be finished today after 6pm.
-   */
+  /** Challenge is ready to be finished today after 6pm. */
   public boolean isTimeToFinishChallenge() {
     boolean result = false;
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
       Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
-      Calendar date = Calendar.getInstance();
-      date.setTimeInMillis(currentChallengeShownTime);
+      CALENDAR.setTimeInMillis(currentChallengeShownTime);
 //      Date now = new Date();
       // If is taken < 6pm, wait for 6pm.
 //      if (date.get(Calendar.HOUR_OF_DAY) < 18) {
@@ -256,6 +216,10 @@ public final class ChallengeModel {
     return result;
   }
 
+  /**
+   * Checks if the level of the given challenge is higher than the current one and updates the
+   * current one if needed.
+   */
   public boolean checkLevelUp(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -272,21 +236,26 @@ public final class ChallengeModel {
     return false;
   }
 
-  @Challenge.LevelType
-  public int getLevel() {
-    return level;
+  private Map<String, Challenge> getChallengesMap() {
+    return challengeMap;
   }
 
-  private void setLevel(int level) {
-    this.level = level;
+  @NonNull
+  private List<Challenge> getChallengesByStatus(int status) {
+    List<Challenge> challenges = new ArrayList<>();
+    for (Challenge challenge : getChallengesMap().values()) {
+      if (challenge.getStatus() == status) {
+        challenges.add(challenge);
+      }
+    }
+    return challenges;
   }
 
   /** Challenge expires at midnight of this day. */
   private boolean isChallengeTimeExpired() {
     boolean result;
     Date timeToDecline = Utils.getNextMidnight(currentChallengeShownTime);
-    Calendar date = Calendar.getInstance();
-    date.setTimeInMillis(currentChallengeShownTime);
+    CALENDAR.setTimeInMillis(currentChallengeShownTime);
     Date now = new Date();
     // If is taken < 6pm, wait for midnight.
 //    if (date.get(Calendar.HOUR_OF_DAY) < 18) {
@@ -301,10 +270,10 @@ public final class ChallengeModel {
   }
 
   private void selectChallengeIfNeeded() {
+    boolean newChallengeRequired = false;
     if (TextUtils.isEmpty(currentChallengeId)) {
-      currentChallengeId = getNewChallengeId();
+      newChallengeRequired = true;
     } else {
-      boolean newChallengeRequired = false;
       if (!getChallengesMap().containsKey(currentChallengeId)) {
         Log.e(TAG, "Failed to select current challenge with id " + currentChallengeId);
         return;
@@ -322,6 +291,7 @@ public final class ChallengeModel {
           break;
         case Challenge.ACCEPTED:
           if (isChallengeTimeExpired()) {
+            // User is interested in challenge. Give him a chance to finish it next time.
             challenge.reset();
             newChallengeRequired = true;
           }
@@ -335,9 +305,9 @@ public final class ChallengeModel {
         default:
           Log.e(TAG, "Wrong status of current challenge: " + currentChallengeId);
       }
-      if (newChallengeRequired) {
-        currentChallengeId = getNewChallengeId();
-      }
+    }
+    if (newChallengeRequired) {
+      currentChallengeId = getNewChallengeId();
     }
     Challenge currentChallenge = getChallengesMap().get(currentChallengeId);
     if (currentChallenge == null) {
@@ -347,61 +317,62 @@ public final class ChallengeModel {
       Log.d(TAG, "Current challenge id is " + currentChallengeId + ": "
           + currentChallenge.getContent());
     }
-    challengeArchiver.storeChallengeData(challengeMap);
-    challengeArchiver.storeCurrentChallenge(currentChallenge);
-    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
+    storeState();
   }
 
   /**
    * If there are nonfinished challenges, get random challenge from them taking into account levels.
-   * Else if there are declined challenges, get random challenge from them.
-   * Else get random challenge from all and is not equal to previous one.
+   * Else if there are declined challenges, get random challenge from them with 1/3 probability.
+   * Else get random challenge from all not equal to previous one.
    */
   @NonNull
   private String getNewChallengeId() {
     String challengeId = "";
     Challenge challenge = null;
-    List<Challenge> nonfinishedChallenges = getChallengesMap(Challenge.UNKNOWN);
-    nonfinishedChallenges.addAll(getChallengesMap(Challenge.ACCEPTED));
-    nonfinishedChallenges.addAll(getChallengesMap(Challenge.SHOWN));
+    List<Challenge> nonfinishedChallenges = getChallengesByStatus(Challenge.UNKNOWN);
+    // Ideally, we shouldn't have such challenges.
+    nonfinishedChallenges.addAll(getChallengesByStatus(Challenge.ACCEPTED));
+    // Ideally, we shouldn't have such challenges.
+    nonfinishedChallenges.addAll(getChallengesByStatus(Challenge.SHOWN));
     nonfinishedChallenges = filterNonfinishedChallengesByLevel(nonfinishedChallenges);
     if (nonfinishedChallenges.size() > 0) {
       challenge = getRandomChallenge(nonfinishedChallenges);
       challengeId = challenge.getId();
     } else {
-      List<Challenge> declinedChallenges = getChallengesMap(Challenge.DECLINED);
+      List<Challenge> declinedChallenges = getChallengesByStatus(Challenge.DECLINED);
       if (declinedChallenges.size() > 0) {
-        challenge = getRandomChallenge(declinedChallenges);
+        // Don't force user to take a declined challenge again. Show declined challenges with some
+        // probability.
+        if (Math.random() < 1D / 3) {
+          challenge = getRandomChallenge(declinedChallenges);
+        } else {
+          challenge = getRandomChallenge(nonfinishedChallenges);
+        }
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
         // All challenges are finished. Return random old one.
         challenge = getRandomChallenge(getChallengesMap().values());
-        if (getCurrentChallenge() != null) {
-          while (challenge.getId().equals(getCurrentChallenge().getId())) {
+        Challenge currentChallenge = getCurrentChallenge();
+        if (currentChallenge != null) {
+          while (challenge.getId().equals(currentChallenge.getId())) {
             challenge = getRandomChallenge(getChallengesMap().values());
           }
         }
         challengeId = challenge.getId();
       }
-      if (challenge != null) {
-        challenge.reset();
-      }
+    }
+    if (challenge != null) {
+      // TODO: we loose statistics here about the challenge if it was taken before.
+      // To solve this, we need to store its previous finished time and status somewhere.
+      challenge.reset();
     }
     return challengeId;
   }
 
   @NonNull
   private Challenge getRandomChallenge(@NonNull Collection<Challenge> challenges) {
-    int id = (int) (Math.random() * challenges.size());
-    int i = 0;
-    Challenge result = challenges.iterator().next();
-    for (Challenge challenge : challenges) {
-      if (i++ == id) {
-        result = challenge;
-        break;
-      }
-    }
-    return result;
+    int id = (int) (Math.random() * challenges.size()); // Round up to floor value.
+    return Iterables.get(challenges, id);
   }
 
   /**
@@ -441,13 +412,63 @@ public final class ChallengeModel {
     return filteredChallenges;
   }
 
-  @NonNull
-  private List<Challenge> getChallengesMap(int status) {
+  private void restoreState() {
+    challengeArchiver.restoreChallengeData(challengeMap);
+    Challenge challenge = challengeArchiver.restoreCurrentChallenge();
+    if (challenge != null) {
+      currentChallengeId = challenge.getId();
+    }
+    currentChallengeShownTime = challengeArchiver.restoreCurrentChallengeShownTime();
+    level = challengeArchiver.restoreLevel();
+  }
+
+  private void storeState() {
+    challengeArchiver.storeChallengeData(challengeMap);
+    challengeArchiver.storeCurrentChallenge(getCurrentChallenge());
+    challengeArchiver.storeCurrentChallengeShownTime(currentChallengeShownTime);
+    challengeArchiver.storeLevel(level);
+  }
+
+  private void updateCurrentChallenge() {
+    Log.d(TAG, "updateCurrentChallenge");
+    Challenge challenge = getCurrentChallenge();
+    challenge.updateStatus();
+  }
+
+  private List<Challenge> generateChallenges() {
     List<Challenge> challenges = new ArrayList<>();
-    for (Challenge challenge : getChallengesMap().values()) {
-      if (challenge.getStatus() == status) {
-        challenges.add(challenge);
-      }
+//      int days = 1;
+//      int days = 2;
+//      int days = 13;
+//      int days = 14;
+//      int days = 14 * 7 - 1;
+//      int days = 14 * 7;
+//      int days = 14 * 30 - 1;
+    int days = 14 * 30;
+//    int days = 200;
+    for (int i = 0; i < days; i++) {
+      Challenge challenge = new Challenge(
+          "id" + i,
+          "content" + i,
+          "details" + i,
+          "type" + i,
+          i % 3, // level
+          "source" + i,
+          "url" + i,
+          "quote" + i
+      );
+      int status = Challenge.FINISHED;
+//      do {
+//        status = (int) (Math.random() * Challenge.STATUSES_LENGTH);
+//      } while (status == Challenge.ACCEPTED);
+      challenge.setStatus(status);
+      //challenge.setRating((float) Math.random() * getMaxRating(context));
+      challenge.setRating(i % 5);
+      CALENDAR.setTime(new Date());
+      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) (Math.random() * days));
+      //CALENDAR.add(Calendar.DAY_OF_YEAR, i + 1);
+      challenge.setFinishedTime(CALENDAR.getTimeInMillis());
+      challenges.add(challenge);
     }
     return challenges;
   }
