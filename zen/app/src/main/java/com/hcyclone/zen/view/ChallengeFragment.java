@@ -80,12 +80,19 @@ public class ChallengeFragment extends Fragment {
     super.onCreateOptionsMenu(menu, inflater);
 
     inflater.inflate(R.menu.challenge_menu, menu);
-    // Retrieve the share menu item
+
     MenuItem shareItem = menu.findItem(R.id.action_menu_share);
-
-    // Now get the ShareActionProvider from the item
     shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
-
+    shareActionProvider.setOnShareTargetSelectedListener(
+        new ShareActionProvider.OnShareTargetSelectedListener() {
+      @Override
+      public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+        if (intent.hasExtra(Intent.EXTRA_SUBJECT)) {
+          Analytics.getInstance().sendShare(intent.getStringExtra(Intent.EXTRA_SUBJECT));
+        }
+        return false;
+      }
+    });
     setShareIntent(createShareIntent(challengeId));
   }
 

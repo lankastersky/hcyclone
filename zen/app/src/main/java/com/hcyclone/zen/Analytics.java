@@ -75,6 +75,10 @@ public class Analytics {
     send("Statistics chart", "View", value);
   }
 
+  public void sendShare(String value) {
+    send("Share challenge", "share", value);
+  }
+
   private void send(String category, String action, String label) {
     tracker.send(new HitBuilders.EventBuilder()
         .setCategory(category)
