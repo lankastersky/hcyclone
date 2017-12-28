@@ -59,6 +59,10 @@ public class Analytics {
     send("Challenge Rating Update", "rated", challenge.getId(), (long) challenge.getRating());
   }
 
+  public void sendChallengeComments(String comments) {
+    send("Challenge Comments", "comment", comments != null ? comments.length() : 0);
+  }
+
   public void sendSettings(@NonNull String action, String value) {
     send("Settings Update", action, value);
   }
@@ -84,6 +88,14 @@ public class Analytics {
         .setCategory(category)
         .setAction(action)
         .setLabel(label)
+        .build());
+  }
+
+  private void send(String category, String action, long value) {
+    tracker.send(new HitBuilders.EventBuilder()
+        .setCategory(category)
+        .setAction(action)
+        .setValue(value)
         .build());
   }
 

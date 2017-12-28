@@ -112,6 +112,7 @@
     <string name="fragment_challenge_type">Type: %s</string>
     <string name="fragment_challenge_level">Difficulty: %s</string>
     <string name="fragment_challenge_menu_share">Share</string>
+    <string name="fragment_challenge_comments_hint">Describe your experience to see it in the journal</string>
 
     <!-- Challenge types -->
     <string name="challenge_type_sid">Stop Internal Dialog</string>

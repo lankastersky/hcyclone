@@ -1,11 +1,13 @@
 package com.hcyclone.zen.view;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.hcyclone.zen.R;
+import com.hcyclone.zen.model.Challenge;
 
 /** Shows challenge from journal. */
 public class JournalChallengeFragment extends ChallengeFragment {
@@ -40,9 +42,16 @@ public class JournalChallengeFragment extends ChallengeFragment {
 
     setHasOptionsMenu(true);
 
+    Challenge challenge = challengeModel.getChallenge(challengeId);
+
     ratingBar = view.findViewById(R.id.fragment_challenge_rating_bar);
     ratingBar.setVisibility(View.VISIBLE);
-
+    commentsTextView = view.findViewById(R.id.fragment_challenge_comments_text_view);
+    String comments = challenge.getComments();
+    commentsTextView.setVisibility(!TextUtils.isEmpty(comments) ? View.VISIBLE : View.GONE);
+    if (!TextUtils.isEmpty(comments)) {
+      commentsTextView.setText(challenge.getComments());
+    }
     showChallengeData(view);
 
     return view;

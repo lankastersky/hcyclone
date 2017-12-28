@@ -41,6 +41,7 @@ public class Challenge {
   private float rating;
   @StatusType private int status;
   private long finishedTime;
+  private String comments;
 
   public Challenge(String id, String content, String details, String type, long level,
                    String source, String url, String quote) {
@@ -108,6 +109,14 @@ public class Challenge {
 
   public void setRating(float rating) {
     this.rating = rating;
+  }
+
+  public String getComments() {
+    return comments;
+  }
+
+  public void setComments(String comments) {
+    this.comments = comments;
   }
 
   void updateStatus() {

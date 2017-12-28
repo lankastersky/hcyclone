@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/text_margin">
+        android:padding="0dp">
 
         <TextView
             android:id="@+id/fragment_challenge_content"
@@ -70,12 +70,21 @@
             style="@style/CustomRatingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/text_margin"
             android:layout_gravity="center"
             android:isIndicator="true"
             android:numStars="4"
             android:rating="2.0"
-            android:stepSize="1.0"
-            android:visibility="gone"/>
+            android:stepSize="1.0"/>
+
+        <TextView
+            android:id="@+id/fragment_challenge_comments_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:paddingBottom="@dimen/text_margin"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 

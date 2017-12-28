@@ -15,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -37,8 +39,10 @@ public class ChallengeFragment extends Fragment {
 
   protected String challengeId;
   protected RatingBar ratingBar;
+  protected TextView commentsTextView;
   protected ChallengeModel challengeModel;
 
+  private EditText commentsEditText;
   private Button challengeButton;
   //private boolean showFromJournal;
   private View rankDialog;
@@ -63,7 +67,16 @@ public class ChallengeFragment extends Fragment {
 
     ratingBar = view.findViewById(R.id.fragment_challenge_rating_bar);
     rankDialog = view.findViewById(R.id.fragment_challenge_rank_dialog);
-
+    commentsTextView = view.findViewById(R.id.fragment_challenge_comments_text_view);
+    commentsEditText = view.findViewById(R.id.fragment_challenge_edit_text);
+    // Allow scrolling.
+    commentsEditText.setOnTouchListener(new View.OnTouchListener() {
+      @Override
+      public boolean onTouch(View view, MotionEvent motionEvent) {
+        view.getParent().requestDisallowInterceptTouchEvent(true);
+        return false;
+      }
+    });
     createChallengeButton(view);
 
     return view;
@@ -105,6 +118,8 @@ public class ChallengeFragment extends Fragment {
     showLevelUpIfNeeded();
     showChallengeData(getView());
     updateRatingBar();
+    updateRankDialog();
+    updateComments();
     updateChallengeButton();
 
     // TODO: find better way to scroll to the top.
@@ -209,24 +224,26 @@ public class ChallengeFragment extends Fragment {
             AlarmService.getInstance().setDailyAlarm();
             break;
           case Challenge.ACCEPTED:
-            rate();
             // Rate before setting the challenge finished.
+            rate();
+            challenge.setComments(commentsEditText.getText().toString());
             challengeModel.setChallengeFinished(challengeId);
             AlarmService.getInstance().stopDailyAlarm();
-            rankDialog.setVisibility(View.GONE);
             break;
           default:
             Log.e(TAG, "Wrong challenge status: " + status);
             break;
         }
-        updateChallengeButton();
         updateRatingBar();
+        updateRankDialog();
+        updateComments();
+        updateChallengeButton();
       }
     });
   }
 
-  private void showRankView() {
-    rankDialog.setVisibility(View.VISIBLE);
+  private void showRankView(boolean visible) {
+    rankDialog.setVisibility(visible ? View.VISIBLE : View.GONE);
     RatingBar ratingBar = rankDialog.findViewById(R.id.rank_dialog_ratingbar);
     ratingBar.setRating(0);
   }
@@ -248,7 +265,48 @@ public class ChallengeFragment extends Fragment {
         break;
       default:
         ratingBar.setVisibility(View.GONE);
-        rankDialog.setVisibility(View.GONE);
+        ratingBar.setRating(0);
+        break;
+    }
+  }
+
+  private void updateRankDialog() {
+    Challenge challenge = challengeModel.getChallenge(challengeId);
+    @Challenge.StatusType int status = challenge.getStatus();
+    switch (status) {
+      case Challenge.ACCEPTED:
+        boolean visible = challengeModel.isTimeToFinishChallenge();
+        showRankView(visible);
+        break;
+      default:
+        showRankView(false);
+        break;
+    }
+  }
+
+  private void updateComments() {
+    Challenge challenge = challengeModel.getChallenge(challengeId);
+    @Challenge.StatusType int status = challenge.getStatus();
+    switch (status) {
+      case Challenge.ACCEPTED:
+        boolean timeToFinish = challengeModel.isTimeToFinishChallenge();
+        commentsEditText.setVisibility(timeToFinish ? View.VISIBLE : View.GONE);
+        commentsTextView.setVisibility(View.GONE);
+        String comments = challenge.getComments();
+        if (timeToFinish && !TextUtils.isEmpty(comments)) {
+          // Show previous comments for the current challenge if any.
+          commentsEditText.setText(comments);
+          Analytics.getInstance().sendChallengeComments(comments);
+        }
+        break;
+      case Challenge.FINISHED:
+        commentsEditText.setVisibility(View.GONE);
+        commentsTextView.setVisibility(View.VISIBLE);
+        commentsTextView.setText(challenge.getComments());
+        break;
+      default:
+        commentsEditText.setVisibility(View.GONE);
+        commentsTextView.setVisibility(View.GONE);
         break;
     }
   }
@@ -282,9 +340,6 @@ public class ChallengeFragment extends Fragment {
         challengeButton.setText(enabled
             ? getString(R.string.fragment_challenge_finish)
             : getString(R.string.fragment_challenge_return_after_6pm));
-        if (enabled) {
-          showRankView();
-        }
         break;
       case Challenge.FINISHED:
       case Challenge.DECLINED:

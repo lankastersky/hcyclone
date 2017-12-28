@@ -11,6 +11,7 @@
     <string name="fragment_challenge_journal_entry">Задание из журнала</string>
     <string name="fragment_challenge_level">Сложность: %s</string>
     <string name="fragment_challenge_menu_share">Поделиться</string>
+    <string name="fragment_challenge_comments_hint">Опишите свой опыт для журнала</string>
     <string name="fragment_challenge_list">Выполненные задания</string>
     <string name="fragment_challenge_list_empty_text">Пока нет выполненных заданий</string>
     <string name="fragment_challenge_status">Статус: %s</string>

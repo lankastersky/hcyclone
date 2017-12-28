@@ -42,6 +42,21 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"/>
 
+            <EditText
+                android:id="@+id/fragment_challenge_edit_text"
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@string/fontFamilyMedium"
+                android:textSize="16sp"
+                android:minLines="3"
+                android:maxLines="20"
+                android:hint="@string/fragment_challenge_comments_hint"
+                android:background="@null"
+                android:maxLength="1000"
+                android:scrollHorizontally="false"
+            />
+
             <Button
                 android:id="@+id/fragment_challenge_accept_button"
                 android:layout_width="match_parent"

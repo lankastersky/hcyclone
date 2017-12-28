@@ -15,12 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Archives and unarchives challenges data.
- */
+/** Archives and unarchives challenges data. */
 public class ChallengeArchiver {
 
-  public static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.model.ChallengeModel";
+  static final String SHARED_PREFERENCES_NAME = "com.hcyclone.zen.model.ChallengeModel";
+
   private static final String TAG = ChallengeArchiver.class.getSimpleName();
   private static final String KEY_CHALLENGE_DATA = "challenge_data";
   private static final String KEY_CHALLENGES = "challenges";
@@ -79,7 +78,7 @@ public class ChallengeArchiver {
     List<ChallengeData> data = new ArrayList<>();
     for (Challenge challenge : challengeMap.values()) {
       data.add(new ChallengeData(challenge.getId(), challenge.getStatus(),
-          challenge.getFinishedTime(), challenge.getRating()));
+          challenge.getFinishedTime(), challenge.getRating(), challenge.getComments()));
     }
     String dataString = GSON.toJson(data);
     sharedPreferences.edit().putString(KEY_CHALLENGE_DATA, dataString).apply();
@@ -101,6 +100,7 @@ public class ChallengeArchiver {
         challenge.setStatus(challengeData.status);
         challenge.setFinishedTime(challengeData.finishedTime);
         challenge.setRating(challengeData.rating);
+        challenge.setComments(challengeData.comments);
       }
     }
   }
