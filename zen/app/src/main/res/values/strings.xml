@@ -100,7 +100,7 @@
     </string-array>
 
     <!-- Fragment Challenge -->
-    <string name="fragment_challenge_current">Current Challenge</string>
+    <string name="challenge_current">Current Challenge</string>
     <string name="fragment_challenge_journal_entry">Journal Entry</string>
     <string name="fragment_challenge_accept">Accept</string>
     <string name="fragment_challenge_return_after_6pm">Return after 6PM</string>
@@ -111,6 +111,7 @@
     <string name="fragment_challenge_status">Status: %s</string>
     <string name="fragment_challenge_type">Type: %s</string>
     <string name="fragment_challenge_level">Difficulty: %s</string>
+    <string name="fragment_challenge_menu_share">Share</string>
 
     <!-- Challenge types -->
     <string name="challenge_type_sid">Stop Internal Dialog</string>

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -35,12 +36,9 @@ public class MainActivity extends AppCompatActivity
 
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
   private static final String TAG = MainActivity.class.getSimpleName();
-  private static final String SELECTED_MENU_ITEM_ID_PARAM = "selectedMenuItemId";
-  private static final String CURRENT_FRAGMENT_TAG_PARAM = "currentFragmentTag";
 
-  private String currentFragmentTag;
-  private int selectedMenuItemId;
   private ProgressBar progressBar;
+  private boolean loadingChallenges;
 
   private static String getFragmentTag(Fragment fragment) {
     return fragment.getClass().getSimpleName();
@@ -66,10 +64,10 @@ public class MainActivity extends AppCompatActivity
     progressBar = findViewById(R.id.progressBar);
 
     if (savedInstanceState == null) {
+      loadingChallenges = true;
       selectChallengeMenuItem();
 
 //      if (!Utils.isDebug()) {
-        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         progressBar.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent(this, FirebaseService.class);
@@ -79,8 +77,9 @@ public class MainActivity extends AppCompatActivity
 //      } else {
 //        ChallengeModel.getInstance().loadChallenges();
 //      }
-      replaceFragment(ChallengeFragment.class);
     } else {
+      loadingChallenges = false;
+      progressBar.setVisibility(View.GONE);
       ChallengeModel.getInstance().loadChallenges();
     }
   }
@@ -92,11 +91,23 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onStart() {
-    super.onStart();
+  protected void onResume() {
+    super.onResume();
+
+    if (loadingChallenges) {
+      return;
+    }
 
     if (isStartFromNotification()) {
+      Log.d(TAG, "Start from notification");
       getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+      selectChallengeMenuItem();
+      replaceFragment(ChallengeFragment.class);
+    }
+
+    // Come here if challenges were loaded when activity was invisible.
+    if (getSupportFragmentManager().getFragments().isEmpty()) {
+      Log.d(TAG, "Start when challenged were loaded in background");
       selectChallengeMenuItem();
       replaceFragment(ChallengeFragment.class);
     }
@@ -114,26 +125,10 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-    selectedMenuItemId = item.getItemId();
-    selectMenuItem(selectedMenuItemId);
+    selectMenuItem(item.getItemId());
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
-  }
-
-  @Override
-  protected void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
-    outState.putInt(SELECTED_MENU_ITEM_ID_PARAM, selectedMenuItemId);
-    outState.putString(CURRENT_FRAGMENT_TAG_PARAM, currentFragmentTag);
-  }
-
-  @Override
-  protected void onRestoreInstanceState(Bundle savedInstanceState) {
-    super.onRestoreInstanceState(savedInstanceState);
-    currentFragmentTag = savedInstanceState.getString(CURRENT_FRAGMENT_TAG_PARAM);
-    selectedMenuItemId = savedInstanceState.getInt(SELECTED_MENU_ITEM_ID_PARAM);
-    selectMenuItem(selectedMenuItemId);
   }
 
   @Override
@@ -141,15 +136,15 @@ public class MainActivity extends AppCompatActivity
     Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
     Intent intent = new Intent(this, ChallengeActivity.class);
     Bundle extras = new Bundle();
-    extras.putString(ChallengeFragment.CHALLENGE_ID, item.getId());
+    extras.putString(JournalChallengeFragment.CHALLENGE_ID, item.getId());
     intent.putExtras(extras);
     startActivity(intent);
   }
 
   private boolean isStartFromNotification() {
     Intent intent = getIntent();
-    return intent.getExtras() != null
-        && intent.getExtras().getBoolean(INTENT_PARAM_START_FROM_NOTIFICATION);
+    return intent.hasExtra(INTENT_PARAM_START_FROM_NOTIFICATION)
+        && intent.getBooleanExtra(INTENT_PARAM_START_FROM_NOTIFICATION, false);
   }
 
   private void selectChallengeMenuItem() {
@@ -157,7 +152,6 @@ public class MainActivity extends AppCompatActivity
     Menu menu = navigationView.getMenu();
     MenuItem menuItem = menu.findItem(R.id.nav_challenge);
     menuItem.setChecked(true);
-    selectedMenuItemId = menuItem.getItemId();
   }
 
   private void selectMenuItem(int menuItemId) {
@@ -186,9 +180,6 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void replaceFragment(Class<? extends Fragment> clazz) {
-    if (clazz.getSimpleName().equals(currentFragmentTag)) {
-      return;
-    }
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     Fragment newFragment;
@@ -200,29 +191,21 @@ public class MainActivity extends AppCompatActivity
     }
     fragmentTransaction.replace(R.id.content_container, newFragment,
         getFragmentTag(newFragment)).commit();
-    currentFragmentTag = getFragmentTag(newFragment);
-  }
-
-  private Fragment getCurrentFragment() {
-    return (getSupportFragmentManager().findFragmentByTag(currentFragmentTag));
   }
 
   private void onChallengesLoaded(int resultCode) {
+    loadingChallenges = false;
     progressBar.setVisibility(View.GONE);
-    DrawerLayout drawer = findViewById(R.id.drawer_layout);
-    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
     switch (resultCode) {
       case FirebaseService.RESULT_CODE_OK:
-        //if (AppLifecycleManager.isAppVisible()) {
-        //showCurrentChallenge();
-        //}
         AlarmService.getInstance().setAlarms();
         ChallengeModel.getInstance().loadChallenges();
-        ChallengeFragment fragment = (ChallengeFragment) getCurrentFragment();
-        if (fragment != null) {
-          fragment.refresh();
+        if (!AppLifecycleManager.isAppVisible()) {
+          Log.d(TAG, "App in background. Skipping loading challenges");
+          return;
         }
+        replaceFragment(ChallengeFragment.class);
         break;
       case FirebaseService.RESULT_CODE_ERROR:
         Utils.buildDialog(getString(R.string.dialog_title_something_wrong),

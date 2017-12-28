@@ -182,7 +182,12 @@ public final class ChallengeModel {
     level = challengeArchiver.restoreLevel();
   }
 
-  public void setCurrentChallengeShown() {
+  public void setChallengeShown(String challengeId) {
+    if (!challengeId.equals(currentChallengeId)) {
+      Log.w(
+          TAG, "Can't mark challenge shown. ChallengeId is not current challenge: " + challengeId);
+      return;
+    }
     if (getCurrentChallenge().getStatus() != Challenge.UNKNOWN) {
       return;
     }
@@ -190,11 +195,21 @@ public final class ChallengeModel {
     updateCurrentChallenge();
   }
 
-  public void setCurrentChallengeAccepted() {
+  public void setChallengeAccepted(String challengeId) {
+    if (!challengeId.equals(currentChallengeId)) {
+      Log.w(
+          TAG, "Can't accept challenge. ChallengeId is not current challenge: " + challengeId);
+      return;
+    }
     updateCurrentChallenge();
   }
 
-  public void setCurrentChallengeFinished() {
+  public void setChallengeFinished(String challengeId) {
+    if (!challengeId.equals(currentChallengeId)) {
+      Log.w(
+          TAG, "Can't finish challenge. ChallengeId is not current challenge: " + challengeId);
+      return;
+    }
     updateCurrentChallenge();
   }
 
@@ -241,7 +256,12 @@ public final class ChallengeModel {
     return result;
   }
 
-  public boolean checkLevelUp() {
+  public boolean checkLevelUp(String challengeId) {
+    if (!challengeId.equals(currentChallengeId)) {
+      Log.w(
+          TAG, "Can't check level up. ChallengeId is not current challenge: " + challengeId);
+      return false;
+    }
     Challenge challenge = getCurrentChallenge();
     int currentLevel = challenge.getLevel();
     if (currentLevel > getLevel() && currentLevel >= Challenge.LEVEL_LOW) {
@@ -324,7 +344,7 @@ public final class ChallengeModel {
       Log.e(TAG, "Failed to get current challenge with id " + currentChallengeId);
       return;
     } else {
-      Log.d(TAG, "Current challenge id:" + currentChallengeId + ": "
+      Log.d(TAG, "Current challenge id is " + currentChallengeId + ": "
           + currentChallenge.getContent());
     }
     challengeArchiver.storeChallengeData(challengeMap);

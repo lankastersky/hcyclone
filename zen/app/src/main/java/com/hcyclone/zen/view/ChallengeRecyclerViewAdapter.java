@@ -38,7 +38,7 @@ public class ChallengeRecyclerViewAdapter
   private Set<Integer> levels;
   private Set<Float> ratings;
 
-  public ChallengeRecyclerViewAdapter(List<Challenge> items,
+  ChallengeRecyclerViewAdapter(List<Challenge> items,
                                       Set<Integer> levels,
                                       Set<Float> ratings,
                                       OnListFragmentInteractionListener listener,
@@ -49,8 +49,6 @@ public class ChallengeRecyclerViewAdapter
     this.ratings = ratings;
     this.listener = listener;
     this.context = context;
-
-    setHasStableIds(true);
 
     filter();
   }
@@ -95,13 +93,13 @@ public class ChallengeRecyclerViewAdapter
     return values.size();
   }
 
-  public void filterByLevels(Set<Integer> levels) {
+  void filterByLevels(Set<Integer> levels) {
     this.levels = levels;
     filter();
     notifyDataSetChanged();
   }
 
-  public void filterByRating(Set<Float> ratings) {
+  void filterByRating(Set<Float> ratings) {
     this.ratings = ratings;
     filter();
     notifyDataSetChanged();
@@ -116,17 +114,17 @@ public class ChallengeRecyclerViewAdapter
     }
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  static class ViewHolder extends RecyclerView.ViewHolder {
 
-    public final View view;
-    public final TextView contentView;
-    public final TextView detailsView;
-    public final TextView finishedTime;
-    public final TextView levelView;
-    public final RatingBar ratingBar;
-    public Challenge item;
+    final View view;
+    final TextView contentView;
+    final TextView detailsView;
+    final TextView finishedTime;
+    final TextView levelView;
+    final RatingBar ratingBar;
+    Challenge item;
 
-    public ViewHolder(View view) {
+    ViewHolder(View view) {
       super(view);
       this.view = view;
       finishedTime = view.findViewById(R.id.finishedTime);

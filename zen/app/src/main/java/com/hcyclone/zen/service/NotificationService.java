@@ -1,5 +1,7 @@
 package com.hcyclone.zen.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,8 +11,10 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
@@ -29,6 +33,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   private static final NotificationService instance = new NotificationService();
 
   private static final int NOTIFICATION_ID = 1;
+  private static final String CHALLENGE_CHANNEL_ID = "challenge_channel";
   private static final int LIGHT_TIME_MS = 3000;
 
   private NotificationManager notificationManager;
@@ -55,6 +60,10 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     PreferenceManager.getDefaultSharedPreferences(context)
         .registerOnSharedPreferenceChangeListener(this);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      buildChannel();
+    }
   }
 
   @Override
@@ -66,7 +75,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
     }
   }
 
-  public void showInitialAlarmNotification() {
+  void showInitialAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore initial alarm notification as challenge is null");
@@ -81,7 +90,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
         challenge.getContent());
   }
 
-  public void showFinalAlarmNotification() {
+  void showFinalAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore final alarm notification as challenge is null");
@@ -97,7 +106,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
         challenge.getContent());
   }
 
-  public void showDailyAlarmNotification() {
+  void showDailyAlarmNotification() {
     Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore daily alarm notification as challenge is null");
@@ -111,13 +120,31 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
     showNotification(challenge.getContent(), challenge.getDetails());
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
+  private NotificationChannel buildChannel() {
+    NotificationManager notificationManager =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    // The user-visible name of the channel.
+    CharSequence name = context.getString(R.string.challenge_current);
+    // The user-visible description of the channel.
+    //String description = "Media playback controls";
+    int importance = NotificationManager.IMPORTANCE_LOW;
+    NotificationChannel channel = new NotificationChannel(CHALLENGE_CHANNEL_ID, name, importance);
+    // Configure the notification channel.
+    //channel.setDescription(description);
+    //channel.setShowBadge(false);
+    channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+    notificationManager.createNotificationChannel(channel);
+    return channel;
+  }
+
   private void showNotification(String title, String text) {
     if (AppLifecycleManager.isAppVisible()) {
       return;
     }
 
     NotificationCompat.Builder builder =
-        new NotificationCompat.Builder(context)
+        new NotificationCompat.Builder(context, CHALLENGE_CHANNEL_ID)
             .setSmallIcon(getNotificationIcon())
             .setContentTitle(title)
             .setContentText(text)

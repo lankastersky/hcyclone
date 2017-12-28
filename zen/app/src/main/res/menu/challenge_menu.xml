@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:support="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_menu_share"
+        android:title="@string/fragment_challenge_menu_share"
+        support:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        support:showAsAction="ifRoom" />
+
+</menu>

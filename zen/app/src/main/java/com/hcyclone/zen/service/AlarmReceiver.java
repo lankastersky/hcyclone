@@ -27,6 +27,8 @@ public final class AlarmReceiver extends BroadcastReceiver {
           } else {
             Log.d(TAG, "Don't start service in background for Android O+");
           }
+        } else {
+          context.startService(new Intent(context, FirebaseService.class));
         }
         // Restart alarm to make it random.
         AlarmService.getInstance().setServiceAlarm();

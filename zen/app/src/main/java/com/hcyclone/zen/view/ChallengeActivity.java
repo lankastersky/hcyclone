@@ -20,14 +20,14 @@ public class ChallengeActivity extends AppCompatActivity {
     setContentView(R.layout.activity_challenge);
     setupActionBar();
 
-    String challengeId = getIntent().getExtras().getString(ChallengeFragment.CHALLENGE_ID);
+    String challengeId = getIntent().getExtras().getString(JournalChallengeFragment.CHALLENGE_ID);
     setTitle(ChallengeModel.getInstance().getChallenge(challengeId).getContent());
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-    if (fragmentManager.findFragmentByTag(ChallengeFragment.TAG) == null) {
-      ChallengeFragment challengeFragment = ChallengeFragment.newInstance(challengeId);
-      fragmentTransaction.add(R.id.content_container, challengeFragment, ChallengeFragment.TAG)
+    if (fragmentManager.findFragmentByTag(JournalChallengeFragment.TAG) == null) {
+      JournalChallengeFragment challengeFragment = JournalChallengeFragment.newInstance(challengeId);
+      fragmentTransaction.add(R.id.content_container, challengeFragment, JournalChallengeFragment.TAG)
           .commit();
     } else {
       Log.d(ChallengeActivity.class.getSimpleName(), "Challenge Fragment is already created");

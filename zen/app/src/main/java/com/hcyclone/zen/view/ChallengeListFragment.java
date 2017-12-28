@@ -46,7 +46,6 @@ public class ChallengeListFragment extends Fragment {
   private OnListFragmentInteractionListener onListFragmentInteractionListener;
   private RecyclerView recyclerView;
   private ChallengeFilterModel challengeFilterModel;
-  private List<Challenge> finishedChallenges;
 
   private static Set<Integer> levelsToSet(boolean[] items) {
     Set<Integer> levelsSet = new HashSet<>();
@@ -98,11 +97,10 @@ public class ChallengeListFragment extends Fragment {
     setHasOptionsMenu(true);
 
     View view;
-    finishedChallenges = ChallengeModel.getInstance().getFinishedChallengesSortedDesc();
 //    for (int i = 0; i < 9; i++) {
 //      finishedChallenges.addAll(ChallengeModel.getInstance().getFinishedChallenges());
 //    }
-    if (finishedChallenges.isEmpty()) {
+    if (ChallengeModel.getInstance().getFinishedChallenges().isEmpty()) {
       view = inflater.inflate(R.layout.fragment_challenge_list_empty, container, false);
     } else {
       view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
@@ -159,7 +157,7 @@ public class ChallengeListFragment extends Fragment {
 //    recyclerView.setNestedScrollingEnabled(false);
     recyclerView.setLayoutManager(new LinearLayoutManager(context));
     recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
-        finishedChallenges,
+        ChallengeModel.getInstance().getFinishedChallengesSortedDesc(),
         levelsToSet(levels),
         ratingsToSet(ratings),
         onListFragmentInteractionListener,
