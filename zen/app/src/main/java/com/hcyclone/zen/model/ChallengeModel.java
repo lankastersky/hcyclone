@@ -341,14 +341,11 @@ public final class ChallengeModel {
       challengeId = challenge.getId();
     } else {
       List<Challenge> declinedChallenges = getChallengesByStatus(Challenge.DECLINED);
-      if (declinedChallenges.size() > 0) {
+      if (declinedChallenges.size() > 0 && Math.random() < PROBABILITY_GET_DECLINED_CHALLENGE) {
         // Don't force user to take a declined challenge again. Show declined challenges with some
         // probability.
-        if (Math.random() < PROBABILITY_GET_DECLINED_CHALLENGE) {
-          challenge = getRandomChallenge(declinedChallenges);
-        } else {
-          challenge = getRandomChallenge(nonfinishedChallenges);
-        }
+        Log.d(TAG, "Assign random declined challenge");
+        challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
         // All challenges are finished. Return random old one.
@@ -373,6 +370,9 @@ public final class ChallengeModel {
 
   @NonNull
   private Challenge getRandomChallenge(@NonNull Collection<Challenge> challenges) {
+    if (challenges.isEmpty()) {
+      return null;
+    }
     int id = (int) (Math.random() * challenges.size()); // Round up to floor value.
     return Iterables.get(challenges, id);
   }
@@ -440,13 +440,13 @@ public final class ChallengeModel {
 
   private List<Challenge> generateChallenges() {
     List<Challenge> challenges = new ArrayList<>();
-      int days = 1;
+//      int days = 1;
 //      int days = 2;
 //      int days = 13;
 //      int days = 14;
 //      int days = 14 * 7 - 1;
 //      int days = 14 * 7;
-//      int days = 14 * 30 - 1;
+      int days = 14 * 30 - 1;
 //    int days = 14 * 30;
 //    int days = 200;
     for (int i = 0; i < days; i++) {
@@ -468,7 +468,7 @@ public final class ChallengeModel {
       //challenge.setRating((float) Math.random() * getMaxRating(context));
       challenge.setRating(i % 5);
       CALENDAR.setTime(new Date());
-      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) (Math.random() * days));
+      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) -(Math.random() * days));
       //CALENDAR.add(Calendar.DAY_OF_YEAR, i + 1);
       challenge.setFinishedTime(CALENDAR.getTimeInMillis());
       challenges.add(challenge);

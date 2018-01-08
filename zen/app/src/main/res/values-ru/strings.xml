@@ -72,4 +72,7 @@
     <string name="fragment_statistics_consciousness_plot_title">Уровень осознанности, %</string>
     <string name="fragment_statistics_line_chart">Линейный чарт</string>
     <string name="fragment_statistics_bar_chart">Бар чарт</string>
+    <string name="dialog_text_failed_to_load_challenges">Не удалось загрузить задания. Попробуйте
+        перезапустить приложение.
+    </string>
 </resources>

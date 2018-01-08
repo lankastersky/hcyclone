@@ -122,7 +122,9 @@ public class FirebaseAdapter {
                 challenges.add(challenge);
               }
             } catch (Exception e) {
-              Log.e(TAG, e.toString());
+              Log.e(TAG, "Failed to parse challenges", e);
+              listener.onError(e);
+              return;
             }
             listener.onChallenges(challenges);
           }

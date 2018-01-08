@@ -191,35 +191,42 @@ public class MainActivity extends AppCompatActivity
       return;
     }
     fragmentTransaction.replace(R.id.content_container, newFragment,
-        getFragmentTag(newFragment)).commit();
+        getFragmentTag(newFragment)).commitAllowingStateLoss();
   }
 
   private void onChallengesLoaded(int resultCode) {
     loadingChallenges = false;
     progressBar.setVisibility(View.GONE);
 
+    AlarmService.getInstance().setAlarms();
+    ChallengeModel.getInstance().loadChallenges();
+
     switch (resultCode) {
       case FirebaseService.RESULT_CODE_OK:
-        AlarmService.getInstance().setAlarms();
-        ChallengeModel.getInstance().loadChallenges();
-        if (!AppLifecycleManager.isAppVisible()) {
-          Log.d(TAG, "App in background. Skipping loading challenges");
-          return;
-        }
-        replaceFragment(ChallengeFragment.class);
+        // Do nothing.
         break;
       case FirebaseService.RESULT_CODE_ERROR:
-        Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
-            getString(R.string.dialog_text_failed_to_connect), this, null).show();
+        Log.w(TAG, "Failed to load challenges. Try to restore from persistent storage");
         break;
+    }
+
+    if (!AppLifecycleManager.isAppVisible()) {
+      Log.d(TAG, "App in background. Skipping showing challenges");
+      return;
+    }
+    if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
+      replaceFragment(ChallengeFragment.class);
+    } else {
+      Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+          getString(R.string.dialog_text_failed_to_connect), this, null).show();
     }
   }
 
   private static class ChallengesResultReceiver extends ResultReceiver {
 
-    private final WeakReference<MainActivity> mainActivityRef;
+    final WeakReference<MainActivity> mainActivityRef;
 
-    private ChallengesResultReceiver(Handler handler, MainActivity mainActivity) {
+    ChallengesResultReceiver(Handler handler, MainActivity mainActivity) {
       super(handler);
       mainActivityRef = new WeakReference<>(mainActivity);
     }

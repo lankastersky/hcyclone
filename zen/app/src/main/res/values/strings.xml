@@ -167,8 +167,8 @@
 
     <!-- Firebase error -->
     <string name="dialog_title_something_wrong">Something is wrong</string>
-    <string name="dialog_text_failed_to_connect">Failed to connect to the server. Try again later.
-    </string>
+    <string name="dialog_text_failed_to_connect">Failed to connect to the server. Try again later.</string>
+    <string name="dialog_text_failed_to_load_challenges">Failed to load challenges. Try to restart the app.</string>
     <string name="filter_challenges_by_rating">Filter by level of consciousness</string>
     <string name="filter_challenges_by_level">Filter by difficulty</string>
 

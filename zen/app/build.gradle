@@ -8,8 +8,8 @@ android {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 10
-        versionName "1.2.0"
+        versionCode 12
+        versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -21,6 +21,7 @@ android {
 
     buildTypes {
         debug {
+            applicationIdSuffix ".dev"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

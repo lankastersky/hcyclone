@@ -92,6 +92,9 @@ public class ChallengeFragment extends Fragment {
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     super.onCreateOptionsMenu(menu, inflater);
 
+    if (TextUtils.isEmpty(challengeId)) {
+      return;
+    }
     inflater.inflate(R.menu.challenge_menu, menu);
 
     MenuItem shareItem = menu.findItem(R.id.action_menu_share);
@@ -110,6 +113,8 @@ public class ChallengeFragment extends Fragment {
     Challenge challenge = challengeModel.getCurrentChallenge();
     if (challenge == null) {
       Log.d(TAG, "Can't refresh challenge data: challenge is null");
+    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+        getString(R.string.dialog_text_failed_to_load_challenges), getActivity(), null).show();
       return;
     }
     challengeId = challenge.getId();
@@ -123,7 +128,6 @@ public class ChallengeFragment extends Fragment {
     updateComments();
     updateChallengeButton();
 
-    // TODO: find better way to scroll to the top.
     NestedScrollView scrollView = getActivity().getWindow().getDecorView()
         .findViewById(R.id.nested_scroll_view);
     if (scrollView != null) {
