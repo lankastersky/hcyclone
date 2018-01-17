@@ -1,0 +1,1 @@
+The app published to (https://play.google.com/store/apps/details?id=com.hcyclone.zyq).
