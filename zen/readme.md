@@ -1,1 +1,1 @@
-The app published to (https://play.google.com/store/apps/details?id=com.hcyclone.zen).
+The app published to [Play Market](https://play.google.com/store/apps/details?id=com.hcyclone.zen).
