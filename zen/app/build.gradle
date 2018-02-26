@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 12
-        versionName "1.2.1"
+        targetSdkVersion 27
+        versionCode 13
+        versionName "1.2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -37,7 +37,7 @@ android {
     }
 }
 
-def uiVersion = "26.1.0"
+def uiVersion = "27.0.2"
 def gmsVersion = "11.8.0"
 
 dependencies {

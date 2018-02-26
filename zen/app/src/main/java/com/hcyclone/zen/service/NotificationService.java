@@ -12,6 +12,8 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -26,6 +28,8 @@ import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.view.MainActivity;
 
+import java.util.Locale;
+
 public final class NotificationService implements OnSharedPreferenceChangeListener {
 
   private static final String TAG = NotificationService.class.getSimpleName();
@@ -33,12 +37,16 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   private static final NotificationService instance = new NotificationService();
 
   private static final int NOTIFICATION_ID = 1;
-  private static final String CHALLENGE_CHANNEL_ID = "challenge_channel";
+  private static final String CHALLENGE_CHANNEL_NAME = "challenge_channel";
+  private static final String CHALLENGE_CHANNEL_ID =
+      String.format(Locale.ENGLISH, "%s_%d", CHALLENGE_CHANNEL_NAME, NOTIFICATION_ID);
   private static final int LIGHT_TIME_MS = 3000;
+  private static final long[] VIBRATION_PATTERN = {0, 50, 200, 50, 200, 50};
 
   private NotificationManager notificationManager;
   private Context context;
   private SharedPreferences sharedPreferences;
+  private Vibrator vibrator;
 
   private NotificationService() {}
 
@@ -60,6 +68,8 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     PreferenceManager.getDefaultSharedPreferences(context)
         .registerOnSharedPreferenceChangeListener(this);
+
+    vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       buildChannel();
@@ -124,17 +134,23 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   private NotificationChannel buildChannel() {
     NotificationManager notificationManager =
         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-    // The user-visible name of the channel.
-    CharSequence name = context.getString(R.string.challenge_current);
-    // The user-visible description of the channel.
-    //String description = "Media playback controls";
-    int importance = NotificationManager.IMPORTANCE_LOW;
-    NotificationChannel channel = new NotificationChannel(CHALLENGE_CHANNEL_ID, name, importance);
-    // Configure the notification channel.
-    //channel.setDescription(description);
-    //channel.setShowBadge(false);
-    channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-    notificationManager.createNotificationChannel(channel);
+    NotificationChannel channel = notificationManager.getNotificationChannel(CHALLENGE_CHANNEL_ID);
+    // Channel can be created only once. Once created, settings can't be changed from code.
+    if (channel == null) {
+      // The user-visible name of the channel.
+      CharSequence name = context.getString(R.string.challenge_current);
+      // The user-visible description of the channel.
+      int importance = NotificationManager.IMPORTANCE_DEFAULT;
+      channel = new NotificationChannel(CHALLENGE_CHANNEL_ID, name, importance);
+      // Configure the notification channel.
+      //String description = "Media playback controls";
+      //channel.setDescription(description);
+      //channel.setShowBadge(false);
+      channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+      channel.enableLights(true);
+      channel.setLightColor(Color.RED);
+      notificationManager.createNotificationChannel(channel);
+    }
     return channel;
   }
 
@@ -161,9 +177,24 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
             PendingIntent.FLAG_UPDATE_CURRENT
         );
     builder.setContentIntent(resultPendingIntent);
-    if (sharedPreferences.getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, false)) {
-      builder.setVibrate(new long[] { 0, 50, 200, 50, 200, 50 });
+
+    boolean vibrate = (sharedPreferences
+        .getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, true));
+
+    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      if (vibrate) {
+        vibrator.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, -1));
+      } // else default vibration will be used
+    } else {
+      if (vibrate) {
+        builder.setVibrate(VIBRATION_PATTERN);
+      } // else default vibration will be used
+      buildRingtone(builder);
     }
+    notificationManager.notify(NOTIFICATION_ID, builder.build());
+  }
+
+  private void buildRingtone(NotificationCompat.Builder builder) {
     String ringtoneUri = sharedPreferences.getString(
         PreferencesService.PREF_KEY_NOTIFICATION_RINGTONE, null);
     Uri soundUri;
@@ -173,6 +204,5 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
       soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
     }
     builder.setSound(soundUri);
-    notificationManager.notify(NOTIFICATION_ID, builder.build());
   }
 }
