@@ -138,6 +138,7 @@ public final class AlarmService implements OnSharedPreferenceChangeListener {
     setServiceAlarm();
     setInitialAlarm();
     setFinalAlarm();
+    setDailyAlarm();
   }
 
   @Override
