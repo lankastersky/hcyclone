@@ -61,7 +61,7 @@ public final class FirebaseService extends IntentService
 
   private void loadChallenges() {
     Log.d(TAG, "Load challenges");
-    FirebaseAdapter.getInstance().getChallenges(new FirebaseAdapter.FirebaseDataListener() {
+    FirebaseAdapter.getInstance().downloadChallenges(new FirebaseAdapter.FirebaseDataListener() {
       @Override
       public void onError(Exception exception) {
         Log.e(TAG, exception.toString());

@@ -14,12 +14,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +55,7 @@ public class FirebaseAdapter {
   void signIn(FirebaseAuthListener listener, Context context) {
     Log.d(TAG, "Sign in");
     firebaseAuthListener = listener;
-    FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
-      @Override
-      public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
+    FirebaseAuth.AuthStateListener authStateListener = (firebaseAuth) -> {
         FirebaseAdapter.this.firebaseAuth = firebaseAuth;
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
@@ -59,7 +63,6 @@ public class FirebaseAdapter {
         } else {
           Log.e(TAG, "No user is signed in.");
         }
-      }
     };
     FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
     authenticate(context);
@@ -99,34 +102,19 @@ public class FirebaseAdapter {
         });
   }
 
-  void getChallenges(final FirebaseDataListener listener) {
+  void getChallenges(FirebaseDataListener listener) {
     Log.d(TAG, "getChallenges");
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     reference.child("challenges").addListenerForSingleValueEvent(
         new ValueEventListener() {
           @Override
           public void onDataChange(DataSnapshot dataSnapshot) {
-            ArrayList<Challenge> challenges = new ArrayList<>();
             try {
-              Map<String, Object> challengesMap = (Map<String, Object>) dataSnapshot.getValue();
-              for (String key : challengesMap.keySet()) {
-                Map<String, Object> challengeMap = (Map<String, Object>) challengesMap.get(key);
-                Challenge challenge = new Challenge(key,
-                    (String) challengeMap.get("content"),
-                    (String) challengeMap.get("details"),
-                    (String) challengeMap.get("type"),
-                    (Long) challengeMap.get("level"),
-                    (String) challengeMap.get("source"),
-                    (String) challengeMap.get("url"),
-                    (String) challengeMap.get("quote"));
-                challenges.add(challenge);
-              }
+              listener.onChallenges(parseChallenges((Map<String, Object>) dataSnapshot.getValue()));
             } catch (Exception e) {
               Log.e(TAG, "Failed to parse challenges", e);
               listener.onError(e);
-              return;
             }
-            listener.onChallenges(challenges);
           }
 
           @Override
@@ -136,6 +124,76 @@ public class FirebaseAdapter {
           }
         });
     reference.child("challenges").keepSynced(true);
+  }
+
+  void downloadChallenges(FirebaseDataListener listener) {
+    Log.d(TAG, "downloadChallenges");
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    String filePath = "challenges.json";
+    StorageReference pathReference = storageReference.child(filePath);
+    final long ONE_MEGABYTE = 1024 * 1024;
+    pathReference
+        .getBytes(ONE_MEGABYTE)
+        .addOnSuccessListener(
+            bytes -> {
+              try {
+                String stringChallenges = new String(bytes, "UTF-8");
+                JSONObject jsonChallenges = new JSONObject(stringChallenges);
+                listener.onChallenges(parseChallenges(jsonChallenges));
+              } catch (Exception e) {
+                Log.e(TAG, "Failed to parse challenges", e);
+                listener.onError(e);
+              }
+            })
+        .addOnFailureListener(
+            e -> {
+              Log.w(TAG, "downloadChallenges:onFailure", e);
+              getChallenges(listener);
+              listener.onError(e);
+            });
+  }
+
+  private ArrayList<Challenge> parseChallenges(Map<String, Object> challengesMap) {
+    ArrayList<Challenge> challenges = new ArrayList<>();
+    for (String key : challengesMap.keySet()) {
+      Map<String, Object> challengeMap = (Map<String, Object>) challengesMap.get(key);
+      challenges.add(parseChallenge(key, challengeMap));
+    }
+    return challenges;
+  }
+
+  private Challenge parseChallenge(String key, Map<String, Object> challengeMap) {
+    return new Challenge(key,
+        (String) challengeMap.get("content"),
+        (String) challengeMap.get("details"),
+        (String) challengeMap.get("type"),
+        (Long) challengeMap.get("level"),
+        (String) challengeMap.get("source"),
+        (String) challengeMap.get("url"),
+        (String) challengeMap.get("quote"));
+  }
+
+  private ArrayList<Challenge> parseChallenges(JSONObject challengesMap) throws JSONException {
+    ArrayList<Challenge> challenges = new ArrayList<>();
+
+    Iterator<String> keysItr = challengesMap.keys();
+    while (keysItr.hasNext()) {
+      String key = keysItr.next();
+      JSONObject challengeMap = challengesMap.getJSONObject(key);
+      challenges.add(parseChallenge(key, challengeMap));
+    }
+    return challenges;
+  }
+
+  private Challenge parseChallenge(String key, JSONObject challengeMap) throws JSONException {
+    return new Challenge(key,
+        challengeMap.getString("content"),
+        challengeMap.getString("details"),
+        challengeMap.getString("type"),
+        challengeMap.getLong("level"),
+        challengeMap.getString("source"),
+        challengeMap.getString("url"),
+        challengeMap.getString("quote"));
   }
 
   /** Firebase authentication process listener. */

@@ -8,8 +8,8 @@ android {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 14
-        versionName "1.2.3"
+        versionCode 15
+        versionName "1.2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -51,6 +51,7 @@ dependencies {
     compile 'com.google.guava:guava:20.0'
     compile "com.google.firebase:firebase-core:${gmsVersion}"
     compile "com.google.firebase:firebase-database:${gmsVersion}"
+    compile "com.google.firebase:firebase-storage:${gmsVersion}"
     compile "com.google.firebase:firebase-auth:${gmsVersion}"
     compile "com.google.firebase:firebase-crash:${gmsVersion}"
     compile "com.google.android.gms:play-services-analytics:${gmsVersion}"
