@@ -149,7 +149,6 @@ public class FirebaseAdapter {
             e -> {
               Log.w(TAG, "downloadChallenges:onFailure", e);
               getChallenges(listener);
-              listener.onError(e);
             });
   }
 

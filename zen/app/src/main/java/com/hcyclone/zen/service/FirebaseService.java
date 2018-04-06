@@ -25,6 +25,7 @@ public final class FirebaseService extends IntentService
 
   public FirebaseService() {
     super("FirebaseService");
+    setIntentRedelivery(true);
   }
 
   @Override
