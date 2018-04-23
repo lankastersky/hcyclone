@@ -36,7 +36,7 @@ public final class FirebaseService extends IntentService
       Log.d(TAG, "Sign in to Firebase");
       FirebaseAdapter.getInstance().signIn(this, this);
     } else {
-      loadChallenges();
+      downloadChallenges();
     }
     try {
       // Prevent service to be stopped before challenges were loaded.
@@ -48,7 +48,7 @@ public final class FirebaseService extends IntentService
 
   @Override
   public void onAuthSuccess() {
-    loadChallenges();
+    downloadChallenges();
   }
 
   @Override
@@ -60,12 +60,12 @@ public final class FirebaseService extends IntentService
     countDownLatch.countDown();
   }
 
-  private void loadChallenges() {
+  private void downloadChallenges() {
     Log.d(TAG, "Load challenges");
-    FirebaseAdapter.getInstance().downloadChallenges(new FirebaseAdapter.FirebaseDataListener() {
+    FirebaseAdapter.getInstance().downloadChallenges(new ChallengesDownloadListener() {
       @Override
       public void onError(Exception exception) {
-        Log.e(TAG, exception.toString());
+        Log.e(TAG, "Failed to load challenges", exception);
         if (receiver != null) {
           receiver.send(RESULT_CODE_ERROR, null);
         }
@@ -73,7 +73,7 @@ public final class FirebaseService extends IntentService
       }
 
       @Override
-      public void onChallenges(List<Challenge> challenges) {
+      public void onChallengesDownloaded(List<Challenge> challenges) {
         Log.d(TAG, "Challenges loaded");
         ChallengeModel.getInstance().init(FirebaseService.this);
         ChallengeModel.getInstance().saveChallenges(challenges);
@@ -82,6 +82,6 @@ public final class FirebaseService extends IntentService
         }
         countDownLatch.countDown();
       }
-    });
+    }, this);
   }
 }

@@ -114,7 +114,7 @@ public final class Utils {
   /**
    * Checks network connectivity.
    */
-  public static boolean isConnected(Context context) {
+  public static boolean isOnline(Context context) {
     ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
         Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();

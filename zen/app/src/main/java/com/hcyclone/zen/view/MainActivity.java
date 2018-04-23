@@ -2,8 +2,6 @@ package com.hcyclone.zen.view;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -25,14 +23,12 @@ import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
-import com.hcyclone.zen.service.AlarmService;
-import com.hcyclone.zen.service.FirebaseService;
-
-import java.lang.ref.WeakReference;
+import com.hcyclone.zen.service.ChallengesLoader;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
-    ChallengeListFragment.OnListFragmentInteractionListener {
+    ChallengeListFragment.OnListFragmentInteractionListener,
+    ChallengesLoader.ChallengesLoadListener {
 
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -64,25 +60,13 @@ public class MainActivity extends AppCompatActivity
     progressBar = findViewById(R.id.progressBar);
 
     if (savedInstanceState == null) {
-      loadingChallenges = true;
       selectChallengeMenuItem();
-
-//      if (!Utils.isDebug()) {
-        progressBar.setVisibility(View.VISIBLE);
-
-        Intent intent = new Intent(this, FirebaseService.class);
-        intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
-            new ChallengesResultReceiver(new Handler(), this));
-        startService(intent);
-//      } else {
-//        ChallengeModel.getInstance().loadChallenges();
-//        replaceFragment(ChallengeFragment.class);
-//      }
-    } else {
-      loadingChallenges = false;
-      progressBar.setVisibility(View.GONE);
-      ChallengeModel.getInstance().loadChallenges();
-    }
+      loadingChallenges = true;
+      progressBar.setVisibility(View.VISIBLE);
+      new ChallengesLoader().loadChallenges(this, this);
+      } else {
+        onChallengesLoaded();
+      }
   }
 
   @Override
@@ -194,21 +178,11 @@ public class MainActivity extends AppCompatActivity
         getFragmentTag(newFragment)).commitAllowingStateLoss();
   }
 
-  private void onChallengesLoaded(int resultCode) {
+  // ChallengesLoadListener
+  @Override
+  public void onChallengesLoaded() {
     loadingChallenges = false;
     progressBar.setVisibility(View.GONE);
-
-    AlarmService.getInstance().setAlarms();
-    ChallengeModel.getInstance().loadChallenges();
-
-    switch (resultCode) {
-      case FirebaseService.RESULT_CODE_OK:
-        // Do nothing.
-        break;
-      case FirebaseService.RESULT_CODE_ERROR:
-        Log.w(TAG, "Failed to load challenges. Try to restore from persistent storage");
-        break;
-    }
 
     if (!AppLifecycleManager.isAppVisible()) {
       Log.d(TAG, "App in background. Skipping showing challenges");
@@ -222,21 +196,12 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private static class ChallengesResultReceiver extends ResultReceiver {
+  @Override
+  public void onError(Exception e) {
+    loadingChallenges = false;
+    progressBar.setVisibility(View.GONE);
 
-    final WeakReference<MainActivity> mainActivityRef;
-
-    ChallengesResultReceiver(Handler handler, MainActivity mainActivity) {
-      super(handler);
-      mainActivityRef = new WeakReference<>(mainActivity);
-    }
-
-    @Override
-    protected void onReceiveResult(int resultCode, Bundle resultData) {
-      super.onReceiveResult(resultCode, resultData);
-      if (mainActivityRef.get() != null) {
-        mainActivityRef.get().onChallengesLoaded(resultCode);
-      }
-    }
+    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+        getString(R.string.dialog_text_failed_to_connect), this, null).show();
   }
 }

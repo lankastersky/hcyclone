@@ -26,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /** This class is responsible for Firebase connection and handling Firebase database reference. */
@@ -89,7 +88,7 @@ public class FirebaseAdapter {
             if (firebaseAuthListener != null) {
               if (task.isSuccessful()) {
                 firebaseAuthListener.onAuthSuccess();
-              } else if (!Utils.isConnected(context)) {
+              } else if (!Utils.isOnline(context)) {
                 // Use cached data.
                 Log.d(TAG, "Offline, try use cached data");
                 firebaseAuthListener.onAuthSuccess();
@@ -102,7 +101,7 @@ public class FirebaseAdapter {
         });
   }
 
-  void getChallenges(FirebaseDataListener listener) {
+  void getChallenges(ChallengesDownloadListener listener) {
     Log.d(TAG, "getChallenges");
     DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     reference.child("challenges").addListenerForSingleValueEvent(
@@ -110,7 +109,7 @@ public class FirebaseAdapter {
           @Override
           public void onDataChange(DataSnapshot dataSnapshot) {
             try {
-              listener.onChallenges(parseChallenges((Map<String, Object>) dataSnapshot.getValue()));
+              listener.onChallengesDownloaded(parseChallenges((Map<String, Object>) dataSnapshot.getValue()));
             } catch (Exception e) {
               Log.e(TAG, "Failed to parse challenges", e);
               listener.onError(e);
@@ -126,7 +125,7 @@ public class FirebaseAdapter {
     reference.child("challenges").keepSynced(true);
   }
 
-  void downloadChallenges(FirebaseDataListener listener) {
+  void downloadChallenges(ChallengesDownloadListener listener, Context context) {
     Log.d(TAG, "downloadChallenges");
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     String filePath = "challenges.json";
@@ -139,7 +138,7 @@ public class FirebaseAdapter {
               try {
                 String stringChallenges = new String(bytes, "UTF-8");
                 JSONObject jsonChallenges = new JSONObject(stringChallenges);
-                listener.onChallenges(parseChallenges(jsonChallenges));
+                listener.onChallengesDownloaded(parseChallenges(jsonChallenges));
               } catch (Exception e) {
                 Log.e(TAG, "Failed to parse challenges", e);
                 listener.onError(e);
@@ -148,7 +147,12 @@ public class FirebaseAdapter {
         .addOnFailureListener(
             e -> {
               Log.w(TAG, "downloadChallenges:onFailure", e);
-              getChallenges(listener);
+              if (!Utils.isOnline(context)) {
+                Log.w(TAG, "Device is offline, don't load challenges");
+                listener.onError(new Exception("Device is offline"));
+              } else {
+                getChallenges(listener);
+              }
             });
   }
 
@@ -204,9 +208,4 @@ public class FirebaseAdapter {
     void onAuthError(Exception exception);
   }
 
-  /** Listens to Firebase Database references changes. */
-  public interface FirebaseDataListener {
-    void onError(Exception e);
-    void onChallenges(List<Challenge> challenges);
-  }
 }

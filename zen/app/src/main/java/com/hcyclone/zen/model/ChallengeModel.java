@@ -47,7 +47,9 @@ public final class ChallengeModel {
   }
 
   public void init(@NonNull Context context) {
-    challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
+    if (challengeArchiver == null) {
+      challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
+    }
   }
 
   @Challenge.LevelType
@@ -131,7 +133,6 @@ public final class ChallengeModel {
       }
     }
     // Update loaded challenges with history data.
-    restoreState();
     selectChallengeIfNeeded();
   }
 
@@ -142,11 +143,6 @@ public final class ChallengeModel {
       challengeMap.put(challenge.getId(), challenge);
     }
     challengeArchiver.storeChallenges(challenges);
-    // If new challenges arrived, we don't need to update them.
-    // But old challenges need to be restored and updated if the app wasn't running when this method
-    // is called to select new challenge if needed.
-    restoreState();
-    selectChallengeIfNeeded();
   }
 
   /**
@@ -270,6 +266,8 @@ public final class ChallengeModel {
   }
 
   private void selectChallengeIfNeeded() {
+    restoreState();
+
     boolean newChallengeRequired = false;
     if (TextUtils.isEmpty(currentChallengeId)) {
       newChallengeRequired = true;
@@ -318,6 +316,7 @@ public final class ChallengeModel {
       Log.d(TAG, "Current challenge id is " + currentChallengeId + ": "
           + currentChallenge.getContent());
     }
+
     storeState();
   }
 
