@@ -58,7 +58,7 @@ public final class ChallengesLoader {
         if (AppLifecycleManager.isAppVisible()) {
           startFirebaseService(listener, context);
         } else {
-          Log.d(TAG, "Don't start service in background for Android O+");
+          Log.w(TAG, "Don't start service in background for Android O+");
           // Try to restore from persistent storage.
           onLoaded(listener);
         }
@@ -66,7 +66,7 @@ public final class ChallengesLoader {
         startFirebaseService(listener, context);
       }
     } else {
-      // Try to restore from persistent storage.
+      Log.w(TAG, "Device is offline, Try to restore from persistent storage.");
       onLoaded(listener);
     }
   }

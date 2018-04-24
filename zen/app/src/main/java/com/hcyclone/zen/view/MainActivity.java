@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity
       selectChallengeMenuItem();
       loadingChallenges = true;
       progressBar.setVisibility(View.VISIBLE);
-      new ChallengesLoader().loadChallenges(this, this);
       } else {
         onChallengesLoaded();
       }
@@ -73,6 +72,17 @@ public class MainActivity extends AppCompatActivity
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
     setIntent(intent);
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+
+    if (loadingChallenges) {
+      // We load using background service which is not available on Android O+ in background. So
+      // we have to wait for the activity to be in foreground (started) first.
+      new ChallengesLoader().loadChallenges(this, this);
+    }
   }
 
   @Override
@@ -92,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 
     // Come here if challenges were loaded when activity was invisible.
     if (getSupportFragmentManager().getFragments().isEmpty()) {
-      Log.d(TAG, "Start when challenged were loaded in background");
+      Log.d(TAG, "Start when challenges were loaded in background");
       selectChallengeMenuItem();
       replaceFragment(ChallengeFragment.class);
     }
