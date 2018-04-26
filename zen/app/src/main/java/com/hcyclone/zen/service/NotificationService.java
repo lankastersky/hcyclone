@@ -55,9 +55,10 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   }
 
   private static int getNotificationIcon() {
-    boolean useBlackIcon = (android.os.Build.VERSION.SDK_INT >=
-        android.os.Build.VERSION_CODES.LOLLIPOP);
-    return useBlackIcon ? R.mipmap.ic_menu_challenge : R.mipmap.ic_menu_challenge_white;
+//    boolean useBlackIcon = (android.os.Build.VERSION.SDK_INT >=
+//        android.os.Build.VERSION_CODES.LOLLIPOP);
+//    return useBlackIcon ? R.mipmap.ic_menu_challenge : R.mipmap.ic_menu_challenge_white;
+    return R.mipmap.ic_menu_challenge_white;
   }
 
   public void init(@NonNull Context context) {
@@ -182,6 +183,8 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
         .getBoolean(PreferencesService.PREF_KEY_NOTIFICATION_VIBRATE, true));
 
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      // TODO: if vibrate is disabled in app settings but enabled in channel, it still vibrates but
+      // in standard way.
       if (vibrate) {
         vibrator.vibrate(VibrationEffect.createWaveform(VIBRATION_PATTERN, -1));
       } // else default vibration will be used

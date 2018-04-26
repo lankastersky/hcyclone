@@ -6,21 +6,15 @@ package com.hcyclone.zen;
 public class Log {
 
   public static void i(String tag, String string) {
-    if (isLog()) {
-      android.util.Log.i(tag, string);
-    }
+    android.util.Log.i(tag, string);
   }
 
   public static void e(String tag, String string) {
-    if (isLog()) {
-      android.util.Log.e(tag, string);
-    }
+    android.util.Log.e(tag, string);
   }
 
   public static void e(String tag, String string, Throwable e) {
-    if (isLog()) {
-      android.util.Log.e(tag, string, e);
-    }
+    android.util.Log.e(tag, string, e);
   }
 
   public static void d(String tag, String string) {
@@ -36,15 +30,11 @@ public class Log {
   }
 
   public static void w(String tag, String string) {
-    if (isLog()) {
-      android.util.Log.w(tag, string);
-    }
+    android.util.Log.w(tag, string);
   }
 
   public static void w(String tag, String string, Throwable e) {
-    if (isLog()) {
-      android.util.Log.w(tag, string, e);
-    }
+    android.util.Log.w(tag, string, e);
   }
 
   private static boolean isLog() {

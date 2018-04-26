@@ -10,7 +10,7 @@ public class BackupAgent extends BackupAgentHelper {
 
   @Override
   public void onCreate() {
-    Log.d(BackupAgent.class.getSimpleName(), "Backing up");
+    Log.i(BackupAgent.class.getSimpleName(), "Backing up");
     SharedPreferencesBackupHelper helper =
         new SharedPreferencesBackupHelper(this, ChallengeArchiver.SHARED_PREFERENCES_NAME);
     addHelper(PREFS_CHALLENGES_BACKUP_KEY, helper);

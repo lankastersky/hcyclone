@@ -12,7 +12,7 @@ public final class BootReceiver extends BroadcastReceiver {
   @Override
   public void onReceive(Context context, Intent intent) {
     if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-      Log.d(BootReceiver.class.getSimpleName(), "Setting alarms on boot");
+      Log.i(BootReceiver.class.getSimpleName(), "Setting alarms on boot");
 
       AlarmService.getInstance().init(context);
       AlarmService.getInstance().setAlarms();

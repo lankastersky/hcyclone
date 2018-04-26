@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity
         Utils.sendFeedback(this);
         break;
       default:
-        Log.d(TAG, "Wrong menu item " + menuItemId);
+        Log.e(TAG, "Wrong menu item " + menuItemId);
     }
   }
 

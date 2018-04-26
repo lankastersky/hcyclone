@@ -90,7 +90,7 @@ public class FirebaseAdapter {
                 firebaseAuthListener.onAuthSuccess();
               } else if (!Utils.isOnline(context)) {
                 // Use cached data.
-                Log.d(TAG, "Offline, try use cached data");
+                Log.w(TAG, "Offline, try use cached data");
                 firebaseAuthListener.onAuthSuccess();
               } else {
                 // Auth error.
