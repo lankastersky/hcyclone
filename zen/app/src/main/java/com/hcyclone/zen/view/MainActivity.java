@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
     if (loadingChallenges) {
       // We load using background service which is not available on Android O+ in background. So
       // we have to wait for the activity to be in foreground (started) first.
-      new ChallengesLoader().loadChallenges(this, this);
+      new ChallengesLoader(this, this).loadChallenges(this);
     }
   }
 

@@ -16,7 +16,7 @@ public final class AlarmReceiver extends BroadcastReceiver {
     Log.d(TAG, "Alarm received with id: " + alarmId);
     switch (alarmId) {
       case AlarmService.ALARM_CODE_SERVICE:
-        new ChallengesLoader().loadChallenges(null, context);
+        new ChallengesLoader(null, context).loadChallenges(context);
         // Restart alarm to make it random.
         AlarmService.getInstance().setServiceAlarm();
         break;

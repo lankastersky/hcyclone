@@ -24,15 +24,22 @@ import com.hcyclone.zen.model.Challenge;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.zip.ZipInputStream;
 
 /** This class is responsible for Firebase connection and handling Firebase database reference. */
 public class FirebaseAdapter {
 
   private static final String TAG = FirebaseAdapter.class.getSimpleName();
   private static final FirebaseAdapter instance = new FirebaseAdapter();
+  private static final int HALF_MEGABYTE = 1024 * 500;
+  private static final String CHALLENGES_FILENAME = "challenges.zip";
 
   static {
     FirebaseDatabase firebaseConfig = FirebaseDatabase.getInstance();
@@ -128,15 +135,13 @@ public class FirebaseAdapter {
   void downloadChallenges(ChallengesDownloadListener listener, Context context) {
     Log.d(TAG, "downloadChallenges");
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    String filePath = "challenges.json";
-    StorageReference pathReference = storageReference.child(filePath);
-    final long ONE_MEGABYTE = 1024 * 1024;
+    StorageReference pathReference = storageReference.child(CHALLENGES_FILENAME);
     pathReference
-        .getBytes(ONE_MEGABYTE)
+        .getBytes(HALF_MEGABYTE)
         .addOnSuccessListener(
             bytes -> {
               try {
-                String stringChallenges = new String(bytes, "UTF-8");
+                String stringChallenges = unzip(bytes);
                 JSONObject jsonChallenges = new JSONObject(stringChallenges);
                 listener.onChallengesDownloaded(parseChallenges(jsonChallenges));
               } catch (Exception e) {
@@ -154,6 +159,30 @@ public class FirebaseAdapter {
                 getChallenges(listener);
               }
             });
+  }
+
+  private static String unzip(byte[] bytes) throws IOException {
+    ZipInputStream zis = new ZipInputStream(
+        new BufferedInputStream(
+            new ByteArrayInputStream(bytes)));
+    try {
+      int count;
+      byte[] buffer = new byte[HALF_MEGABYTE];
+      ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      if ((zis.getNextEntry()) != null) {
+        try {
+          while ((count = zis.read(buffer)) != -1)
+            outputStream.write(buffer, 0, count);
+        } finally {
+          outputStream.close();
+        }
+        return new String(outputStream.toByteArray(), "UTF-8");
+      } else {
+        throw new IOException("Bad zip format");
+      }
+    } finally {
+      zis.close();
+    }
   }
 
   private ArrayList<Challenge> parseChallenges(Map<String, Object> challengesMap) {
