@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public final class Utils {
 
@@ -170,5 +172,14 @@ public final class Utils {
   public static String timeToString(long time, DateFormat dateFormat) {
     Date date = new Date(time);
     return dateFormat.format(date);
+  }
+
+  public static Locale getCurrentLocale(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return context.getResources().getConfiguration().getLocales().get(0);
+    } else {
+      //noinspection deprecation
+      return context.getResources().getConfiguration().locale;
+    }
   }
 }

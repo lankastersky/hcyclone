@@ -1,6 +1,8 @@
 package com.hcyclone.zen.service;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -30,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -39,7 +42,8 @@ public class FirebaseAdapter {
   private static final String TAG = FirebaseAdapter.class.getSimpleName();
   private static final FirebaseAdapter instance = new FirebaseAdapter();
   private static final int HALF_MEGABYTE = 1024 * 500;
-  private static final String CHALLENGES_FILENAME = "challenges.zip";
+  private static final String CHALLENGES_FILENAME_RU = "challenges.zip";
+  private static final String KEY_CHALLENGES_LOCALE = "key_challenges_locale";
 
   static {
     FirebaseDatabase firebaseConfig = FirebaseDatabase.getInstance();
@@ -135,7 +139,8 @@ public class FirebaseAdapter {
   void downloadChallenges(ChallengesDownloadListener listener, Context context) {
     Log.d(TAG, "downloadChallenges");
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    StorageReference pathReference = storageReference.child(CHALLENGES_FILENAME);
+    String challengesFilename = getChallengesFilename(context);
+    StorageReference pathReference = storageReference.child(challengesFilename);
     pathReference
         .getBytes(HALF_MEGABYTE)
         .addOnSuccessListener(
@@ -159,6 +164,28 @@ public class FirebaseAdapter {
                 getChallenges(listener);
               }
             });
+  }
+
+  /**
+   * The server has different challenges' file resources for different locales.
+   * The challenges locale is set during first challenges load from the server and can't be changed.
+   */
+  private static String getChallengesFilename(Context context) {
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    String challengesLocale = sharedPreferences.getString(KEY_CHALLENGES_LOCALE, null);
+    if (challengesLocale == null) {
+      Locale locale = Utils.getCurrentLocale(context);
+      challengesLocale = locale.getLanguage();
+      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, challengesLocale).apply();
+    }
+
+    if (challengesLocale.equals("ru")) {
+      return CHALLENGES_FILENAME_RU;
+    } else if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
+      // TODO: add localization.
+    }
+
+    return CHALLENGES_FILENAME_RU;
   }
 
   private static String unzip(byte[] bytes) throws IOException {

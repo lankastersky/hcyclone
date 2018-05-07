@@ -122,14 +122,17 @@ public class ChallengeArchiverTest {
   }
 
   private static Challenge buildChallenge() {
-    String id = "id";
-    String content = "content";
-    String details = "details";
-    String type = "type";
+    return buildChallenge("id");
+  }
+
+  private static Challenge buildChallenge(String id) {
+    String content = "content" + "_" + id;
+    String details = "details" + "_" + id;
+    String type = "type" + "_" + id;
     int level = 1;
-    String source = "source";
-    String url = "http://url";
-    String quote = "quote";
+    String source = "source" + "_" + id;
+    String url = "http://url" + "_" + id;
+    String quote = "quote" + "_" + id;
     return new Challenge(id, content, details, type, level, source, url, quote);
   }
 }

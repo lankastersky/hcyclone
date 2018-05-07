@@ -30,15 +30,16 @@ public class Challenge {
   @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
   public @interface LevelType {}
 
-  private final String id;
+  // Locale-dependent properties.
   private final String content;
   private final String details;
-  @LevelType private final int level;
   private final String quote;
   private final String source;
   private final String type;
   private final String url;
 
+  private final String id;
+  @LevelType private final int level;
   @StatusType private int status;
   private long finishedTime;
   private float rating;

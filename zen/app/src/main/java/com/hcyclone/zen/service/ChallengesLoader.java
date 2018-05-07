@@ -95,6 +95,9 @@ public final class ChallengesLoader {
 
   /** Returns true if {@link #LOAD_AFTER_DAYS} passed since last load. */
   private boolean isTimeToLoad() {
+    if (Utils.isDebug()) {
+      return true;
+    }
     long lastLoadTimeSec = sharedPreferences.getLong(KEY_CHALLENGES_LAST_LOAD_TIME, 0);
     if (lastLoadTimeSec == 0) {
       return true;
