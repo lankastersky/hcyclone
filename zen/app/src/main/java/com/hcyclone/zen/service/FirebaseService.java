@@ -19,9 +19,11 @@ public final class FirebaseService extends IntentService
   public static final String INTENT_KEY_RECEIVER = "INTENT_KEY_RECEIVER";
   public static final int RESULT_CODE_OK = 0;
   public static final int RESULT_CODE_ERROR = 1;
+  public static final String INTENT_CHALLENGES_LOCALE = "INTENT_CHALLENGES_LOCALE";
 
   private CountDownLatch countDownLatch;
   private ResultReceiver receiver;
+  private String locale;
 
   public FirebaseService() {
     super("FirebaseService");
@@ -31,6 +33,7 @@ public final class FirebaseService extends IntentService
   @Override
   protected void onHandleIntent(Intent intent) {
     receiver = intent.getParcelableExtra(INTENT_KEY_RECEIVER);
+    locale = intent.getStringExtra(INTENT_CHALLENGES_LOCALE);
     countDownLatch = new CountDownLatch(1);
     if (!FirebaseAdapter.getInstance().isSignedIn()) {
       Log.d(TAG, "Sign in to Firebase");
@@ -62,7 +65,7 @@ public final class FirebaseService extends IntentService
 
   private void downloadChallenges() {
     Log.d(TAG, "Load challenges");
-    FirebaseAdapter.getInstance().downloadChallenges(new ChallengesDownloadListener() {
+    FirebaseAdapter.getInstance().downloadChallenges(locale, new ChallengesDownloadListener() {
       @Override
       public void onError(Exception exception) {
         Log.e(TAG, "Failed to load challenges", exception);

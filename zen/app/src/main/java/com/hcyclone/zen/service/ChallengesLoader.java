@@ -16,6 +16,7 @@ import com.hcyclone.zen.model.ChallengeModel;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /** Loads challenges from Firebase if offline or from persistent storage. */
 public final class ChallengesLoader {
@@ -24,9 +25,12 @@ public final class ChallengesLoader {
   private static final String KEY_CHALLENGES_LAST_LOAD_TIME = "challenges_last_load_time";
   private static final Calendar CALENDAR = Calendar.getInstance();
   private static final int LOAD_AFTER_DAYS = 7;
+  private static final String KEY_CHALLENGES_LOCALE = "key_challenges_locale";
 
   private final ChallengesLoadListener listener;
   private final SharedPreferences sharedPreferences;
+
+  private boolean localeChanged;
 
   public interface ChallengesLoadListener {
     void onError(Exception e);
@@ -64,6 +68,8 @@ public final class ChallengesLoader {
   }
 
   public void loadChallenges(Context context) {
+    checkAndUpdateChallengesLocale(context);
+
     if (!isTimeToLoad()) {
       // Avoid frequent request to backend. Use data from persistent storage.
       onLoaded();
@@ -93,15 +99,21 @@ public final class ChallengesLoader {
     }
   }
 
-  /** Returns true if {@link #LOAD_AFTER_DAYS} passed since last load. */
+  /** Returns true if {@link #LOAD_AFTER_DAYS} passed since last load or locale changed. */
   private boolean isTimeToLoad() {
     if (Utils.isDebug()) {
       return true;
     }
+
+    if (localeChanged) {
+      return true;
+    }
+
     long lastLoadTimeSec = sharedPreferences.getLong(KEY_CHALLENGES_LAST_LOAD_TIME, 0);
     if (lastLoadTimeSec == 0) {
       return true;
     }
+
     Date lastLoadTime = new Date(lastLoadTimeSec);
     CALENDAR.setTime(lastLoadTime);
     CALENDAR.add(Calendar.DATE, LOAD_AFTER_DAYS);
@@ -119,7 +131,27 @@ public final class ChallengesLoader {
     Intent intent = new Intent(context, FirebaseService.class);
     intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
         new ChallengesResultReceiver(new Handler(), this));
+    intent.putExtra(FirebaseService.INTENT_CHALLENGES_LOCALE, getChallengesLocale());
     context.startService(intent);
+  }
+
+  /** Returns true if Locale changed since last run or was not set before. */
+  private void checkAndUpdateChallengesLocale(Context context) {
+    localeChanged = false;
+    String challengesLocale = sharedPreferences.getString(KEY_CHALLENGES_LOCALE, null);
+    Locale locale = Utils.getCurrentLocale(context);
+    if (challengesLocale == null) {
+      challengesLocale = locale.getLanguage();
+      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, challengesLocale).apply();
+      localeChanged = true;
+    } else if (!challengesLocale.equals(locale.getLanguage())) {
+      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, locale.getLanguage()).apply();
+      localeChanged = true;
+    }
+  }
+
+  private String getChallengesLocale() {
+    return sharedPreferences.getString(KEY_CHALLENGES_LOCALE, Locale.ENGLISH.getLanguage());
   }
 
   private void onLoaded() {

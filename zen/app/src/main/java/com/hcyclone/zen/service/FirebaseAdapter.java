@@ -1,8 +1,6 @@
 package com.hcyclone.zen.service;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -136,10 +134,12 @@ public class FirebaseAdapter {
     reference.child("challenges").keepSynced(true);
   }
 
-  void downloadChallenges(ChallengesDownloadListener listener, Context context) {
+  void downloadChallenges(
+      String challengesLocale, ChallengesDownloadListener listener, Context context) {
+
     Log.d(TAG, "downloadChallenges");
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    String challengesFilename = getChallengesFilename(context);
+    String challengesFilename = getChallengesFilename(challengesLocale);
     StorageReference pathReference = storageReference.child(challengesFilename);
     pathReference
         .getBytes(HALF_MEGABYTE)
@@ -166,19 +166,8 @@ public class FirebaseAdapter {
             });
   }
 
-  /**
-   * The server has different challenges' file resources for different locales.
-   * The challenges locale is set during first challenges load from the server and can't be changed.
-   */
-  private static String getChallengesFilename(Context context) {
-    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    String challengesLocale = sharedPreferences.getString(KEY_CHALLENGES_LOCALE, null);
-    if (challengesLocale == null) {
-      Locale locale = Utils.getCurrentLocale(context);
-      challengesLocale = locale.getLanguage();
-      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, challengesLocale).apply();
-    }
-
+  /** The server has different challenges' file resources for different locales. */
+  private static String getChallengesFilename(String challengesLocale) {
     if (challengesLocale.equals("ru")) {
       return CHALLENGES_FILENAME_RU;
     } else if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
