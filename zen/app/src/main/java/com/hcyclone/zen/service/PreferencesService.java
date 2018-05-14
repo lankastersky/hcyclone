@@ -17,6 +17,7 @@ public final class PreferencesService {
   public static final String PREF_KEY_FINAL_ALARM_LIST = "pref_final_reminder_list";
   public static final String PREF_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
   public static final String PREF_KEY_NOTIFICATION_VIBRATE = "notification_vibrate";
+  public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
   private static final PreferencesService instance = new PreferencesService();
   /**
    * A preference value change listener that updates the preference's summary

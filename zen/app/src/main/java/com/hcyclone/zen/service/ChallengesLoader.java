@@ -105,6 +105,11 @@ public final class ChallengesLoader {
       return true;
     }
 
+    if (sharedPreferences.getBoolean(
+        PreferencesService.PREF_KEY_SHOW_CHALLENGES, false)) {
+      return true;
+    }
+
     if (localeChanged) {
       return true;
     }

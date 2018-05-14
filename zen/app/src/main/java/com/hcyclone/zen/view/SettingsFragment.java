@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.service.PreferencesService;
 
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -40,6 +41,9 @@ public class SettingsFragment extends PreferenceFragmentCompat
         PreferencesService.PREF_KEY_DAILY_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
+
+    // TODO: show only when Utils.isDebug() is true
+    //findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
   }
 
   @Override

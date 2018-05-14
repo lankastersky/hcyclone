@@ -54,4 +54,9 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_header_final_reminder"/>
 
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="pref_show_challenges"
+        android:title="Show Challenges"/>
+
 </PreferenceScreen>

@@ -41,7 +41,7 @@ public class FirebaseAdapter {
   private static final FirebaseAdapter instance = new FirebaseAdapter();
   private static final int HALF_MEGABYTE = 1024 * 500;
   private static final String CHALLENGES_FILENAME_RU = "challenges.zip";
-  private static final String KEY_CHALLENGES_LOCALE = "key_challenges_locale";
+  private static final String CHALLENGES_FILENAME_EN = "challenges_en.zip";
 
   static {
     FirebaseDatabase firebaseConfig = FirebaseDatabase.getInstance();
@@ -171,7 +171,7 @@ public class FirebaseAdapter {
     if (challengesLocale.equals("ru")) {
       return CHALLENGES_FILENAME_RU;
     } else if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
-      // TODO: add localization.
+      return CHALLENGES_FILENAME_EN;
     }
 
     return CHALLENGES_FILENAME_RU;

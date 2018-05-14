@@ -110,6 +110,15 @@ public final class ChallengeModel {
     return getChallengesByStatus(Challenge.FINISHED);
   }
 
+  public List<Challenge> getChallenges() {
+    ArrayList<Challenge> challenges = new ArrayList<>(getChallengesMap().values());
+    // Sort by id.
+    Collections.sort(challenges, (Challenge challenge1, Challenge challenge2) ->
+        challenge1.getId().compareTo(challenge2.getId())
+    );
+    return challenges;
+  }
+
   /** Gets persistently stored current challenge. */
   public Challenge getSerializedCurrentChallenge() {
     return challengeArchiver.restoreCurrentChallenge();
@@ -367,7 +376,6 @@ public final class ChallengeModel {
     return challengeId;
   }
 
-  @NonNull
   private Challenge getRandomChallenge(@NonNull Collection<Challenge> challenges) {
     if (challenges.isEmpty()) {
       return null;

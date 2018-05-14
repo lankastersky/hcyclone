@@ -1,6 +1,8 @@
 package com.hcyclone.zen.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
+import com.hcyclone.zen.service.PreferencesService;
 import com.hcyclone.zen.view.ChallengeListFragment.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ public class ChallengeRecyclerViewAdapter
 
   private Set<Integer> levels;
   private Set<Float> ratings;
+  private boolean showDebug;
 
   ChallengeRecyclerViewAdapter(List<Challenge> items,
                                       Set<Integer> levels,
@@ -43,6 +47,12 @@ public class ChallengeRecyclerViewAdapter
     this.ratings = ratings;
     this.listener = listener;
     this.context = context;
+
+    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    if (sharedPreferences.getBoolean(
+        PreferencesService.PREF_KEY_SHOW_CHALLENGES, false)) {
+      showDebug = true;
+    }
 
     filter();
   }
@@ -59,6 +69,9 @@ public class ChallengeRecyclerViewAdapter
     holder.item = values.get(position);
 
     holder.finishedTime.setText(Utils.timeToString(holder.item.getFinishedTime()));
+    if (showDebug) {
+      holder.finishedTime.append(" - " + holder.item.getId());
+    }
 
     holder.contentView.setText(values.get(position).getContent());
     holder.detailsView.setText(values.get(position).getDetails());

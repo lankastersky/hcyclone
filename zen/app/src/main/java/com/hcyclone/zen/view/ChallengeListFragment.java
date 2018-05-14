@@ -3,7 +3,10 @@ package com.hcyclone.zen.view;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +22,7 @@ import com.hcyclone.zen.R;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeFilterModel;
 import com.hcyclone.zen.model.ChallengeModel;
+import com.hcyclone.zen.service.PreferencesService;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,6 +50,8 @@ public class ChallengeListFragment extends Fragment {
   private OnListFragmentInteractionListener onListFragmentInteractionListener;
   private RecyclerView recyclerView;
   private ChallengeFilterModel challengeFilterModel;
+  private ChallengeModel challengeModel;
+  private List<Challenge> challenges;
 
   private static Set<Integer> levelsToSet(boolean[] items) {
     Set<Integer> levelsSet = new HashSet<>();
@@ -71,6 +77,7 @@ public class ChallengeListFragment extends Fragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+    challengeModel = ChallengeModel.getInstance();
     if (context instanceof OnListFragmentInteractionListener) {
       onListFragmentInteractionListener = (OnListFragmentInteractionListener) context;
       challengeFilterModel = new ChallengeFilterModel(context);
@@ -88,27 +95,36 @@ public class ChallengeListFragment extends Fragment {
 //    fragment.show(getActivity().getSupportFragmentManager(), FilterChallengesFragment.TAG);
 //  }
 
+
+  @Override
+  public void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    SharedPreferences sharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(getActivity());
+    if (sharedPreferences.getBoolean(
+        PreferencesService.PREF_KEY_SHOW_CHALLENGES, false)) {
+      challenges = challengeModel.getChallenges();
+    } else {
+      challenges = challengeModel.getFinishedChallengesSortedDesc();
+    }
+  }
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
 
     getActivity().setTitle(getString(R.string.fragment_challenge_list));
-
     setHasOptionsMenu(true);
 
     View view;
-//    for (int i = 0; i < 9; i++) {
-//      finishedChallenges.addAll(ChallengeModel.getInstance().getFinishedChallenges());
-//    }
-    if (ChallengeModel.getInstance().getFinishedChallenges().isEmpty()) {
+    if (challenges.isEmpty()) {
       view = inflater.inflate(R.layout.fragment_challenge_list_empty, container, false);
     } else {
       view = inflater.inflate(R.layout.fragment_challenge_list, container, false);
     }
 
-    // Set the adapter
     if (view instanceof RecyclerView) {
-      initRecyclerView(view);
+      initRecyclerView(view, challenges);
     }
     return view;
   }
@@ -122,9 +138,7 @@ public class ChallengeListFragment extends Fragment {
   @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.challenge_list_menu, menu);
-    List<Challenge> finishedChallenges =
-        ChallengeModel.getInstance().getFinishedChallenges();
-    if (finishedChallenges.isEmpty()) {
+    if (challenges.isEmpty()) {
       MenuItem item = menu.findItem(R.id.action_filter_rate);
       item.setVisible(false);
       item = menu.findItem(R.id.action_filter_level);
@@ -147,7 +161,7 @@ public class ChallengeListFragment extends Fragment {
     return super.onOptionsItemSelected(item);
   }
 
-  private void initRecyclerView(View view) {
+  private void initRecyclerView(View view, List<Challenge> challenges) {
     Context context = view.getContext();
     recyclerView = (RecyclerView) view;
     recyclerView.setHasFixedSize(true);
@@ -157,7 +171,7 @@ public class ChallengeListFragment extends Fragment {
 //    recyclerView.setNestedScrollingEnabled(false);
     recyclerView.setLayoutManager(new LinearLayoutManager(context));
     recyclerView.setAdapter(new ChallengeRecyclerViewAdapter(
-        ChallengeModel.getInstance().getFinishedChallengesSortedDesc(),
+        challenges,
         levelsToSet(levels),
         ratingsToSet(ratings),
         onListFragmentInteractionListener,
