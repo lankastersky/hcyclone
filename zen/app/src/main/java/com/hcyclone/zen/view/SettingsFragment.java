@@ -42,8 +42,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
 
-    // TODO: show only when Utils.isDebug() is true
-    //findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
+    findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
   }
 
   @Override

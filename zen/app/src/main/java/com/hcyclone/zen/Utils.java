@@ -35,7 +35,7 @@ public final class Utils {
   }
 
   public static boolean isDebug() {
-    return false;//BuildConfig.DEBUG;
+    return BuildConfig.DEBUG;
   }
 
   public static long getDebugAlarmRepeatTime() {
