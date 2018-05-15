@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Magic Path</string>
-    <string name="app_description">Becoming Awareness</string>
+    <string name="app_description">Becoming Aware</string>
 
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -131,7 +131,7 @@
     <string name="filter_challenges_title" translatable="false">Choose filter</string>
 
     <!-- Help -->
-    <string name="fragment_help_text" translatable="false">"Каждое утро вам доступно новое задание в разделе \"Задание\". Вы можете начать его выполнять, нажав на кнопку \"Принять\". Задание выполняется в течение дня. После шести вечера, если вы готовы завершить задание, нажмите на кнопку \"Завершить\". При этом предлагается оценить текущий уровень осознанности: минимальный - \"на автопилоте\", максимальный - полностью осознанно.\n\nЗавершенные задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет считаться пропущенным и не появится в журнале. Через некоторе время пропущенные задания будут снова предложены на выполнение.\n\nКаждое задание имеет свой уровень сложности. Постепенно будут даваться все более сложные задания.\n\nВ приложении ведется статистика по количеству выполненных заданий и текущему уровню осознанности.\n\nДля того чтобы не забывать брать, выполнять и завершать задания, можно использовать напоминания в разделе \"Настройки\"."
+    <string name="fragment_help_text" translatable="false">"A new task is available every morning; it can be taken or skipped. To start the task, click \"Accept\" button in the \"Challenge\" screen. The practice continues during the day and finishes at night. You can finish the task after 6pm by clicking on \"Finish\" button. You will be suggested to estimate your level of awareness while doing this task. The finished tasks are recorded in the \"Journal\" screen.\n\nEvery task has its own difficulty level. More difficult tasks will be given with time.\n\nThe \"Statistics\" screen shows charts with the number of finished tasks and level of awareness over time.\n\nYou can enable reminders in the \"Settings\" which can help you in daily practice."
     </string>
     <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion %s</string>
     <string name="fragment_help">Help</string>
