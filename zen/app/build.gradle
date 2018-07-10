@@ -8,10 +8,11 @@ android {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 19
+        versionCode 20
         versionName "1.3.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
 
     compileOptions {
@@ -41,34 +42,37 @@ def uiVersion = "27.0.2"
 def gmsVersion = "11.8.0"
 
 dependencies {
-    compile "com.android.support:preference-v7:${uiVersion}"
-    compile "com.android.support:design:${uiVersion}"
-    compile "com.android.support:support-v4:${uiVersion}"
-    compile "com.android.support:recyclerview-v7:${uiVersion}"
-    compile "com.android.support:cardview-v7:${uiVersion}"
-    compile "com.android.support:support-vector-drawable:${uiVersion}"
-    compile "com.google.code.gson:gson:2.7"
-    compile 'com.google.guava:guava:20.0'
-    compile "com.google.firebase:firebase-core:${gmsVersion}"
-    compile "com.google.firebase:firebase-database:${gmsVersion}"
-    compile "com.google.firebase:firebase-storage:${gmsVersion}"
-    compile "com.google.firebase:firebase-auth:${gmsVersion}"
-    compile "com.google.firebase:firebase-crash:${gmsVersion}"
-    compile "com.google.android.gms:play-services-analytics:${gmsVersion}"
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation "com.android.support:preference-v7:${uiVersion}"
+    implementation "com.android.support:design:${uiVersion}"
+    implementation "com.android.support:support-v4:${uiVersion}"
+    implementation "com.android.support:recyclerview-v7:${uiVersion}"
+    implementation "com.android.support:cardview-v7:${uiVersion}"
+    implementation "com.android.support:support-vector-drawable:${uiVersion}"
+    implementation "com.google.code.gson:gson:2.7"
+    implementation 'com.google.guava:guava:20.0'
+    implementation "com.google.firebase:firebase-core:${gmsVersion}"
+    implementation "com.google.firebase:firebase-database:${gmsVersion}"
+    implementation "com.google.firebase:firebase-storage:${gmsVersion}"
+    implementation "com.google.firebase:firebase-auth:${gmsVersion}"
+    implementation "com.google.firebase:firebase-crash:${gmsVersion}"
+    implementation "com.google.firebase:firebase-ads:${gmsVersion}"
+    implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
+    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true
     }
 
     // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
-    compile "com.androidplot:androidplot-core:1.5.2"
+    implementation "com.androidplot:androidplot-core:1.5.2"
 
     testImplementation 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.4.2'
-    testCompile 'com.google.truth:truth:0.35'
-    testCompile 'org.easymock:easymock:3.5'
-    testCompile 'org.powermock:powermock-api-mockito2:1.7.1'
-    testCompile 'org.powermock:powermock-api-easymock:1.7.1'
-    testCompile 'org.powermock:powermock-module-junit4:1.7.1'
+    testImplementation 'org.robolectric:robolectric:3.4.2'
+    testImplementation 'com.google.truth:truth:0.35'
+    testImplementation 'org.easymock:easymock:3.5'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.1'
+    testImplementation 'org.powermock:powermock-api-easymock:1.7.1'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -3,6 +3,7 @@ package com.hcyclone.zen;
 import android.app.Application;
 import android.os.StrictMode;
 
+import com.google.android.gms.ads.MobileAds;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.AlarmService;
 import com.hcyclone.zen.service.NotificationService;
@@ -43,6 +44,7 @@ public class App extends Application {
   }
 
   protected void initSingletons() {
+    MobileAds.initialize(this, getString(R.string.admob_app_id));
     ChallengeModel.getInstance().init(this);
     AlarmService.getInstance().init(this);
     NotificationService.getInstance().init(this);

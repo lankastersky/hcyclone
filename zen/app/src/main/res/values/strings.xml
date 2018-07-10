@@ -171,4 +171,8 @@
     <string name="dialog_text_failed_to_load_challenges">Failed to load challenges. Try to restart the app.</string>
     <string name="filter_challenges_by_rating">Filter by level of consciousness</string>
     <string name="filter_challenges_by_level">Filter by difficulty</string>
+
+    <!-- AdMob constants -->
+    <string name="admob_app_id" translatable="false">"ca-app-pub-4142226708429553~1657176734"</string>
+    <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/1402009957</string>
 </resources>

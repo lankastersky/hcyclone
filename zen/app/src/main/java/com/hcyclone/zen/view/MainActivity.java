@@ -17,6 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity
 
   private ProgressBar progressBar;
   private boolean loadingChallenges;
+  private AdView adView;
 
   private static String getFragmentTag(Fragment fragment) {
     return fragment.getClass().getSimpleName();
@@ -63,9 +67,52 @@ public class MainActivity extends AppCompatActivity
       selectChallengeMenuItem();
       loadingChallenges = true;
       progressBar.setVisibility(View.VISIBLE);
-      } else {
-        onChallengesLoaded();
+    } else {
+      onChallengesLoaded();
+    }
+
+    initAds();
+  }
+
+  private void initAds() {
+    adView = findViewById(R.id.adView);
+    AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+    if (Utils.isDebug()) {
+      adRequestBuilder
+          .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+          .addTestDevice("C1E5694CEA6750AFC77596E5C0295F9B"); // Nexus 5
+    }
+    AdRequest adRequest = adRequestBuilder.build();
+    adView.loadAd(adRequest);
+    adView.setAdListener(new AdListener() {
+      @Override
+      public void onAdLoaded() {
+
+        // Code to be executed when an ad finishes loading.
       }
+
+      @Override
+      public void onAdFailedToLoad(int errorCode) {
+        Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
+      }
+
+      @Override
+      public void onAdOpened() {
+        // Code to be executed when an ad opens an overlay that
+        // covers the screen.
+      }
+
+      @Override
+      public void onAdLeftApplication() {
+        // Code to be executed when the user has left the app.
+      }
+
+      @Override
+      public void onAdClosed() {
+        // Code to be executed when when the user is about to return
+        // to the app after tapping on an ad.
+      }
+    });
   }
 
   @Override
