@@ -118,9 +118,9 @@
     <string name="challenge_type_sid">Stop Internal Dialog</string>
 
     <!-- Challenge levels -->
-    <string name="challenge_level_low">Low</string>
-    <string name="challenge_level_medium">Medium</string>
-    <string name="challenge_level_high">High</string>
+    <string name="challenge_level_low">low</string>
+    <string name="challenge_level_medium">medium</string>
+    <string name="challenge_level_high">high</string>
 
     <!-- Fragment Challenge List -->
     <string name="fragment_challenge_list">Finished Challenges</string>

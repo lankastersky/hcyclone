@@ -42,6 +42,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
 
+    // Showing all challenges in the Journal by default. Set visible for beta testing if needed.
     findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
   }
 

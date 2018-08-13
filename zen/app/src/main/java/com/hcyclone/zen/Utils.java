@@ -103,7 +103,7 @@ public final class Utils {
     }
   }
 
-  private static int getVersionCode(Context context) {
+  public static int getVersionCode(Context context) {
     try {
       return context.getPackageManager()
           .getPackageInfo(context.getPackageName(), 0).versionCode;

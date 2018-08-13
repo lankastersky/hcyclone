@@ -27,6 +27,7 @@ import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.ChallengesLoader;
+import com.hcyclone.zen.service.FeaturesService;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
@@ -71,11 +72,20 @@ public class MainActivity extends AppCompatActivity
       onChallengesLoaded();
     }
 
-    initAds();
+    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+      // Disable charts.
+      Menu navigationMenu = navigationView.getMenu();
+      MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
+      item.setVisible(false);
+
+      // Show ads.
+      showAds();
+    }
   }
 
-  private void initAds() {
+  private void showAds() {
     adView = findViewById(R.id.adView);
+    adView.setVisibility(View.GONE);
     AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
     if (Utils.isDebug()) {
       adRequestBuilder
@@ -87,8 +97,7 @@ public class MainActivity extends AppCompatActivity
     adView.setAdListener(new AdListener() {
       @Override
       public void onAdLoaded() {
-
-        // Code to be executed when an ad finishes loading.
+        adView.setVisibility(View.VISIBLE);
       }
 
       @Override

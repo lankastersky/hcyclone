@@ -60,6 +60,7 @@
         ads:adSize="SMART_BANNER"
         android:layout_gravity="center|bottom"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         app:adUnitId="@string/banner_challenge"/>
 
 </RelativeLayout>

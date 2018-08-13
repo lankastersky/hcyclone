@@ -6,6 +6,7 @@ import android.os.StrictMode;
 import com.google.android.gms.ads.MobileAds;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.AlarmService;
+import com.hcyclone.zen.service.FeaturesService;
 import com.hcyclone.zen.service.NotificationService;
 import com.hcyclone.zen.service.PreferencesService;
 
@@ -51,5 +52,6 @@ public class App extends Application {
     PreferencesService.getInstance().init(this);
     Analytics.getInstance().init(this);
     AppLifecycleManager.getInstance().init(this);
+    FeaturesService.getInstance().init(this);
   }
 }
