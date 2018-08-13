@@ -361,12 +361,17 @@ public final class ChallengeModel {
         challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
-        // All challenges are finished. Return random old one.
-        challenge = getRandomChallenge(getChallengesMap().values());
+        Collection<Challenge> challenges = getChallengesMap().values();
+        if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+            challenges = filterNonfinishedChallengesByLevel(challenges);
+        }
+
+        // All available challenges are finished. Return a random old one.
+        challenge = getRandomChallenge(challenges);
         Challenge currentChallenge = getCurrentChallenge();
-        if (currentChallenge != null && getChallengesMap().size() > 1) {
+        if (currentChallenge != null) {
           while (challenge.getId().equals(currentChallenge.getId())) {
-            challenge = getRandomChallenge(getChallengesMap().values());
+            challenge = getRandomChallenge(challenges);
           }
         }
         challengeId = challenge.getId();
