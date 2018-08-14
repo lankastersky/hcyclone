@@ -10,8 +10,11 @@ import com.hcyclone.zen.Utils;
 // Determines which feature are enabled for which users. Track the app version persistently.
 public final class FeaturesService {
 
+  // Which features sets are available.
   public enum FeaturesType {
+    // Only free features are available.
     FREE,
+    // Paid and free features are available.
     PAID
   }
 
@@ -34,6 +37,16 @@ public final class FeaturesService {
     storeVersionCode();
   }
 
+  /**
+   * Cases:
+   * an old user updates (version code less {@code FREE_FEATURES_CODE_VERSION}):
+   *   return {@code FeaturesType.PAID}
+   * a new user installs ({@link Utils.isFirstInstall(Context) returns true}):
+   *   return {@code FeaturesType.FREE}
+   * a new user paid for the content
+   *   return {@code FeaturesType.PAID}
+   * else return {@code FeaturesType.FREE}
+   */
   public FeaturesType getFeaturesType() {
 //    if (Utils.isDebug()) {
 //      return FeaturesType.PAID;
@@ -42,8 +55,22 @@ public final class FeaturesService {
     if (getVersionCode() <= FREE_FEATURES_CODE_VERSION) {
         // First users have all features for free.
         return FeaturesType.PAID;
-      }
+    }
+
+    if (Utils.isFirstInstall(context)) {
       return FeaturesType.FREE;
+    }
+
+    if (isPaidContent()) {
+      return FeaturesType.PAID;
+    }
+
+    return FeaturesType.FREE;
+  }
+
+  private boolean isPaidContent() {
+    // TODO: implement.
+    return false;
   }
 
   private void storeVersionCode() {

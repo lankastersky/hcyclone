@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -98,7 +99,7 @@ public final class Utils {
     try {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {
-      Log.e(TAG, "Couldn't get the version name.", e);
+      Log.e(TAG, "Can't get the version name.", e);
       return "";
     }
   }
@@ -108,7 +109,7 @@ public final class Utils {
       return context.getPackageManager()
           .getPackageInfo(context.getPackageName(), 0).versionCode;
     } catch (Exception e) {
-      Log.e(TAG, "Couldn't get the version code.", e);
+      Log.e(TAG, "Can't get the version code.", e);
       return 0;
     }
   }
@@ -121,6 +122,20 @@ public final class Utils {
         Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+  }
+
+  /** Returns true if it's a first install or impossible to determine. */
+  public static boolean isFirstInstall(Context context) {
+    try {
+      String packageName = context.getPackageName();
+      PackageManager packageManager = context.getPackageManager();
+      long firstInstallTime = packageManager.getPackageInfo(packageName, 0).firstInstallTime;
+      long lastUpdateTime = packageManager.getPackageInfo(packageName, 0).lastUpdateTime;
+      return firstInstallTime == lastUpdateTime;
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.e(TAG, "Can't get package info");
+      return true;
+    }
   }
 
   public static Dialog buildDialog(
