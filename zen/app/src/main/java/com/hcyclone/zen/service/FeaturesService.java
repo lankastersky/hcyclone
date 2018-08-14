@@ -20,7 +20,7 @@ public final class FeaturesService {
 
   private static final FeaturesService instance = new FeaturesService();
   private static final String KEY_VERSION_CODE = "version_code";
-  private static final int FREE_FEATURES_CODE_VERSION = 18;
+  private static final String KEY_UPGRADED_USER = "upgraded_user";
 
   private Context context;
   private SharedPreferences sharedPreferences;
@@ -36,16 +36,18 @@ public final class FeaturesService {
     if (sharedPreferences == null) {
       this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
+    // Must be called before storing version code.
+    storeUpgradedUserFlag();
     storeVersionCode();
   }
 
   /**
    * Cases:
-   * an old user updates (version code less {@code FREE_FEATURES_CODE_VERSION}):
-   *   return {@code FeaturesType.PAID}
    * a new user installs ({@link Utils.isFirstInstall(Context) returns true}):
    *   return {@code FeaturesType.FREE}
-   * a new user paid for the content
+   * an upgraded user updates:
+   *   return {@code FeaturesType.PAID}
+   * a new user paid for the content:
    *   return {@code FeaturesType.PAID}
    * else return {@code FeaturesType.FREE}
    */
@@ -54,13 +56,13 @@ public final class FeaturesService {
 //      return FeaturesType.PAID;
 //    }
 
-    if (getVersionCode() <= FREE_FEATURES_CODE_VERSION) {
-        // First users have all features for free.
-        return FeaturesType.PAID;
-    }
-
     if (Utils.isFirstInstall(context)) {
       return FeaturesType.FREE;
+    }
+
+    if (isUpgradedUser()) {
+        // Upgraded users have all features for free.
+        return FeaturesType.PAID;
     }
 
     if (isPaidContent()) {
@@ -75,15 +77,23 @@ public final class FeaturesService {
     return false;
   }
 
-  private void storeVersionCode() {
-    // Store version code only once.
-    if (getVersionCode() == 0) {
-      int versionCode = Utils.getVersionCode(context);
-      sharedPreferences.edit().putInt(KEY_VERSION_CODE, versionCode).apply();
+  private boolean isUpgradedUser() {
+    return sharedPreferences.getBoolean(KEY_UPGRADED_USER, false);
+  }
+
+  private void storeUpgradedUserFlag() {
+    // Upgraded users don't have version code stored.
+    if (!Utils.isFirstInstall(context) && getVersionCode() == 0) {
+      sharedPreferences.edit().putBoolean(KEY_UPGRADED_USER, true).apply();
     }
   }
 
   private int getVersionCode() {
     return sharedPreferences.getInt(KEY_VERSION_CODE, 0);
+  }
+
+  private void storeVersionCode() {
+    int versionCode = Utils.getVersionCode(context);
+    sharedPreferences.edit().putInt(KEY_VERSION_CODE, versionCode).apply();
   }
 }
