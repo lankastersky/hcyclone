@@ -25,6 +25,8 @@ public final class FeaturesService {
   private Context context;
   private SharedPreferences sharedPreferences;
 
+  private FeaturesService() {}
+
   public static FeaturesService getInstance() {
     return instance;
   }

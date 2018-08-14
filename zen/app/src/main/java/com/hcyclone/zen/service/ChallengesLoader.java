@@ -16,21 +16,18 @@ import com.hcyclone.zen.model.ChallengeModel;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 /** Loads challenges from Firebase if offline or from persistent storage. */
-public final class ChallengesLoader {
+public final class ChallengesLoader implements SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static final String TAG = ChallengesLoader.class.getSimpleName();
   private static final String KEY_CHALLENGES_LAST_LOAD_TIME = "challenges_last_load_time";
+  private static final int DEFAULT_LAST_LOAD_TIME = 0;
   private static final Calendar CALENDAR = Calendar.getInstance();
   private static final int LOAD_AFTER_DAYS = 7;
-  private static final String KEY_CHALLENGES_LOCALE = "key_challenges_locale";
 
   private final ChallengesLoadListener listener;
   private final SharedPreferences sharedPreferences;
-
-  private boolean localeChanged;
 
   public interface ChallengesLoadListener {
     void onError(Exception e);
@@ -65,11 +62,26 @@ public final class ChallengesLoader {
   public ChallengesLoader(ChallengesLoadListener listener, Context context) {
     this.listener = listener;
     this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    PreferenceManager.getDefaultSharedPreferences(context)
+        .registerOnSharedPreferenceChangeListener(this);
+
+    if (getChallengesLocale() == null) {
+      String language = Utils.getCurrentLocale(context).getLanguage();
+      sharedPreferences
+          .edit().putString(PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST, language).apply();
+    }
+  }
+
+  @Override
+  public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    if (key.equals(PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST)) {
+      // Reset load time to force the new update for the other language.
+      sharedPreferences
+          .edit().putLong(KEY_CHALLENGES_LAST_LOAD_TIME, DEFAULT_LAST_LOAD_TIME).apply();
+    }
   }
 
   public void loadChallenges(Context context) {
-    checkAndUpdateChallengesLocale(context);
-
     if (!isTimeToLoad()) {
       // Avoid frequent request to backend. Use data from persistent storage.
       onLoaded();
@@ -101,21 +113,18 @@ public final class ChallengesLoader {
 
   /** Returns true if {@link #LOAD_AFTER_DAYS} passed since last load or locale changed. */
   private boolean isTimeToLoad() {
-    if (Utils.isDebug()) {
-      return true;
-    }
+//    if (Utils.isDebug()) {
+//      return true;
+//    }
 
     if (sharedPreferences.getBoolean(
         PreferencesService.PREF_KEY_SHOW_CHALLENGES, false)) {
       return true;
     }
 
-    if (localeChanged) {
-      return true;
-    }
-
-    long lastLoadTimeSec = sharedPreferences.getLong(KEY_CHALLENGES_LAST_LOAD_TIME, 0);
-    if (lastLoadTimeSec == 0) {
+    long lastLoadTimeSec =
+        sharedPreferences.getLong(KEY_CHALLENGES_LAST_LOAD_TIME, DEFAULT_LAST_LOAD_TIME);
+    if (lastLoadTimeSec == DEFAULT_LAST_LOAD_TIME) {
       return true;
     }
 
@@ -140,23 +149,10 @@ public final class ChallengesLoader {
     context.startService(intent);
   }
 
-  /** Returns true if Locale changed since last run or was not set before. */
-  private void checkAndUpdateChallengesLocale(Context context) {
-    localeChanged = false;
-    String challengesLocale = sharedPreferences.getString(KEY_CHALLENGES_LOCALE, null);
-    Locale locale = Utils.getCurrentLocale(context);
-    if (challengesLocale == null) {
-      challengesLocale = locale.getLanguage();
-      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, challengesLocale).apply();
-      localeChanged = true;
-    } else if (!challengesLocale.equals(locale.getLanguage())) {
-      sharedPreferences.edit().putString(KEY_CHALLENGES_LOCALE, locale.getLanguage()).apply();
-      localeChanged = true;
-    }
-  }
 
   private String getChallengesLocale() {
-    return sharedPreferences.getString(KEY_CHALLENGES_LOCALE, Locale.ENGLISH.getLanguage());
+    return sharedPreferences.getString(
+        PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST, null);
   }
 
   private void onLoaded() {

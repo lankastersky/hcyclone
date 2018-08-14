@@ -17,6 +17,7 @@
     <string name="pref_header_initial_reminder">Initial reminder</string>
     <string name="pref_header_constant_reminder">Constant reminder</string>
     <string name="pref_header_final_reminder">Final reminder</string>
+    <string name="pref_header_challenges_language">Challenges Language</string>
 
     <string name="pref_reminder_show_notification">Show notifications</string>
 
@@ -29,19 +30,22 @@
     <string name="pref_time_random" translatable="false">-2</string>
 
     <string name="pref_never">Never</string>
-    <string name="pref_random_6_12">Random between 6:00 and 12:00</string>
-    <string name="pref_random_18_24">Random between 18:00 and 24:00</string>
+    <string name="pref_random_6_12">Random between 6am and 12pm</string>
+    <string name="pref_random_18_24">Random between 6pm and 12am</string>
     <string name="pref_every_1_hour">Every hour</string>
     <string name="pref_every_2_hours">Every 2 hours</string>
     <string name="pref_every_3_hours">Every 3 hours</string>
     <string name="pref_every_4_hours">Every 4 hours</string>
 
+    <string name="pref_language_en">English</string>
+    <string name="pref_language_ru">Russian</string>
+
     <string-array name="pref_initial_reminder_list_titles" translatable="false">
         <item>@string/pref_never</item>
-        <item>6:00</item>
-        <item>8:00</item>
-        <item>10:00</item>
-        <item>12:00</item>
+        <item>6am</item>
+        <item>8am</item>
+        <item>10am</item>
+        <item>12pm</item>
         <item>@string/pref_random_6_12</item>
     </string-array>
     <string-array name="pref_initial_reminder_list_values" translatable="false">
@@ -55,10 +59,10 @@
 
     <string-array name="pref_final_reminder_list_titles" translatable="false">
         <item>@string/pref_never</item>
-        <item>18:00</item>
-        <item>20:00</item>
-        <item>22:00</item>
-        <item>24:00</item>
+        <item>6pm</item>
+        <item>8pm</item>
+        <item>10pm</item>
+        <item>12am</item>
         <item>@string/pref_random_18_24</item>
     </string-array>
     <string-array name="pref_final_reminder_list_values" translatable="false">
@@ -83,6 +87,15 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+    </string-array>
+
+    <string-array name="pref_language_titles">
+        <item>@string/pref_language_en</item>
+        <item>@string/pref_language_ru</item>
+    </string-array>
+    <string-array name="pref_language_list_values" translatable="false">
+        <item>en</item>
+        <item>ru</item>
     </string-array>
 
     <string-array name="levels">

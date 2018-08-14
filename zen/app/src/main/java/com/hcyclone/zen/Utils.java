@@ -32,7 +32,8 @@ public final class Utils {
   public static String getApplicationName(Context context) {
     ApplicationInfo applicationInfo = context.getApplicationInfo();
     int stringId = applicationInfo.labelRes;
-    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    return stringId == 0
+        ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
   public static boolean isDebug() {
@@ -40,7 +41,7 @@ public final class Utils {
   }
 
   public static long getDebugAlarmRepeatTime() {
-    return 20_000;
+    return 10_000;
   }
 
   public static long getDebugDailyAlarmTime() {
@@ -124,7 +125,7 @@ public final class Utils {
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
   }
 
-  /** Returns true if it's a first install or impossible to determine. */
+  /** Returns true if it's a first install or it's impossible to determine. */
   public static boolean isFirstInstall(Context context) {
     try {
       String packageName = context.getPackageName();

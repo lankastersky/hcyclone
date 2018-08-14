@@ -28,7 +28,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
   @Override
   public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-    addPreferencesFromResource(R.xml.pref_notification);
+    addPreferencesFromResource(R.xml.preferences);
 
     // Bind the summaries of EditText/List/Dialog/Ringtone preferences
     // to their values. When their values change, their summaries are
@@ -41,6 +41,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
         PreferencesService.PREF_KEY_DAILY_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
+    preferencesService.bindPreferenceSummaryToValue(findPreference(
+        PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST));
 
     // Showing all challenges in the Journal by default. Set visible for beta testing if needed.
     findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());

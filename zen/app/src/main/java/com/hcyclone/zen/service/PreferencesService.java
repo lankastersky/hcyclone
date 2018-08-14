@@ -18,6 +18,8 @@ public final class PreferencesService {
   public static final String PREF_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
   public static final String PREF_KEY_NOTIFICATION_VIBRATE = "notification_vibrate";
   public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
+  public static final String PREF_KEY_CHALLENGES_LANGUAGE_LIST = "pref_challenges_locale";
+
   private static final PreferencesService instance = new PreferencesService();
   /**
    * A preference value change listener that updates the preference's summary
@@ -50,6 +52,7 @@ public final class PreferencesService {
       return true;
     }
   };
+
   private SharedPreferences sharedPreferences;
 
   private PreferencesService() {
