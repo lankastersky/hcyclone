@@ -8,6 +8,8 @@ import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 
 import com.hcyclone.zen.AppLifecycleManager;
+import com.hcyclone.zen.R;
+import com.hcyclone.zen.Utils;
 
 public final class PreferencesService {
 
@@ -20,7 +22,9 @@ public final class PreferencesService {
   public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
   public static final String PREF_KEY_CHALLENGES_LANGUAGE_LIST = "pref_challenges_locale";
 
-  private static final PreferencesService instance = new PreferencesService();
+  private final Context context;
+  private final SharedPreferences sharedPreferences;
+
   /**
    * A preference value change listener that updates the preference's summary
    * to reflect its new value.
@@ -43,6 +47,15 @@ public final class PreferencesService {
             index >= 0
                 ? listPreference.getEntries()[index]
                 : null);
+        if (preference.getKey().equals(PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST)
+            && !stringValue.equals(((ListPreference) preference).getValue())) {
+          Utils.buildDialog(
+              context.getString(R.string.pref_restart_needed_title),
+              context.getString(R.string.pref_restart_needed_message),
+              context,
+              null)
+              .show();
+        }
       } else {
         // For all other preferences, set the summary to the value's
         // simple string representation.
@@ -53,16 +66,8 @@ public final class PreferencesService {
     }
   };
 
-  private SharedPreferences sharedPreferences;
-
-  private PreferencesService() {
-  }
-
-  public static PreferencesService getInstance() {
-    return instance;
-  }
-
-  public void init(@NonNull Context context) {
+  public PreferencesService(Context context) {
+    this.context = context;
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
   }
 

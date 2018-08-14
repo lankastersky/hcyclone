@@ -34,7 +34,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
     // to their values. When their values change, their summaries are
     // updated to reflect the new value, per the Android Design
     // guidelines.
-    PreferencesService preferencesService = PreferencesService.getInstance();
+    PreferencesService preferencesService = new PreferencesService(getContext());
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_INITIAL_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(

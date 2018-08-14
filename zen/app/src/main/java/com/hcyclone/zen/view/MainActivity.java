@@ -83,47 +83,6 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private void showAds() {
-    adView = findViewById(R.id.adView);
-    adView.setVisibility(View.GONE);
-    AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
-    if (Utils.isDebug()) {
-      adRequestBuilder
-          .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-          .addTestDevice("C1E5694CEA6750AFC77596E5C0295F9B"); // Nexus 5
-    }
-    AdRequest adRequest = adRequestBuilder.build();
-    adView.loadAd(adRequest);
-    adView.setAdListener(new AdListener() {
-      @Override
-      public void onAdLoaded() {
-        adView.setVisibility(View.VISIBLE);
-      }
-
-      @Override
-      public void onAdFailedToLoad(int errorCode) {
-        Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
-      }
-
-      @Override
-      public void onAdOpened() {
-        // Code to be executed when an ad opens an overlay that
-        // covers the screen.
-      }
-
-      @Override
-      public void onAdLeftApplication() {
-        // Code to be executed when the user has left the app.
-      }
-
-      @Override
-      public void onAdClosed() {
-        // Code to be executed when when the user is about to return
-        // to the app after tapping on an ad.
-      }
-    });
-  }
-
   @Override
   protected void onNewIntent(Intent intent) {
     super.onNewIntent(intent);
@@ -192,6 +151,33 @@ public class MainActivity extends AppCompatActivity
     startActivity(intent);
   }
 
+  // ChallengesLoadListener
+  @Override
+  public void onChallengesLoaded() {
+    loadingChallenges = false;
+    progressBar.setVisibility(View.GONE);
+
+    if (!AppLifecycleManager.isAppVisible()) {
+      Log.d(TAG, "App in background. Skipping showing challenges");
+      return;
+    }
+    if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
+      replaceFragment(ChallengeFragment.class);
+    } else {
+      Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+          getString(R.string.dialog_text_failed_to_connect), this, null).show();
+    }
+  }
+
+  @Override
+  public void onError(Exception e) {
+    loadingChallenges = false;
+    progressBar.setVisibility(View.GONE);
+
+    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+        getString(R.string.dialog_text_failed_to_connect), this, null).show();
+  }
+
   private boolean isStartFromNotification() {
     Intent intent = getIntent();
     return intent.hasExtra(INTENT_PARAM_START_FROM_NOTIFICATION)
@@ -244,30 +230,44 @@ public class MainActivity extends AppCompatActivity
         getFragmentTag(newFragment)).commitAllowingStateLoss();
   }
 
-  // ChallengesLoadListener
-  @Override
-  public void onChallengesLoaded() {
-    loadingChallenges = false;
-    progressBar.setVisibility(View.GONE);
-
-    if (!AppLifecycleManager.isAppVisible()) {
-      Log.d(TAG, "App in background. Skipping showing challenges");
-      return;
+  private void showAds() {
+    adView = findViewById(R.id.adView);
+    adView.setVisibility(View.GONE);
+    AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
+    if (Utils.isDebug()) {
+      adRequestBuilder
+          .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+          .addTestDevice("C1E5694CEA6750AFC77596E5C0295F9B"); // Nexus 5
     }
-    if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
-      replaceFragment(ChallengeFragment.class);
-    } else {
-      Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
-          getString(R.string.dialog_text_failed_to_connect), this, null).show();
-    }
-  }
+    AdRequest adRequest = adRequestBuilder.build();
+    adView.loadAd(adRequest);
+    adView.setAdListener(new AdListener() {
+      @Override
+      public void onAdLoaded() {
+        adView.setVisibility(View.VISIBLE);
+      }
 
-  @Override
-  public void onError(Exception e) {
-    loadingChallenges = false;
-    progressBar.setVisibility(View.GONE);
+      @Override
+      public void onAdFailedToLoad(int errorCode) {
+        Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
+      }
 
-    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
-        getString(R.string.dialog_text_failed_to_connect), this, null).show();
+      @Override
+      public void onAdOpened() {
+        // Code to be executed when an ad opens an overlay that
+        // covers the screen.
+      }
+
+      @Override
+      public void onAdLeftApplication() {
+        // Code to be executed when the user has left the app.
+      }
+
+      @Override
+      public void onAdClosed() {
+        // Code to be executed when when the user is about to return
+        // to the app after tapping on an ad.
+      }
+    });
   }
 }

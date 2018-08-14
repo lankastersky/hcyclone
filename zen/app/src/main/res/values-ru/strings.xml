@@ -80,4 +80,8 @@
     <string name="pref_header_challenges_language">Язык заданий</string>
     <string name="pref_language_en">английский</string>
     <string name="pref_language_ru">русский</string>
+
+    <string name="pref_restart_needed_title">Требуется перезапуск</string>
+    <string name="pref_restart_needed_message">Пожалуйста, перезапустите приложение</string>
+
 </resources>

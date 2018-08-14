@@ -112,6 +112,9 @@
         <item>★★★★</item>
     </string-array>
 
+    <string name="pref_restart_needed_title">Restart is required</string>
+    <string name="pref_restart_needed_message">Please restart the app</string>
+
     <!-- Fragment Challenge -->
     <string name="challenge_current">Current Challenge</string>
     <string name="fragment_challenge_journal_entry">Journal Entry</string>
