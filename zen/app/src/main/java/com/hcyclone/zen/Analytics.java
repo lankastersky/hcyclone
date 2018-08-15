@@ -94,6 +94,10 @@ public class Analytics {
     send("Share challenge", "share", value);
   }
 
+  public void sendChangeLanguage(String value) {
+    send("Change language", "change", value);
+  }
+
   public void sendChallengeBackupData(Challenge challenge) {
     send("Challenge backup", "Statuses", challenge.getPrevStatuses().toString());
     List<String> finishedTimesAsString = new ArrayList<>();

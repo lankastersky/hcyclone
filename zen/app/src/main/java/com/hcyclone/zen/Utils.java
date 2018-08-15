@@ -41,7 +41,7 @@ public final class Utils {
   }
 
   public static long getDebugAlarmRepeatTime() {
-    return 100_000;
+    return 10_000;
   }
 
   public static long getDebugDailyAlarmTime() {

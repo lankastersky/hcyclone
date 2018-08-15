@@ -149,7 +149,7 @@
     <!-- Help -->
     <string name="fragment_help_text">"A new task is available every morning; it can be taken or skipped. To start the task, click \"Accept\" button in the \"Challenge\" screen. The practice continues during the day and finishes at night. You can finish the task after 6pm by clicking on \"Finish\" button. You will be suggested to estimate your level of awareness while doing this task.\n\nThe finished tasks are recorded in the \"Journal\" screen.\n\nEvery task has its own difficulty level. More difficult tasks will be given with time.\n\nThe \"Statistics\" screen shows charts with the number of finished tasks and level of awareness over time.\n\nYou can enable reminders in the \"Settings\" which can help you in daily practice."
     </string>
-    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion %s</string>
+    <string name="fragment_help_version">Lankastersky Studio\nVersion %s</string>
     <string name="fragment_help">Help</string>
 
     <!-- Statistics -->

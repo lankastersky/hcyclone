@@ -52,9 +52,9 @@ public final class FeaturesService {
    * else return {@code FeaturesType.FREE}
    */
   public FeaturesType getFeaturesType() {
-//    if (Utils.isDebug()) {
-//      return FeaturesType.PAID;
-//    }
+    if (Utils.isDebug()) {
+      return FeaturesType.PAID;
+    }
 
     if (Utils.isFirstInstall(context)) {
       return FeaturesType.FREE;
