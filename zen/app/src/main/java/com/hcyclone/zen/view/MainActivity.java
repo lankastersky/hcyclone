@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity
 
   private ProgressBar progressBar;
   private boolean loadingChallenges;
-  private AdView adView;
 
   private static String getFragmentTag(Fragment fragment) {
     return fragment.getClass().getSimpleName();
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity
       MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
       item.setVisible(false);
 
-      // Show ads.
       showAds();
     }
   }
@@ -231,7 +229,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void showAds() {
-    adView = findViewById(R.id.adView);
+    AdView adView = findViewById(R.id.adView);
     adView.setVisibility(View.GONE);
     AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
     if (Utils.isDebug()) {

@@ -53,7 +53,7 @@ public final class FeaturesService {
    */
   public FeaturesType getFeaturesType() {
     if (Utils.isDebug()) {
-      return FeaturesType.PAID;
+      return FeaturesType.FREE;
     }
 
     if (Utils.isFirstInstall(context)) {
