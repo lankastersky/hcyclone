@@ -3,6 +3,7 @@ package com.hcyclone.zyq;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,7 +24,7 @@ public final class Utils {
 
   private Utils() {}
 
-  static boolean isDebug() {
+  public static boolean isDebug() {
     return BuildConfig.DEBUG;
   }
 
@@ -76,6 +77,20 @@ public final class Utils {
         context.getString(R.string.feedback_send_email)));
   }
 
+  /** Returns true if it's a first install or it's impossible to determine. */
+  public static boolean isFirstInstall(Context context) {
+    try {
+      String packageName = context.getPackageName();
+      PackageManager packageManager = context.getPackageManager();
+      long firstInstallTime = packageManager.getPackageInfo(packageName, 0).firstInstallTime;
+      long lastUpdateTime = packageManager.getPackageInfo(packageName, 0).lastUpdateTime;
+      return firstInstallTime == lastUpdateTime;
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.e(TAG, "Can't get package info");
+      return true;
+    }
+  }
+
   public static boolean isInternetConnected(Context context) {
     ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(
         Context.CONNECTIVITY_SERVICE);
@@ -113,7 +128,7 @@ public final class Utils {
         : context.getString(stringId);
   }
 
-  private static int getVersionCode(Context context) {
+  public static int getVersionCode(Context context) {
     try {
       return context.getPackageManager()
           .getPackageInfo(context.getPackageName(), 0).versionCode;

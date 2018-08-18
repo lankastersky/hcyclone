@@ -6,45 +6,60 @@ android {
     defaultConfig {
         applicationId "com.hcyclone.zyq"
         minSdkVersion 19
-        targetSdkVersion 26
-        versionCode 2
-        versionName "0.1"
+        targetSdkVersion 27
+        versionCode 3
+        versionName "0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes {
         debug {
+            applicationIdSuffix ".dev"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     productFlavors {
     }
+
     lintOptions {
         abortOnError false
     }
 }
 
 def uiVersion = "26.1.0"
-def gmsVersion = "11.6.2"
+def gmsVersion = "16.0.1"
 
 dependencies {
-    compile "com.android.support:preference-v7:${uiVersion}"
-    compile "com.android.support:design:${uiVersion}"
-    compile "com.android.support:support-v4:${uiVersion}"
-    compile "com.android.support:support-media-compat:${uiVersion}"
-    compile "com.android.support:recyclerview-v7:${uiVersion}"
-    compile "com.android.support:cardview-v7:${uiVersion}"
-    compile "com.android.support:support-vector-drawable:${uiVersion}"
-    compile "com.google.android.gms:play-services-analytics:${gmsVersion}"
-    compile 'com.stepstone.stepper:material-stepper:2.2.0'
-    compile 'com.github.bumptech.glide:glide:4.3.1'
-    compile "com.google.code.gson:gson:2.8.0"
-    compile 'com.google.guava:guava:20.0'
-    compile 'net.danlew:android.joda:2.9.9'
+    implementation 'com.android.support:multidex:1.0.3'
+
+    implementation "com.android.support:preference-v7:${uiVersion}"
+    implementation "com.android.support:design:${uiVersion}"
+    implementation "com.android.support:support-v4:${uiVersion}"
+    implementation "com.android.support:support-media-compat:${uiVersion}"
+    implementation "com.android.support:recyclerview-v7:${uiVersion}"
+    implementation "com.android.support:cardview-v7:${uiVersion}"
+    implementation "com.android.support:support-vector-drawable:${uiVersion}"
+    implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
+    implementation 'com.stepstone.stepper:material-stepper:2.2.0'
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    implementation "com.google.code.gson:gson:2.8.0"
+    implementation 'com.google.guava:guava:20.0'
+    implementation 'net.danlew:android.joda:2.9.9'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
 
 }
