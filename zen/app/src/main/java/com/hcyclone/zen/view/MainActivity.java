@@ -63,13 +63,9 @@ public class MainActivity extends AppCompatActivity
 
     progressBar = findViewById(R.id.progressBar);
 
-    if (savedInstanceState == null) {
-      selectChallengeMenuItem();
-      loadingChallenges = true;
-      progressBar.setVisibility(View.VISIBLE);
-    } else {
-      onChallengesLoaded();
-    }
+    selectChallengeMenuItem();
+    loadingChallenges = true;
+    progressBar.setVisibility(View.VISIBLE);
 
     if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
       // Disable charts.

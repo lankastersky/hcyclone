@@ -113,8 +113,8 @@ public class ChallengeFragment extends Fragment {
     Challenge challenge = challengeModel.getCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Can't refresh challenge data: challenge is null");
-    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
-        getString(R.string.dialog_text_failed_to_load_challenges), getActivity(), null).show();
+      Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+          getString(R.string.dialog_text_failed_to_load_challenges), getActivity(), null).show();
       return;
     }
     challengeId = challenge.getId();
