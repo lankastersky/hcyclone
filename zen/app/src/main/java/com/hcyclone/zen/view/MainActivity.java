@@ -38,11 +38,8 @@ public class MainActivity extends AppCompatActivity
   private static final String TAG = MainActivity.class.getSimpleName();
 
   private ProgressBar progressBar;
+  private DrawerLayout drawer;
   private boolean loadingChallenges;
-
-  private static String getFragmentTag(Fragment fragment) {
-    return fragment.getClass().getSimpleName();
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +49,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
-    DrawerLayout drawer = findViewById(R.id.drawer_layout);
+    drawer = findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
         this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
     drawer.setDrawerListener(toggle);
@@ -66,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     selectChallengeMenuItem();
     loadingChallenges = true;
     progressBar.setVisibility(View.VISIBLE);
+    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
     if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
       // Disable charts.
@@ -150,6 +148,7 @@ public class MainActivity extends AppCompatActivity
   public void onChallengesLoaded() {
     loadingChallenges = false;
     progressBar.setVisibility(View.GONE);
+    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
     if (!AppLifecycleManager.isAppVisible()) {
       Log.d(TAG, "App in background. Skipping showing challenges");
@@ -167,6 +166,7 @@ public class MainActivity extends AppCompatActivity
   public void onError(Exception e) {
     loadingChallenges = false;
     progressBar.setVisibility(View.GONE);
+    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
 
     Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
         getString(R.string.dialog_text_failed_to_connect), this, null).show();
@@ -212,6 +212,9 @@ public class MainActivity extends AppCompatActivity
 
   private void replaceFragment(Class<? extends Fragment> clazz) {
     FragmentManager fragmentManager = getSupportFragmentManager();
+    if (fragmentManager.findFragmentByTag(getTag(clazz)) != null) {
+      return;
+    }
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     Fragment newFragment;
     try {
@@ -221,7 +224,7 @@ public class MainActivity extends AppCompatActivity
       return;
     }
     fragmentTransaction.replace(R.id.content_container, newFragment,
-        getFragmentTag(newFragment)).commitAllowingStateLoss();
+        getTag(newFragment.getClass())).commitAllowingStateLoss();
   }
 
   private void showAds() {
@@ -263,5 +266,9 @@ public class MainActivity extends AppCompatActivity
         // to the app after tapping on an ad.
       }
     });
+  }
+
+  private static String getTag(Class clazz) {
+    return clazz.getSimpleName();
   }
 }

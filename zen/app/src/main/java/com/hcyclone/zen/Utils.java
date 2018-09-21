@@ -41,11 +41,11 @@ public final class Utils {
   }
 
   public static long getDebugAlarmRepeatTime() {
-    return 10_000;
+    return 15_000;
   }
 
   public static long getDebugDailyAlarmTime() {
-    return 5_000;
+    return 10_000;
   }
 
   public static boolean isTimeLess6pm(Calendar date) {
@@ -59,7 +59,7 @@ public final class Utils {
     // Today.
     CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      CALENDAR.add(Calendar.SECOND, 10);
+      CALENDAR.add(Calendar.SECOND, 15);
     } else {
       CALENDAR.set(Calendar.HOUR_OF_DAY, 18);
       // Reset minutes, seconds and millis.
