@@ -212,9 +212,10 @@ public class MainActivity extends AppCompatActivity
 
   private void replaceFragment(Class<? extends Fragment> clazz) {
     FragmentManager fragmentManager = getSupportFragmentManager();
-    if (fragmentManager.findFragmentByTag(getTag(clazz)) != null) {
-      return;
-    }
+    // Even if this fragment is already active, replace it to force the refresh.
+    // if (fragmentManager.findFragmentByTag(getTag(clazz)) != null) {
+    //   return;
+    // }
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
     Fragment newFragment;
     try {
