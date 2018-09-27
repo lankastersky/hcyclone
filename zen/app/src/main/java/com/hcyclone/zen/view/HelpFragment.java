@@ -12,6 +12,8 @@ import com.hcyclone.zen.Utils;
 
 public class HelpFragment extends Fragment {
 
+  public static final String TAG = HelpFragment.class.getCanonicalName();
+
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {

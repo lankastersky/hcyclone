@@ -83,5 +83,6 @@
 
     <string name="pref_restart_needed_title">Требуется перезапуск</string>
     <string name="pref_restart_needed_message">Пожалуйста, перезапустите приложение</string>
+    <string name="pref_privacy_policy">Политика конфиденциальности</string>
 
 </resources>

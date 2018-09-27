@@ -34,7 +34,7 @@ import com.hcyclone.zen.service.AlarmService;
 /** Shows challenge. */
 public class ChallengeFragment extends Fragment {
 
-  public static final String TAG = ChallengeFragment.class.getSimpleName();
+  public static final String TAG = ChallengeFragment.class.getCanonicalName();
   private static final String SHARE_TEXT_DELIMITER = "\n\n";
 
   protected String challengeId;

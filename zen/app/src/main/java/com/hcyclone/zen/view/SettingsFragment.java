@@ -1,8 +1,10 @@
 package com.hcyclone.zen.view;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +20,14 @@ import static android.content.SharedPreferences.OnSharedPreferenceChangeListener
 
 public class SettingsFragment extends PreferenceFragmentCompat
     implements OnSharedPreferenceChangeListener {
+
+  public static final String TAG = SettingsFragment.class.getCanonicalName();
+
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    getActivity().setTheme(R.style.SettingsTheme);
+    super.onCreate(savedInstanceState);
+  }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +53,13 @@ public class SettingsFragment extends PreferenceFragmentCompat
         PreferencesService.PREF_KEY_FINAL_ALARM_LIST));
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST));
+
+    Preference button = findPreference(PreferencesService.PREF_KEY_PRIVACY_POLICY);
+    button.setOnPreferenceClickListener(preference -> {
+      Intent intent = new Intent(getContext(), PrivacyPolicyActivity.class);
+      startActivity(intent);
+      return true;
+    });
 
     // Showing all challenges in the Journal by default. Set visible for beta testing if needed.
     findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());

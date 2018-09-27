@@ -41,6 +41,8 @@ public class StatisticsFragment extends Fragment {
     }
   }
 
+  public static final String TAG = StatisticsFragment.class.getCanonicalName();
+
   private static final String PREF_KEY_STATISTICS_CHART_TYPE = "statistics_chart_type";
   // See https://google.github.io/material-design-icons/
   private static final int INACTIVE_ICON_ALPHA = (int) (255 * 0.3);

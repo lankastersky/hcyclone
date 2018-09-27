@@ -34,12 +34,15 @@ public class MainActivity extends AppCompatActivity
     ChallengeListFragment.OnListFragmentInteractionListener,
     ChallengesLoader.ChallengesLoadListener {
 
-  public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
   private static final String TAG = MainActivity.class.getSimpleName();
+  public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
+
+  private static final String KEY_LAST_FRAGMENT_TAG = "last_fragment_tag";
 
   private ProgressBar progressBar;
   private DrawerLayout drawer;
   private boolean loadingChallenges;
+  private String lastFragmentTag;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity
 
     progressBar = findViewById(R.id.progressBar);
 
-    selectChallengeMenuItem();
     loadingChallenges = true;
     progressBar.setVisibility(View.VISIBLE);
     drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
@@ -72,6 +74,10 @@ public class MainActivity extends AppCompatActivity
       item.setVisible(false);
 
       showAds();
+    }
+
+    if (savedInstanceState != null) {
+      lastFragmentTag = savedInstanceState.getString(KEY_LAST_FRAGMENT_TAG);
     }
   }
 
@@ -92,27 +98,33 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
+//  @Override
+//  protected void onResume() {
+//    super.onResume();
+//
+//    if (loadingChallenges) {
+//      return;
+//    }
+//
+//    if (isStartFromNotification()) {
+//      Log.d(TAG, "Start from notification");
+//      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+//      selectMenuItem();
+//      replaceFragment(ChallengeFragment.TAG);
+//    }
+//
+//    // Come here if challenges were loaded when activity was invisible.
+//    if (getSupportFragmentManager().getFragments().isEmpty()) {
+//      Log.d(TAG, "Start when challenges were loaded in background");
+//      selectMenuItem();
+//      replaceFragment(ChallengeFragment.TAG);
+//    }
+//  }
+
   @Override
-  protected void onResume() {
-    super.onResume();
-
-    if (loadingChallenges) {
-      return;
-    }
-
-    if (isStartFromNotification()) {
-      Log.d(TAG, "Start from notification");
-      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
-      selectChallengeMenuItem();
-      replaceFragment(ChallengeFragment.class);
-    }
-
-    // Come here if challenges were loaded when activity was invisible.
-    if (getSupportFragmentManager().getFragments().isEmpty()) {
-      Log.d(TAG, "Start when challenges were loaded in background");
-      selectChallengeMenuItem();
-      replaceFragment(ChallengeFragment.class);
-    }
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putString(KEY_LAST_FRAGMENT_TAG, lastFragmentTag);
+    super.onSaveInstanceState(outState);
   }
 
   @Override
@@ -155,7 +167,15 @@ public class MainActivity extends AppCompatActivity
       return;
     }
     if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
-      replaceFragment(ChallengeFragment.class);
+      if (isStartFromNotification() || lastFragmentTag == null) {
+        Log.d(TAG, "Start from notification");
+        getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+        selectMenuItem(ChallengeFragment.TAG);
+        replaceFragment(ChallengeFragment.TAG);
+      } else {
+        selectMenuItem(lastFragmentTag);
+        replaceFragment(lastFragmentTag);
+      }
     } else {
       Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
           getString(R.string.dialog_text_failed_to_connect), this, null).show();
@@ -178,29 +198,40 @@ public class MainActivity extends AppCompatActivity
         && intent.getBooleanExtra(INTENT_PARAM_START_FROM_NOTIFICATION, false);
   }
 
-  private void selectChallengeMenuItem() {
+  private void selectMenuItem(String className) {
     NavigationView navigationView = findViewById(R.id.nav_view);
     Menu menu = navigationView.getMenu();
-    MenuItem menuItem = menu.findItem(R.id.nav_challenge);
+    MenuItem menuItem;
+     if (className.equals(ChallengeListFragment.TAG)) {
+      menuItem = menu.findItem(R.id.nav_journal);
+    } else if (className.equals(StatisticsFragment.TAG)) {
+      menuItem = menu.findItem(R.id.nav_statistics);
+    } else if (className.equals(SettingsFragment.TAG)) {
+      menuItem = menu.findItem(R.id.nav_settings);
+    } else if (className.equals(HelpFragment.TAG)) {
+      menuItem = menu.findItem(R.id.nav_help);
+    } else { // if (className.equals(ChallengeFragment.TAG))
+      menuItem = menu.findItem(R.id.nav_challenge);
+    }
     menuItem.setChecked(true);
   }
 
   private void selectMenuItem(int menuItemId) {
     switch (menuItemId) {
       case R.id.nav_challenge:
-        replaceFragment(ChallengeFragment.class);
+        replaceFragment(ChallengeFragment.TAG);
         break;
       case R.id.nav_journal:
-        replaceFragment(ChallengeListFragment.class);
+        replaceFragment(ChallengeListFragment.TAG);
         break;
       case R.id.nav_statistics:
-        replaceFragment(StatisticsFragment.class);
+        replaceFragment(StatisticsFragment.TAG);
         break;
       case R.id.nav_settings:
-        replaceFragment(SettingsFragment.class);
+        replaceFragment(SettingsFragment.TAG);
         break;
       case R.id.nav_help:
-        replaceFragment(HelpFragment.class);
+        replaceFragment(HelpFragment.TAG);
         break;
       case R.id.nav_feedback:
         Utils.sendFeedback(this);
@@ -210,7 +241,15 @@ public class MainActivity extends AppCompatActivity
     }
   }
 
-  private void replaceFragment(Class<? extends Fragment> clazz) {
+  private void replaceFragment(String className) {
+    Class<?  extends Fragment> clazz;
+    try {
+      clazz = Class.forName(className).asSubclass(Fragment.class);
+    } catch (ClassNotFoundException e) {
+      Log.e(TAG, e.toString());
+      return;
+    }
+
     FragmentManager fragmentManager = getSupportFragmentManager();
     // Even if this fragment is already active, replace it to force the refresh.
     // if (fragmentManager.findFragmentByTag(getTag(clazz)) != null) {
@@ -224,8 +263,10 @@ public class MainActivity extends AppCompatActivity
       Log.d(TAG, e.toString());
       return;
     }
-    fragmentTransaction.replace(R.id.content_container, newFragment,
-        getTag(newFragment.getClass())).commitAllowingStateLoss();
+    fragmentTransaction.replace(R.id.content_container, newFragment, className)
+        .commitAllowingStateLoss();
+
+    lastFragmentTag = className;
   }
 
   private void showAds() {
@@ -267,9 +308,5 @@ public class MainActivity extends AppCompatActivity
         // to the app after tapping on an ad.
       }
     });
-  }
-
-  private static String getTag(Class clazz) {
-    return clazz.getSimpleName();
   }
 }
