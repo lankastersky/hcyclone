@@ -2,6 +2,7 @@ package com.hcyclone.zen.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -94,32 +95,33 @@ public class MainActivity extends AppCompatActivity
     if (loadingChallenges) {
       // We load using background service which is not available on Android O+ in background. So
       // we have to wait for the activity to be in foreground (started) first.
-      new ChallengesLoader(this, this).loadChallenges(this);
+      new Handler().post(() -> {
+        new ChallengesLoader(this, this).loadChallenges(this);
+      });
     }
   }
 
-//  @Override
-//  protected void onResume() {
-//    super.onResume();
-//
-//    if (loadingChallenges) {
-//      return;
-//    }
-//
-//    if (isStartFromNotification()) {
-//      Log.d(TAG, "Start from notification");
-//      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
-//      selectMenuItem();
-//      replaceFragment(ChallengeFragment.TAG);
-//    }
-//
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+    if (loadingChallenges) {
+      return;
+    }
+
+    if (isStartFromNotification()) {
+      Log.d(TAG, "Start from notification");
+      getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+      selectMenuItem(ChallengeFragment.TAG);
+      replaceFragment(ChallengeFragment.TAG);
+    }
 //    // Come here if challenges were loaded when activity was invisible.
 //    if (getSupportFragmentManager().getFragments().isEmpty()) {
 //      Log.d(TAG, "Start when challenges were loaded in background");
 //      selectMenuItem();
 //      replaceFragment(ChallengeFragment.TAG);
 //    }
-//  }
+  }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
@@ -167,9 +169,12 @@ public class MainActivity extends AppCompatActivity
       return;
     }
     if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
-      if (isStartFromNotification() || lastFragmentTag == null) {
-        Log.d(TAG, "Start from notification");
-        getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+      boolean fromNotification = isStartFromNotification();
+      if (fromNotification || lastFragmentTag == null) {
+        if (fromNotification) {
+          Log.d(TAG, "Load from notification");
+          getIntent().removeExtra(INTENT_PARAM_START_FROM_NOTIFICATION);
+        }
         selectMenuItem(ChallengeFragment.TAG);
         replaceFragment(ChallengeFragment.TAG);
       } else {
