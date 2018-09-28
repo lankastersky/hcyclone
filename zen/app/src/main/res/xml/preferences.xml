@@ -35,7 +35,7 @@
         android:title="@string/pref_header_initial_reminder"/>
 
     <ListPreference
-        android:defaultValue="1"
+        android:defaultValue="3"
         android:dependency="pref_show_notification"
         android:entries="@array/pref_constant_reminder_list_titles"
         android:entryValues="@array/pref_constant_reminder_list_values"
