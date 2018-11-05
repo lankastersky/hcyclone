@@ -5,17 +5,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
 
-/**
- * Base list activity.
- */
-public abstract class ScrolledActivity extends AppCompatActivity {
+/** Base list activity. */
+public abstract class ScrolledActivity extends AdsActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +20,7 @@ public abstract class ScrolledActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_scrolled);
     setupActionBar();
+    showAds();
   }
 
   private void setupActionBar() {

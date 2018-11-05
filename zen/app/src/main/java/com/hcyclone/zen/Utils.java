@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -31,7 +32,8 @@ public final class Utils {
   public static String getApplicationName(Context context) {
     ApplicationInfo applicationInfo = context.getApplicationInfo();
     int stringId = applicationInfo.labelRes;
-    return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
+    return stringId == 0
+        ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
   }
 
   public static boolean isDebug() {
@@ -39,11 +41,11 @@ public final class Utils {
   }
 
   public static long getDebugAlarmRepeatTime() {
-    return 20_000;
+    return 15_000;
   }
 
   public static long getDebugDailyAlarmTime() {
-    return 5_000;
+    return 10_000;
   }
 
   public static boolean isTimeLess6pm(Calendar date) {
@@ -57,7 +59,7 @@ public final class Utils {
     // Today.
     CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      CALENDAR.add(Calendar.SECOND, 10);
+      CALENDAR.add(Calendar.SECOND, 15);
     } else {
       CALENDAR.set(Calendar.HOUR_OF_DAY, 18);
       // Reset minutes, seconds and millis.
@@ -98,17 +100,17 @@ public final class Utils {
     try {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {
-      Log.e(TAG, "Couldn't get the version name.", e);
+      Log.e(TAG, "Can't get the version name.", e);
       return "";
     }
   }
 
-  private static int getVersionCode(Context context) {
+  public static int getVersionCode(Context context) {
     try {
       return context.getPackageManager()
           .getPackageInfo(context.getPackageName(), 0).versionCode;
     } catch (Exception e) {
-      Log.e(TAG, "Couldn't get the version code.", e);
+      Log.e(TAG, "Can't get the version code.", e);
       return 0;
     }
   }
@@ -121,6 +123,20 @@ public final class Utils {
         Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+  }
+
+  /** Returns true if it's a first install or it's impossible to determine. */
+  public static boolean isFirstInstall(Context context) {
+    try {
+      String packageName = context.getPackageName();
+      PackageManager packageManager = context.getPackageManager();
+      long firstInstallTime = packageManager.getPackageInfo(packageName, 0).firstInstallTime;
+      long lastUpdateTime = packageManager.getPackageInfo(packageName, 0).lastUpdateTime;
+      return firstInstallTime == lastUpdateTime;
+    } catch (PackageManager.NameNotFoundException e) {
+      Log.e(TAG, "Can't get package info");
+      return true;
+    }
   }
 
   public static Dialog buildDialog(

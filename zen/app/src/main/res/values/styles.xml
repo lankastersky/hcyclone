@@ -39,4 +39,8 @@
         <!--<item name="android:windowNoTitle">true</item>-->
     </style>
 
+    <style name="SettingsTheme" parent="PreferenceThemeOverlay">
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>

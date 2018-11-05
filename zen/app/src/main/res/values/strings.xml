@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Magic Path</string>
-    <string name="app_description">Becoming Awareness</string>
+    <string name="app_description">Becoming Aware</string>
 
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -17,6 +17,7 @@
     <string name="pref_header_initial_reminder">Initial reminder</string>
     <string name="pref_header_constant_reminder">Constant reminder</string>
     <string name="pref_header_final_reminder">Final reminder</string>
+    <string name="pref_header_challenges_language">Challenges Language</string>
 
     <string name="pref_reminder_show_notification">Show notifications</string>
 
@@ -29,19 +30,24 @@
     <string name="pref_time_random" translatable="false">-2</string>
 
     <string name="pref_never">Never</string>
-    <string name="pref_random_6_12">Random between 6:00 and 12:00</string>
-    <string name="pref_random_18_24">Random between 18:00 and 24:00</string>
+    <string name="pref_random_6_12">Random between 6am and 12pm</string>
+    <string name="pref_random_18_24">Random between 6pm and 12am</string>
     <string name="pref_every_1_hour">Every hour</string>
     <string name="pref_every_2_hours">Every 2 hours</string>
     <string name="pref_every_3_hours">Every 3 hours</string>
     <string name="pref_every_4_hours">Every 4 hours</string>
 
+    <string name="pref_language_en">English</string>
+    <string name="pref_language_ru">Russian</string>
+
+    <string name="pref_privacy_policy">Privacy Policy</string>
+
     <string-array name="pref_initial_reminder_list_titles" translatable="false">
         <item>@string/pref_never</item>
-        <item>6:00</item>
-        <item>8:00</item>
-        <item>10:00</item>
-        <item>12:00</item>
+        <item>6am</item>
+        <item>8am</item>
+        <item>10am</item>
+        <item>12pm</item>
         <item>@string/pref_random_6_12</item>
     </string-array>
     <string-array name="pref_initial_reminder_list_values" translatable="false">
@@ -55,10 +61,10 @@
 
     <string-array name="pref_final_reminder_list_titles" translatable="false">
         <item>@string/pref_never</item>
-        <item>18:00</item>
-        <item>20:00</item>
-        <item>22:00</item>
-        <item>24:00</item>
+        <item>6pm</item>
+        <item>8pm</item>
+        <item>10pm</item>
+        <item>12am</item>
         <item>@string/pref_random_18_24</item>
     </string-array>
     <string-array name="pref_final_reminder_list_values" translatable="false">
@@ -85,6 +91,15 @@
         <item>4</item>
     </string-array>
 
+    <string-array name="pref_language_titles">
+        <item>@string/pref_language_en</item>
+        <item>@string/pref_language_ru</item>
+    </string-array>
+    <string-array name="pref_language_list_values" translatable="false">
+        <item>en</item>
+        <item>ru</item>
+    </string-array>
+
     <string-array name="levels">
         <item>@string/challenge_level_low</item>
         <item>@string/challenge_level_medium</item>
@@ -99,12 +114,15 @@
         <item>★★★★</item>
     </string-array>
 
+    <string name="pref_restart_needed_title">Restart is required</string>
+    <string name="pref_restart_needed_message">Please restart the app</string>
+
     <!-- Fragment Challenge -->
     <string name="challenge_current">Current Challenge</string>
     <string name="fragment_challenge_journal_entry">Journal Entry</string>
     <string name="fragment_challenge_accept">Accept</string>
     <string name="fragment_challenge_return_after_6pm">Return after 6PM</string>
-    <string name="fragment_challenge_can_start_task_before_6p_only">You can start next task before 6pm</string>
+    <string name="fragment_challenge_can_start_task_before_6p_only">You can accept task before 6pm</string>
     <string name="fragment_challenge_finish">Finish</string>
     <string name="fragment_challenge_finished">Finished</string>
     <string name="fragment_challenge_declined">Declined</string>
@@ -131,9 +149,9 @@
     <string name="filter_challenges_title" translatable="false">Choose filter</string>
 
     <!-- Help -->
-    <string name="fragment_help_text" translatable="false">"Каждое утро вам доступно новое задание в разделе \"Задание\". Вы можете начать его выполнять, нажав на кнопку \"Принять\". Задание выполняется в течение дня. После шести вечера, если вы готовы завершить задание, нажмите на кнопку \"Завершить\". При этом предлагается оценить текущий уровень осознанности: минимальный - \"на автопилоте\", максимальный - полностью осознанно.\n\nЗавершенные задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет считаться пропущенным и не появится в журнале. Через некоторе время пропущенные задания будут снова предложены на выполнение.\n\nКаждое задание имеет свой уровень сложности. Постепенно будут даваться все более сложные задания.\n\nВ приложении ведется статистика по количеству выполненных заданий и текущему уровню осознанности.\n\nДля того чтобы не забывать брать, выполнять и завершать задания, можно использовать напоминания в разделе \"Настройки\"."
+    <string name="fragment_help_text">"A new task is available every morning; it can be taken or skipped. To start the task, click \"Accept\" button in the \"Challenge\" screen. The practice continues during the day and finishes at night. You can finish the task after 6pm by clicking on \"Finish\" button. You will be suggested to estimate your level of awareness while doing this task.\n\nThe finished tasks are recorded in the \"Journal\" screen.\n\nEvery task has its own difficulty level. More difficult tasks will be given with time.\n\nThe \"Statistics\" screen shows charts with the number of finished tasks and level of awareness over time.\n\nYou can enable reminders in the \"Settings\" which can help you in daily practice."
     </string>
-    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion %s</string>
+    <string name="fragment_help_version">Lankastersky Studio\nVersion %s</string>
     <string name="fragment_help">Help</string>
 
     <!-- Statistics -->
@@ -172,4 +190,7 @@
     <string name="filter_challenges_by_rating">Filter by level of consciousness</string>
     <string name="filter_challenges_by_level">Filter by difficulty</string>
 
+    <!-- AdMob constants -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~1657176734</string>
+    <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/1402009957</string>
 </resources>

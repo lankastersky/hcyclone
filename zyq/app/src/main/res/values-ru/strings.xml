@@ -1,5 +1,5 @@
 <resources>
-    <string name="fragment_help_version">Студия \"Гиперборейский циклон\"\nВерсия %s</string>
+    <string name="fragment_help_version">Lankastersky Studio\nВерсия %s</string>
 
     <!-- Drawer -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

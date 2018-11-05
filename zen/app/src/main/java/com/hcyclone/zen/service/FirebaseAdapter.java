@@ -168,12 +168,9 @@ public class FirebaseAdapter {
 
   /** The server has different challenges' file resources for different locales. */
   private static String getChallengesFilename(String challengesLocale) {
-    if (challengesLocale.equals("ru")) {
-      return CHALLENGES_FILENAME_RU;
-    } else if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
+    if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
       return CHALLENGES_FILENAME_EN;
     }
-
     return CHALLENGES_FILENAME_RU;
   }
 

@@ -15,7 +15,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
@@ -30,7 +29,7 @@ import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AdsActivity
     implements NavigationView.OnNavigationItemSelectedListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
@@ -60,6 +59,8 @@ public class MainActivity extends AppCompatActivity
     if (savedInstanceState == null) {
       selectMenuItemPractice();
     }
+
+    showAds();
   }
 
   @Override

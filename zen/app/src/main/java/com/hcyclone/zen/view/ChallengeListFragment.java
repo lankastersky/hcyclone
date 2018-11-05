@@ -37,6 +37,8 @@ import java.util.Set;
  */
 public class ChallengeListFragment extends Fragment {
 
+  public static final String TAG = ChallengeListFragment.class.getCanonicalName();
+
   enum FilterType {
     BY_LEVEL,
     BY_RATING

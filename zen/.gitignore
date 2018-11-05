@@ -9,4 +9,4 @@
 .externalNativeBuild
 app/src/main/res/values/strings_const.xml
 app/build/
-Google-services.json
+app/google-services.json

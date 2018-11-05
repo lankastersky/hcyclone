@@ -15,7 +15,7 @@
     <string name="navigation_drawer_feedback">Feedback</string>
 
     <!-- Help -->
-    <string name="fragment_help_version">Studio \"Hyperborean cyclone\"\nVersion 0.1</string>
+    <string name="fragment_help_version">Lankastersky Studio"\nVersion %s</string>
     <string name="fragment_help_title">About</string>
 
     <!-- Feedback -->
@@ -44,4 +44,9 @@
 
     <!-- Notifications -->
     <string name="notif_no_internet">No internet connection. Try later.</string>
+
+    <!-- AdMob constants -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~8988353299</string>
+    <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/7549464337</string>
+
 </resources>

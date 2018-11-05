@@ -11,6 +11,7 @@ import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.service.FeaturesService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -206,7 +207,7 @@ public final class ChallengeModel {
     Challenge challenge = getChallengesMap().get(currentChallengeId);
     if (challenge.getStatus() == Challenge.ACCEPTED) {
       Date timeToFinish = Utils.get6PM(currentChallengeShownTime);
-      CALENDAR.setTimeInMillis(currentChallengeShownTime);
+//      CALENDAR.setTimeInMillis(currentChallengeShownTime);
 //      Date now = new Date();
       // If is taken < 6pm, wait for 6pm.
 //      if (date.get(Calendar.HOUR_OF_DAY) < 18) {
@@ -229,6 +230,10 @@ public final class ChallengeModel {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
           TAG, "Can't check level up. ChallengeId is not current challenge: " + challengeId);
+      return false;
+    }
+    // Level up is disabled in the free version.
+    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
       return false;
     }
     Challenge challenge = getCurrentChallenge();
@@ -356,12 +361,17 @@ public final class ChallengeModel {
         challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
-        // All challenges are finished. Return random old one.
-        challenge = getRandomChallenge(getChallengesMap().values());
+        Collection<Challenge> challenges = getChallengesMap().values();
+        if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+            challenges = filterNonfinishedChallengesByLevel(challenges);
+        }
+
+        // All available challenges are finished. Return a random old one.
+        challenge = getRandomChallenge(challenges);
         Challenge currentChallenge = getCurrentChallenge();
-        if (currentChallenge != null && getChallengesMap().size() > 1) {
+        if (currentChallenge != null) {
           while (challenge.getId().equals(currentChallenge.getId())) {
-            challenge = getRandomChallenge(getChallengesMap().values());
+            challenge = getRandomChallenge(challenges);
           }
         }
         challengeId = challenge.getId();

@@ -1,11 +1,13 @@
 package com.hcyclone.zyq;
 
-import android.app.Application;
 import android.os.StrictMode;
+import android.support.multidex.MultiDexApplication;
 
+import com.google.android.gms.ads.MobileAds;
 import com.hcyclone.zyq.model.ExerciseModel;
+import com.hcyclone.zyq.service.FeaturesService;
 
-public class App extends Application {
+public class App extends MultiDexApplication {
 
   private static final String TAG = App.class.getSimpleName();
 
@@ -34,7 +36,10 @@ public class App extends Application {
   }
 
   protected void initSingletons() {
+    MobileAds.initialize(this, getString(R.string.admob_app_id));
+
     Analytics.getInstance().init(this);
+    FeaturesService.getInstance().init(this);
   }
 
   private static void enableStrictMode() {

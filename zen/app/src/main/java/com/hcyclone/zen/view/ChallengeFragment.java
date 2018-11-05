@@ -34,7 +34,7 @@ import com.hcyclone.zen.service.AlarmService;
 /** Shows challenge. */
 public class ChallengeFragment extends Fragment {
 
-  public static final String TAG = ChallengeFragment.class.getSimpleName();
+  public static final String TAG = ChallengeFragment.class.getCanonicalName();
   private static final String SHARE_TEXT_DELIMITER = "\n\n";
 
   protected String challengeId;
@@ -111,10 +111,13 @@ public class ChallengeFragment extends Fragment {
 
   protected void refreshChallengeData() {
     Challenge challenge = challengeModel.getCurrentChallenge();
+    // It's possible that the fragment is recreated but the data not. Then the activity is also
+    // recreated and forces the data to load. Once the data is loaded, the activity recreates the
+    // fragment with the current challenge.
     if (challenge == null) {
-      Log.e(TAG, "Can't refresh challenge data: challenge is null");
-    Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
-        getString(R.string.dialog_text_failed_to_load_challenges), getActivity(), null).show();
+      Log.w(TAG, "Can't refresh challenge data: challenge is null");
+      // Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
+      //     getString(R.string.dialog_text_failed_to_load_challenges), getActivity(), null).show();
       return;
     }
     challengeId = challenge.getId();
