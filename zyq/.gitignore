@@ -4,5 +4,8 @@
 /local.properties
 .DS_Store
 /build
+/gradle
 /captures
 .externalNativeBuild
+/gradlew*
+/gradle.properties
