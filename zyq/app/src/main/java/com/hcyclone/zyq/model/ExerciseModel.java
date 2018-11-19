@@ -30,15 +30,25 @@ public final class ExerciseModel {
   private static final Type EXERCISE_TYPE = new TypeToken<List<Exercise>>() {}.getType();
   private static final String DESCRIPTION_ID_DELIMITER = "_";
   private static final String DESCRIPTION_FILE_TEMPLATE = "%s_html";
+  private static final String DESCRIPTION_LOCALIZED_FILE_TEMPLATE = "%s_%s_html";
 
   private final Map<String, Exercise> exercisesMap;
+  private final String language;
 
   public ExerciseModel(Context context) {
+    ImmutableMap.Builder<String, Exercise> exerciseBuilder = ImmutableMap.builder();
+    language = Utils.getCurrentLocale(context).getLanguage();
+
     try {
-      ImmutableMap.Builder<String, Exercise> exerciseBuilder = ImmutableMap.builder();
-      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
-      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
-      exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_json, context));
+      if (language.equals(Locale.ENGLISH.getLanguage())) {
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_en_json, context));
+      } else {
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_json, context));
+      }
       exercisesMap = exerciseBuilder.build();
     } catch (IOException e) {
       throw new IllegalStateException("Failed to read exercises", e);
@@ -135,7 +145,13 @@ public final class ExerciseModel {
 
   private String getPracticeDescription(String id, Context context) {
     String fileName = String.format(DESCRIPTION_FILE_TEMPLATE, id);
-    int resId = context.getResources().getIdentifier(fileName, "raw", context.getPackageName());
+    String localizedFilename = String.format(DESCRIPTION_LOCALIZED_FILE_TEMPLATE, id, language);
+    int resId = context.getResources().getIdentifier(
+            localizedFilename, "raw", context.getPackageName());
+    if (resId == 0) {
+      resId = context.getResources().getIdentifier(
+              fileName, "raw", context.getPackageName());
+    }
     if (resId == 0) {
       return "";
     }

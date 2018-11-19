@@ -8,6 +8,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.AlarmClock;
 import android.text.Html;
 import android.text.Spanned;
@@ -17,6 +18,7 @@ import com.hcyclone.zyq.view.DescriptionActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 public final class Utils {
 
@@ -135,6 +137,15 @@ public final class Utils {
     } catch (Exception e) {
       Log.e(TAG, "Couldn't get the version code.", e);
       return 0;
+    }
+  }
+
+  public static Locale getCurrentLocale(Context context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return context.getResources().getConfiguration().getLocales().get(0);
+    } else {
+      //noinspection deprecation
+      return context.getResources().getConfiguration().locale;
     }
   }
 }
