@@ -41,8 +41,8 @@ public final class ExerciseModel {
 
     try {
       if (language.equals(Locale.ENGLISH.getLanguage())) {
-        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
-        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_en_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_en_json, context));
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_en_json, context));
       } else {
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
