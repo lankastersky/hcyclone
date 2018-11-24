@@ -43,13 +43,13 @@ public final class FeaturesService {
 
   /**
    * Cases:
-   * a new user installs ({@link Utils.isFirstInstall( Context ) returns true}):
-   *   return {@code FeaturesType.FREE}
+   * a new user installs ({@link Utils.#isFirstInstall(Context) returns true}):
+   *   return {@link FeaturesType.#FREE}
    * an upgraded user updates:
-   *   return {@code FeaturesType.PAID}
+   *   return {@link FeaturesType.#PAID}
    * a new user paid for the content:
-   *   return {@code FeaturesType.PAID}
-   * else return {@code FeaturesType.FREE}
+   *   return {@link FeaturesType.#PAID}
+   * else return {@link FeaturesType.#FREE}
    */
   public FeaturesType getFeaturesType() {
     if (Utils.isDebug()) {
