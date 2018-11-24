@@ -40,14 +40,14 @@ public final class ExerciseModel {
     language = Utils.getCurrentLocale(context).getLanguage();
 
     try {
-      if (language.equals(Locale.ENGLISH.getLanguage())) {
-        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_en_json, context));
-        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_en_json, context));
-        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_en_json, context));
-      } else {
+      if ("ru".equals(language)) {
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_json, context));
+      } else {
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_en_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_en_json, context));
+        exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_en_json, context));
       }
       exercisesMap = exerciseBuilder.build();
     } catch (IOException e) {

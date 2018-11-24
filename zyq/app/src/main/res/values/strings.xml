@@ -49,4 +49,14 @@
     <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~8988353299</string>
     <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/7549464337</string>
 
+    <!-- Songs -->
+    <string name="song_feng_shui">Feng Shui (60 min.)</string>
+    <string name="song_garmonic">Garmonic (72 min.)</string>
+    <string name="song_gong_yi">Gong Yi (63 min.)</string>
+    <string name="song_himalaya">Himalaya (50 min.)</string>
+    <string name="song_tai_chi">Tai Chi (61 min.)</string>
+    <string name="song_tibetian">Tibetian_Bowls (66 min.)</string>
+    <string name="song_big_tree">Big tree (45 min.)</string>
+    <string name="song_yan_qi">Yan Qi (73 min.)</string>
+
 </resources>

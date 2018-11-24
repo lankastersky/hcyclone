@@ -157,7 +157,7 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
 
   @Override
   protected Collection<String> buildListItems() {
-    return AudioPlayer.AUDIO_TO_URI_MAP.keySet();
+    return AudioPlayer.buildAudioToUriMap(getContext()).keySet();
   }
 
   @Override

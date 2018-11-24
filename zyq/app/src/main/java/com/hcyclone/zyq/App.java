@@ -24,7 +24,7 @@ public class App extends MultiDexApplication {
 
     initSingletons();
     exerciseModel = new ExerciseModel(this);
-    player = new AudioPlayer();
+    player = new AudioPlayer(getApplicationContext());
   }
 
   public AudioPlayer getPlayer() {

@@ -34,7 +34,15 @@ public class HelpFragment extends Fragment {
 
     TextView helpTextView = view.findViewById(R.id.help_text);
     try {
-      String helpText = Utils.readFromRawResources(R.raw.help_html, getContext());
+      String language = Utils.getCurrentLocale(getContext()).getLanguage();
+      int resourceId;
+      if ("ru".equals(language)) {
+        resourceId = R.raw.help_html;
+      } else {
+        resourceId = R.raw.help_en_html;
+      }
+
+      String helpText = Utils.readFromRawResources(resourceId, getContext());
       helpTextView.setText(Utils.fromHtml(helpText));
       ((TextView) view.findViewById(R.id.help_text)).setMovementMethod(
           LinkMovementMethod.getInstance());

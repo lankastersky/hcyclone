@@ -32,4 +32,15 @@
 
     <!-- Notifications -->
     <string name="notif_no_internet">Нет подключения к интернету. Попробуйте позднее.</string>
+
+    <!-- Songs -->
+    <string name="song_feng_shui">Фен Шуй (60 мин.)</string>
+    <string name="song_garmonic">Гармоника (72 мин.)</string>
+    <string name="song_gong_yi">Гонг Йи (63 мин.)</string>
+    <string name="song_himalaya">Гималаи (50 мин.)</string>
+    <string name="song_tai_chi">Тай Чи (61 мин.)</string>
+    <string name="song_tibetian">Тибетские чашы (66 мин.)</string>
+    <string name="song_big_tree">Большое дерево (45 мин.)</string>
+    <string name="song_yan_qi">Ян-ци (73 мин.)</string>
+
 </resources>
