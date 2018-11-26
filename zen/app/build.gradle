@@ -39,8 +39,8 @@ android {
     }
 }
 
-def uiVersion = "27.0.2"
-def gmsVersion = "11.8.0"
+def uiVersion = "27.1.1"
+def gmsVersion = "16.0.5"
 
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
@@ -57,12 +57,9 @@ dependencies {
     implementation "com.google.firebase:firebase-database:${gmsVersion}"
     implementation "com.google.firebase:firebase-storage:${gmsVersion}"
     implementation "com.google.firebase:firebase-auth:${gmsVersion}"
-    implementation "com.google.firebase:firebase-crash:${gmsVersion}"
-    implementation "com.google.firebase:firebase-ads:${gmsVersion}"
+    implementation 'com.google.android.gms:play-services-ads:17.1.1'
     implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
-    implementation('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true
-    }
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
 
     // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
     implementation "com.androidplot:androidplot-core:1.5.2"
