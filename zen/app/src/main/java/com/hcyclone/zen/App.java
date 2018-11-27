@@ -13,6 +13,9 @@ public class App extends MultiDexApplication {
 
   private static final String TAG = App.class.getSimpleName();
 
+  private FeaturesService featuresService;
+  private ChallengeModel challengeModel;
+
   private static void enableStrictMode() {
     StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
         .detectDiskReads()
@@ -43,14 +46,23 @@ public class App extends MultiDexApplication {
     registerActivityLifecycleCallbacks(AppLifecycleManager.getInstance());
   }
 
+  public ChallengeModel getChallengeModel() {
+    return challengeModel;
+  }
+
+  public FeaturesService getFeaturesService() {
+    return featuresService;
+  }
+
   protected void initSingletons() {
     MobileAds.initialize(this, getString(R.string.admob_app_id));
 
-    ChallengeModel.getInstance().init(this);
+    // Order is important!
+    featuresService = new FeaturesService(this);
+    challengeModel = new ChallengeModel(this);
     AlarmService.getInstance().init(this);
     NotificationService.getInstance().init(this);
     Analytics.getInstance().init(this);
     AppLifecycleManager.getInstance().init(this);
-    FeaturesService.getInstance().init(this);
   }
 }

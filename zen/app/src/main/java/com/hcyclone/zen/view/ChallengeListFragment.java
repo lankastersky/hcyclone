@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeFilterModel;
@@ -79,7 +80,7 @@ public class ChallengeListFragment extends Fragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    challengeModel = ChallengeModel.getInstance();
+    challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
     if (context instanceof OnListFragmentInteractionListener) {
       onListFragmentInteractionListener = (OnListFragmentInteractionListener) context;
       challengeFilterModel = new ChallengeFilterModel(context);

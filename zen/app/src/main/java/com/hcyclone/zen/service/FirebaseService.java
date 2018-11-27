@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
@@ -78,8 +79,8 @@ public final class FirebaseService extends IntentService
       @Override
       public void onChallengesDownloaded(List<Challenge> challenges) {
         Log.d(TAG, "Challenges loaded");
-        ChallengeModel.getInstance().init(FirebaseService.this);
-        ChallengeModel.getInstance().saveChallenges(challenges);
+        ChallengeModel challengeModel = ((App) getApplicationContext()).getChallengeModel();
+        challengeModel.saveChallenges(challenges);
         if (receiver != null) {
           receiver.send(RESULT_CODE_OK, null);
         }

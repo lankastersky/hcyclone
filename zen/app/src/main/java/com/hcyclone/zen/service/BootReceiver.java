@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
@@ -17,7 +18,8 @@ public final class BootReceiver extends BroadcastReceiver {
       AlarmService.getInstance().init(context);
       AlarmService.getInstance().setAlarms();
 
-      Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+      ChallengeModel challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
+      Challenge challenge = challengeModel.getSerializedCurrentChallenge();
       if (challenge != null && challenge.getStatus() == Challenge.ACCEPTED) {
         AlarmService.getInstance().setDailyAlarm();
       }

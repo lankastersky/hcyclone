@@ -40,6 +40,8 @@
     <string name="pref_language_en">English</string>
     <string name="pref_language_ru">Russian</string>
 
+    <string name="pref_upgrade">Upgrade</string>
+
     <string name="pref_privacy_policy">Privacy Policy</string>
 
     <string-array name="pref_initial_reminder_list_titles" translatable="false">

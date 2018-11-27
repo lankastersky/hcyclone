@@ -6,6 +6,7 @@ import android.text.TextUtils;
 
 import com.google.common.collect.Iterables;
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
@@ -28,29 +29,21 @@ public final class ChallengeModel {
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
 
-  private static final ChallengeModel instance = new ChallengeModel();
-
   private static final double PROBABILITY_GET_DECLINED_CHALLENGE = 1D / 6;
   private static final double PROPORTION_ACCEPT_MEDIUM_LEVEL_CHALLENGE = 1D / 3;
   private static final double PROPORTION_ACCEPT_HIGH_LEVEL_CHALLENGE = 2D / 3;
 
   private final Map<String, Challenge> challengeMap = new HashMap<>();
+  private final ChallengeArchiver challengeArchiver;
+  private final FeaturesService featuresService;
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
   private int level;
-  private ChallengeArchiver challengeArchiver;
 
-  private ChallengeModel() {}
-
-  public static ChallengeModel getInstance() {
-    return instance;
-  }
-
-  public void init(@NonNull Context context) {
-    if (challengeArchiver == null) {
-      challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
-    }
+  public ChallengeModel(@NonNull Context context) {
+    challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
+    featuresService = ((App)context.getApplicationContext()).getFeaturesService();
   }
 
   @Challenge.LevelType
@@ -233,7 +226,7 @@ public final class ChallengeModel {
       return false;
     }
     // Level up is disabled in the free version.
-    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+    if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
       return false;
     }
     Challenge challenge = getCurrentChallenge();
@@ -362,7 +355,7 @@ public final class ChallengeModel {
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
         Collection<Challenge> challenges = getChallengesMap().values();
-        if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+        if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
             challenges = filterNonfinishedChallengesByLevel(challenges);
         }
 

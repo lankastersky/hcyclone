@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.androidplot.xy.XYPlot;
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.ChallengeModel;
@@ -71,7 +72,8 @@ public class StatisticsFragment extends Fragment {
 
     setHasOptionsMenu(true);
 
-    ChallengeModel challengeModel = ChallengeModel.getInstance();
+    ChallengeModel challengeModel =
+        ((App) getContext().getApplicationContext()).getChallengeModel();
 
     View view = inflater.inflate(R.layout.fragment_statistics, container, false);
 

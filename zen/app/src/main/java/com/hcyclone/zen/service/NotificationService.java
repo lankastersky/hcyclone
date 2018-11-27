@@ -21,6 +21,7 @@ import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
@@ -47,6 +48,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   private Context context;
   private SharedPreferences sharedPreferences;
   private Vibrator vibrator;
+  private ChallengeModel challengeModel;
 
   private NotificationService() {}
 
@@ -63,6 +65,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
 
   public void init(@NonNull Context context) {
     this.context = context;
+    challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
     notificationManager = (NotificationManager)
         context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -87,7 +90,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   }
 
   void showInitialAlarmNotification() {
-    Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore initial alarm notification as challenge is null");
       return;
@@ -102,7 +105,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   }
 
   void showFinalAlarmNotification() {
-    Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore final alarm notification as challenge is null");
       return;
@@ -118,7 +121,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   }
 
   void showDailyAlarmNotification() {
-    Challenge challenge = ChallengeModel.getInstance().getSerializedCurrentChallenge();
+    Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
       Log.e(TAG, "Ignore daily alarm notification as challenge is null");
       return;

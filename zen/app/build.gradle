@@ -60,6 +60,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:17.1.1'
     implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.android.billingclient:billing:1.2'
 
     // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
     implementation "com.androidplot:androidplot-core:1.5.2"

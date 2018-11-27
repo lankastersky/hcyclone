@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.Utils;
@@ -27,6 +28,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
   private static final int LOAD_AFTER_DAYS = 7;
 
   private final ChallengesLoadListener listener;
+  private final ChallengeModel challengeModel;
   private final SharedPreferences sharedPreferences;
 
   public interface ChallengesLoadListener {
@@ -61,7 +63,8 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
 
   public ChallengesLoader(ChallengesLoadListener listener, Context context) {
     this.listener = listener;
-    this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     PreferenceManager.getDefaultSharedPreferences(context)
         .registerOnSharedPreferenceChangeListener(this);
 
@@ -158,7 +161,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
   private void onLoaded() {
     Log.d(TAG, "Challenges loaded");
     AlarmService.getInstance().setAlarms();
-    ChallengeModel.getInstance().loadChallenges();
+    challengeModel.loadChallenges();
     if (listener != null) {
       listener.onChallengesLoaded();
     }

@@ -24,6 +24,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -52,7 +53,7 @@ public class ChallengeFragment extends Fragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    challengeModel = ChallengeModel.getInstance();
+    challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
   }
 
   @Override

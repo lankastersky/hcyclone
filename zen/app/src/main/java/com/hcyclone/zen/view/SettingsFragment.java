@@ -54,8 +54,15 @@ public class SettingsFragment extends PreferenceFragmentCompat
     preferencesService.bindPreferenceSummaryToValue(findPreference(
         PreferencesService.PREF_KEY_CHALLENGES_LANGUAGE_LIST));
 
-    Preference button = findPreference(PreferencesService.PREF_KEY_PRIVACY_POLICY);
-    button.setOnPreferenceClickListener(preference -> {
+    Preference upgradeButton = findPreference(PreferencesService.PREF_KEY_UPGRADE);
+    upgradeButton.setOnPreferenceClickListener(preference -> {
+      UpgradeFragment upgradeFragment = new UpgradeFragment();
+      upgradeFragment.show(getActivity().getSupportFragmentManager(), UpgradeFragment.TAG);
+      return true;
+    });
+
+    Preference privacyPolicyButton = findPreference(PreferencesService.PREF_KEY_PRIVACY_POLICY);
+    privacyPolicyButton.setOnPreferenceClickListener(preference -> {
       Intent intent = new Intent(getContext(), PrivacyPolicyActivity.class);
       startActivity(intent);
       return true;

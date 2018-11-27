@@ -18,24 +18,16 @@ public final class FeaturesService {
     PAID
   }
 
-  private static final FeaturesService instance = new FeaturesService();
   private static final String KEY_VERSION_CODE = "version_code";
   private static final String KEY_UPGRADED_USER = "upgraded_user";
+  private static final String KEY_EXTENDED_VERSION = "extended_version";
 
-  private Context context;
-  private SharedPreferences sharedPreferences;
+  private final Context context;
+  private final SharedPreferences sharedPreferences;
 
-  private FeaturesService() {}
-
-  public static FeaturesService getInstance() {
-    return instance;
-  }
-
-  public void init(@NonNull Context context) {
+  public FeaturesService(@NonNull Context context) {
     this.context = context;
-    if (sharedPreferences == null) {
-      this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    }
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     // Must be called before storing version code.
     storeUpgradedUserFlag();
     storeVersionCode();
@@ -43,13 +35,13 @@ public final class FeaturesService {
 
   /**
    * Cases:
-   * a new user installs ({@link Utils.isFirstInstall(Context) returns true}):
-   *   return {@code FeaturesType.FREE}
+   * a new user installs ({@link Utils#isFirstInstall(Context) returns true}):
+   *   return {@link FeaturesType#FREE}
    * an upgraded user updates:
-   *   return {@code FeaturesType.PAID}
+   *   return {@link FeaturesType#PAID}
    * a new user paid for the content:
-   *   return {@code FeaturesType.PAID}
-   * else return {@code FeaturesType.FREE}
+   *   return {@link FeaturesType#PAID}
+   * else return {@link FeaturesType#FREE}
    */
   public FeaturesType getFeaturesType() {
     if (Utils.isDebug()) {
@@ -65,16 +57,19 @@ public final class FeaturesService {
         return FeaturesType.PAID;
     }
 
-    if (isPaidContent()) {
+    if (getExtendedVersion()) {
       return FeaturesType.PAID;
     }
 
     return FeaturesType.FREE;
   }
 
-  private boolean isPaidContent() {
-    // TODO: implement.
-    return false;
+  public void setExtendedVersion(boolean extended) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, extended).apply();
+  }
+
+  private boolean getExtendedVersion() {
+    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION, false);
   }
 
   private boolean isUpgradedUser() {

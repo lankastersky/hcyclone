@@ -18,10 +18,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.Purchase;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
+import com.hcyclone.zen.BillingManager;
+import com.hcyclone.zen.BillingManager.BillingUpdatesListener;
+import com.hcyclone.zen.BillingProvider;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -29,11 +35,13 @@ import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.ChallengesLoader;
 import com.hcyclone.zen.service.FeaturesService;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener,
-    ChallengesLoader.ChallengesLoadListener {
+    ChallengesLoader.ChallengesLoadListener,
+    BillingProvider {
 
   private static final String TAG = MainActivity.class.getSimpleName();
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
@@ -44,6 +52,8 @@ public class MainActivity extends AppCompatActivity
   private DrawerLayout drawer;
   private boolean loadingChallenges;
   private String lastFragmentTag;
+  private BillingManager billingManager;
+  private ChallengeModel challengeModel;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -68,18 +78,59 @@ public class MainActivity extends AppCompatActivity
     progressBar.setVisibility(View.VISIBLE);
     drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+    App app = (App) getApplication();
+    challengeModel = app.getChallengeModel();
+    FeaturesService featuresService = app.getFeaturesService();
+
+    if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
       // Disable charts.
       Menu navigationMenu = navigationView.getMenu();
       MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
       item.setVisible(false);
 
-      showAds();
+      showAds(true);
     }
 
     if (savedInstanceState != null) {
       lastFragmentTag = savedInstanceState.getString(KEY_LAST_FRAGMENT_TAG);
     }
+
+    // Create and initialize BillingManager which talks to BillingLibrary
+    billingManager = new BillingManager(this, new BillingUpdatesListener() {
+
+      @Override
+      public void onBillingClientSetupFinished() {
+        Log.d(TAG, "On billing client setup finished");
+      }
+
+      @Override
+      public void onConsumeFinished(String token, int result) {
+        Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
+        // Note: We know this is our sku, because it's the only one we consume, so we don't
+        // check if token corresponding to the expected sku was consumed.
+        if (result == BillingResponse.OK) {
+          // Successfully consumed, so we apply the effects of the item in our
+          // game world's logic, which in our case means filling the gas tank a bit
+          Log.d(TAG, "Consumption successful. Provisioning.");
+        } else {
+          Log.e(TAG, "Error while consuming: " + result);
+        }
+      }
+
+      @Override
+      public void onPurchasesUpdated(List<Purchase> purchases) {
+        Log.d(TAG, "On purchase updated: " + purchases.toArray().toString());
+        for (Purchase purchase : purchases) {
+          switch (purchase.getSku()) {
+            case "no_ads_subscription":
+              Log.d(TAG, "no_ads_subscription purchased");
+              featuresService.setExtendedVersion(true);
+              showAds(false);
+              break;
+          }
+        }
+      }
+    });
   }
 
   @Override
@@ -121,12 +172,30 @@ public class MainActivity extends AppCompatActivity
 //      selectMenuItem();
 //      replaceFragment(ChallengeFragment.TAG);
 //    }
+
+    // Note: We query purchases in onResume() to handle purchases completed while the activity
+    // is inactive. For example, this can happen if the activity is destroyed during the
+    // purchase flow. This ensures that when the activity is resumed it reflects the user's
+    // current purchases.
+    if (billingManager != null
+        && billingManager.getBillingClientResponseCode() == BillingResponse.OK) {
+      billingManager.queryPurchases();
+    }
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putString(KEY_LAST_FRAGMENT_TAG, lastFragmentTag);
     super.onSaveInstanceState(outState);
+  }
+
+  @Override
+  public void onDestroy() {
+    Log.d(TAG, "Destroy");
+    super.onDestroy();
+    if (billingManager != null) {
+      billingManager.destroy();
+    }
   }
 
   @Override
@@ -147,6 +216,8 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
+  // OnListFragmentInteractionListener
+
   @Override
   public void onListFragmentInteraction(Challenge item) {
     Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
@@ -158,6 +229,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   // ChallengesLoadListener
+
   @Override
   public void onChallengesLoaded() {
     loadingChallenges = false;
@@ -168,7 +240,7 @@ public class MainActivity extends AppCompatActivity
       Log.d(TAG, "App in background. Skipping showing challenges");
       return;
     }
-    if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
+    if (challengeModel.getCurrentChallenge() != null) {
       boolean fromNotification = isStartFromNotification();
       if (fromNotification || lastFragmentTag == null) {
         if (fromNotification) {
@@ -195,6 +267,19 @@ public class MainActivity extends AppCompatActivity
 
     Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
         getString(R.string.dialog_text_failed_to_connect), this, null).show();
+  }
+
+  // BillingProvider
+
+  @Override
+  public BillingManager getBillingManager() {
+    return billingManager;
+  }
+
+  @Override
+  public boolean isPremiumPurchased() {
+    // TODO: implement
+    return false;
   }
 
   private boolean isStartFromNotification() {
@@ -274,9 +359,12 @@ public class MainActivity extends AppCompatActivity
     lastFragmentTag = className;
   }
 
-  private void showAds() {
+  private void showAds(boolean show) {
     AdView adView = findViewById(R.id.adView);
     adView.setVisibility(View.GONE);
+    if (!show) {
+      return;
+    }
     AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
     if (Utils.isDebug()) {
       adRequestBuilder
