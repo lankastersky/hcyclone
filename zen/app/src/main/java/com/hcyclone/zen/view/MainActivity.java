@@ -25,9 +25,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
-import com.hcyclone.zen.BillingManager;
-import com.hcyclone.zen.BillingManager.BillingUpdatesListener;
-import com.hcyclone.zen.BillingProvider;
+import com.hcyclone.zen.service.BillingService;
+import com.hcyclone.zen.service.BillingService.BillingUpdatesListener;
+import com.hcyclone.zen.service.BillingProvider;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
   private DrawerLayout drawer;
   private boolean loadingChallenges;
   private String lastFragmentTag;
-  private BillingManager billingManager;
+  private BillingService billingService;
   private ChallengeModel challengeModel;
 
   @Override
@@ -95,8 +95,8 @@ public class MainActivity extends AppCompatActivity
       lastFragmentTag = savedInstanceState.getString(KEY_LAST_FRAGMENT_TAG);
     }
 
-    // Create and initialize BillingManager which talks to BillingLibrary
-    billingManager = new BillingManager(this, new BillingUpdatesListener() {
+    // Create and initialize BillingService which talks to BillingLibrary
+    billingService = new BillingService(this, new BillingUpdatesListener() {
 
       @Override
       public void onBillingClientSetupFinished() {
@@ -177,9 +177,9 @@ public class MainActivity extends AppCompatActivity
     // is inactive. For example, this can happen if the activity is destroyed during the
     // purchase flow. This ensures that when the activity is resumed it reflects the user's
     // current purchases.
-    if (billingManager != null
-        && billingManager.getBillingClientResponseCode() == BillingResponse.OK) {
-      billingManager.queryPurchases();
+    if (billingService != null
+        && billingService.getBillingClientResponseCode() == BillingResponse.OK) {
+      billingService.queryPurchases();
     }
   }
 
@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity
   public void onDestroy() {
     Log.d(TAG, "Destroy");
     super.onDestroy();
-    if (billingManager != null) {
-      billingManager.destroy();
+    if (billingService != null) {
+      billingService.destroy();
     }
   }
 
@@ -272,8 +272,8 @@ public class MainActivity extends AppCompatActivity
   // BillingProvider
 
   @Override
-  public BillingManager getBillingManager() {
-    return billingManager;
+  public BillingService getBillingService() {
+    return billingService;
   }
 
   @Override

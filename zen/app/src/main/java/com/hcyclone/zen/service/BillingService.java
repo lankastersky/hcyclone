@@ -1,4 +1,4 @@
-package com.hcyclone.zen;
+package com.hcyclone.zen.service;
 
 import android.app.Activity;
 import com.android.billingclient.api.BillingClient;
@@ -10,6 +10,8 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,10 +19,10 @@ import java.util.List;
  * Handles all the interactions with Play Store (via Billing library), maintains connection to
  * it through BillingClient and caches temporary states/data if needed.
  */
-public final class BillingManager implements PurchasesUpdatedListener {
+public final class BillingService implements PurchasesUpdatedListener {
 
-  private static final String TAG = BillingManager.class.getSimpleName();
-  // Default value of mBillingClientResponseCode until BillingManager was not yeat initialized
+  private static final String TAG = BillingService.class.getSimpleName();
+  // Default value of mBillingClientResponseCode until BillingService was not yeat initialized
   private static final int BILLING_MANAGER_NOT_INITIALIZED  = -1;
 
   // create new Person
@@ -30,7 +32,7 @@ public final class BillingManager implements PurchasesUpdatedListener {
   private final BillingUpdatesListener billingUpdatesListener;
   private int billingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
-  public BillingManager(Activity activity, final BillingUpdatesListener updatesListener) {
+  public BillingService(Activity activity, final BillingUpdatesListener updatesListener) {
     Log.d(TAG, "Creating Billing client.");
     billingClient = BillingClient.newBuilder(activity).setListener(this).build();
     billingUpdatesListener = updatesListener;
@@ -124,6 +126,7 @@ public final class BillingManager implements PurchasesUpdatedListener {
         if (responseCode == BillingResponse.OK
             && skuDetailsList != null
             && !skuDetailsList.isEmpty()) {
+
           for (SkuDetails skuDetails : skuDetailsList) {
             Log.d(TAG, "Sku: " + skuDetails.toString());
           }

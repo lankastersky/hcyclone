@@ -2,7 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:minWidth="500dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/text_margin">
 
@@ -18,23 +19,67 @@
         android:textSize="20sp"/>
 
     <TextView
-        android:id="@+id/upgrade_dialog_text"
+        android:id="@+id/upgrade_dialog_levels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_margin"
+        android:text="Different levels of challenges"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/upgrade_dialog_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_margin"
+        android:text="Statistics available"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/upgrade_dialog_no_ads"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/text_margin"
         android:text="No ads anymore"
         android:textSize="16sp"/>
 
-    <Button
-        android:id="@+id/upgrade_dialog_button"
-        android:layout_width="100dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@color/colorPrimaryDark"
-        android:focusable="false"
-        android:fontFamily="@string/fontFamilyMedium"
-        android:text="Upgrade"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"/>
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="@dimen/text_margin">
+
+        <Button
+            android:id="@+id/upgrade_dialog_upgrade"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/colorPrimaryDark"
+            android:focusable="false"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="Upgrade"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/centerPoint"
+            android:text=""
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/upgrade_dialog_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:background="@color/colorPrimaryDark"
+            android:focusable="false"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="Cancel"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
 
 </LinearLayout>
