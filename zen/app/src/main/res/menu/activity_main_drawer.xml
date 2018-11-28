@@ -30,6 +30,11 @@
     </group>
 
     <item
+        android:id="@+id/nav_upgrade"
+        android:icon="@mipmap/baseline_stars_black_24"
+        android:title="@string/navigation_drawer_upgrade"/>
+
+    <item
         android:id="@+id/nav_feedback"
         android:icon="@mipmap/ic_feedback_black_24dp"
         android:title="@string/navigation_drawer_feedback"/>

@@ -44,14 +44,6 @@ public final class FeaturesService {
    * else return {@link FeaturesType#FREE}
    */
   public FeaturesType getFeaturesType() {
-    if (Utils.isDebug()) {
-      return FeaturesType.FREE;
-    }
-
-    if (Utils.isFirstInstall(context)) {
-      return FeaturesType.FREE;
-    }
-
     if (isUpgradedUser()) {
         // Upgraded users have all features for free.
         return FeaturesType.PAID;
@@ -61,11 +53,19 @@ public final class FeaturesService {
       return FeaturesType.PAID;
     }
 
+    if (Utils.isFirstInstall(context)) {
+      return FeaturesType.FREE;
+    }
+
+    if (Utils.isDebug()) {
+      return FeaturesType.FREE;
+    }
+
     return FeaturesType.FREE;
   }
 
-  public void setExtendedVersion(boolean extended) {
-    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, extended).apply();
+  public void storeExtendedVersion() {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, true).apply();
   }
 
   private boolean getExtendedVersion() {

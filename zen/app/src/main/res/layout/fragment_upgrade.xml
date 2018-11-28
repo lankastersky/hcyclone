@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:minWidth="500dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/text_margin">
+    android:padding="@dimen/dialog_margin">
 
     <include layout="@layout/loading_indicator" />
 
@@ -15,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingBottom="@dimen/text_margin"
-        android:text="Extended version"
+        android:text="Extended version features"
         android:textSize="20sp"/>
 
     <TextView
@@ -23,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/text_margin"
-        android:text="Different levels of challenges"
+        android:text="- Different levels of challenges"
         android:textSize="16sp"/>
 
     <TextView
@@ -31,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/text_margin"
-        android:text="Statistics available"
+        android:text="- Statistics charts"
         android:textSize="16sp"/>
 
     <TextView
@@ -39,47 +40,100 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/text_margin"
-        android:text="No ads anymore"
+        android:text="- No ads"
         android:textSize="16sp"/>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:padding="@dimen/text_margin">
-
-        <Button
-            android:id="@+id/upgrade_dialog_upgrade"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:background="@color/colorPrimaryDark"
-            android:focusable="false"
-            android:fontFamily="@string/fontFamilyMedium"
-            android:text="Upgrade"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/centerPoint"
-            android:text=""
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true" />
-
-        <Button
-            android:id="@+id/upgrade_dialog_cancel"
+            android:id="@+id/upgrade_dialog_price_buy"
+            android:textStyle="bold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.5"
+            android:layout_marginBottom="8dp"
+            android:text="One-time purchase - $4.99"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/upgrade_dialog_buy"/>
+
+        <Button
+            android:id="@+id/upgrade_dialog_buy"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorPrimaryDark"
             android:focusable="false"
             android:fontFamily="@string/fontFamilyMedium"
-            android:text="Cancel"
+            android:text="Buy"
             android:textColor="@android:color/white"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/upgrade_dialog_price_subscribe"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Subscription - $0.99 / month"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/upgrade_dialog_subscribe"/>
+
+        <Button
+            android:id="@+id/upgrade_dialog_subscribe"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin"
+            android:background="@color/colorPrimaryDark"
+            android:focusable="false"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="Subscribe"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upgrade_dialog_buy"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:padding="@dimen/text_margin">-->
+
+        <!--<Button-->
+            <!--android:id="@+id/upgrade_dialog_upgrade"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:background="@color/colorPrimaryDark"-->
+            <!--android:focusable="false"-->
+            <!--android:fontFamily="@string/fontFamilyMedium"-->
+            <!--android:text="Upgrade"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="16sp"/>-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/centerPoint"-->
+            <!--android:text=""-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerHorizontal="true" />-->
+
+        <!--<Button-->
+            <!--android:id="@+id/upgrade_dialog_cancel"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:background="@color/colorPrimaryDark"-->
+            <!--android:focusable="false"-->
+            <!--android:fontFamily="@string/fontFamilyMedium"-->
+            <!--android:text="Cancel"-->
+            <!--android:textColor="@android:color/white"-->
+            <!--android:textSize="16sp"/>-->
+
+    <!--</LinearLayout>-->
 
 </LinearLayout>

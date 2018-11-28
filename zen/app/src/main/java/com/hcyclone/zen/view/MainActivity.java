@@ -27,7 +27,6 @@ import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.service.BillingService;
 import com.hcyclone.zen.service.BillingService.BillingUpdatesListener;
-import com.hcyclone.zen.service.BillingProvider;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -35,13 +34,14 @@ import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.ChallengesLoader;
 import com.hcyclone.zen.service.FeaturesService;
+import com.hcyclone.zen.service.FeaturesService.FeaturesType;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener,
     ChallengesLoader.ChallengesLoadListener,
-    BillingProvider {
+    BillingUpdatesListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
@@ -50,10 +50,13 @@ public class MainActivity extends AppCompatActivity
 
   private ProgressBar progressBar;
   private DrawerLayout drawer;
+  private NavigationView navigationView;
   private boolean loadingChallenges;
   private String lastFragmentTag;
   private BillingService billingService;
   private ChallengeModel challengeModel;
+  private FeaturesService featuresService;
+  private UpgradeFragment upgradeFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +72,7 @@ public class MainActivity extends AppCompatActivity
     drawer.setDrawerListener(toggle);
     toggle.syncState();
 
-    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
     progressBar = findViewById(R.id.progressBar);
@@ -80,57 +83,13 @@ public class MainActivity extends AppCompatActivity
 
     App app = (App) getApplication();
     challengeModel = app.getChallengeModel();
-    FeaturesService featuresService = app.getFeaturesService();
-
-    if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
-      // Disable charts.
-      Menu navigationMenu = navigationView.getMenu();
-      MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
-      item.setVisible(false);
-
-      showAds(true);
-    }
+    featuresService = app.getFeaturesService();
 
     if (savedInstanceState != null) {
       lastFragmentTag = savedInstanceState.getString(KEY_LAST_FRAGMENT_TAG);
     }
 
-    // Create and initialize BillingService which talks to BillingLibrary
-    billingService = new BillingService(this, new BillingUpdatesListener() {
-
-      @Override
-      public void onBillingClientSetupFinished() {
-        Log.d(TAG, "On billing client setup finished");
-      }
-
-      @Override
-      public void onConsumeFinished(String token, int result) {
-        Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
-        // Note: We know this is our sku, because it's the only one we consume, so we don't
-        // check if token corresponding to the expected sku was consumed.
-        if (result == BillingResponse.OK) {
-          // Successfully consumed, so we apply the effects of the item in our
-          // game world's logic, which in our case means filling the gas tank a bit
-          Log.d(TAG, "Consumption successful. Provisioning.");
-        } else {
-          Log.e(TAG, "Error while consuming: " + result);
-        }
-      }
-
-      @Override
-      public void onPurchasesUpdated(List<Purchase> purchases) {
-        Log.d(TAG, "On purchase updated: " + purchases.toArray().toString());
-        for (Purchase purchase : purchases) {
-          switch (purchase.getSku()) {
-            case "no_ads_subscription":
-              Log.d(TAG, "no_ads_subscription purchased");
-              featuresService.setExtendedVersion(true);
-              showAds(false);
-              break;
-          }
-        }
-      }
-    });
+    billingService = new BillingService(this, this);
   }
 
   @Override
@@ -144,8 +103,9 @@ public class MainActivity extends AppCompatActivity
     super.onStart();
 
     if (loadingChallenges) {
-      // We load using background service which is not available on Android O+ in background. So
+      // We load using background service which is not available on Android 8+ in background. So
       // we have to wait for the activity to be in foreground (started) first.
+      // See https://developer.android.com/about/versions/oreo/background#services
       new Handler().post(() -> {
         new ChallengesLoader(this, this).loadChallenges(this);
       });
@@ -155,6 +115,8 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
+
+    refreshUi();
 
     if (loadingChallenges) {
       return;
@@ -172,15 +134,6 @@ public class MainActivity extends AppCompatActivity
 //      selectMenuItem();
 //      replaceFragment(ChallengeFragment.TAG);
 //    }
-
-    // Note: We query purchases in onResume() to handle purchases completed while the activity
-    // is inactive. For example, this can happen if the activity is destroyed during the
-    // purchase flow. This ensures that when the activity is resumed it reflects the user's
-    // current purchases.
-    if (billingService != null
-        && billingService.getBillingClientResponseCode() == BillingResponse.OK) {
-      billingService.queryPurchases();
-    }
   }
 
   @Override
@@ -193,9 +146,7 @@ public class MainActivity extends AppCompatActivity
   public void onDestroy() {
     Log.d(TAG, "Destroy");
     super.onDestroy();
-    if (billingService != null) {
-      billingService.destroy();
-    }
+    billingService.destroy();
   }
 
   @Override
@@ -269,17 +220,77 @@ public class MainActivity extends AppCompatActivity
         getString(R.string.dialog_text_failed_to_connect), this, null).show();
   }
 
-  // BillingProvider
+  // BillingUpdatesListener
 
   @Override
+  public void onBillingClientSetupFinished() {
+    Log.d(TAG, "On billing client setup finished");
+  }
+
+  @Override
+  public void onConsumeFinished(String token, int result) {
+    Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
+    if (result == BillingResponse.OK) {
+      Log.d(TAG, "Consumption successful.");
+    } else {
+      Log.e(TAG, "Error while consuming: " + result);
+    }
+  }
+
+  @Override
+  public void onPurchasesUpdated(List<Purchase> purchases) {
+    for (Purchase purchase : purchases) {
+      Log.d(TAG, purchase.getSku() + " purchased");
+    }
+    // We have only one purchase for now.
+    //if (getString(R.string.purchase_extended_version).equals(purchase.getSku())) {
+    featuresService.storeExtendedVersion();
+    showUpgradeDialog(false);
+    refreshUi();
+    //}
+  }
+
+  @Override
+  public void onPurchasesCancelled() {
+    if (upgradeFragment != null && upgradeFragment.isVisible()) {
+      upgradeFragment.enableUi(true);
+    }
+    refreshUi();
+  }
+
   public BillingService getBillingService() {
     return billingService;
   }
 
-  @Override
-  public boolean isPremiumPurchased() {
-    // TODO: implement
-    return false;
+  /** Shows upgrade dialog. */
+  public void showUpgradeDialog(boolean show) {
+    if (show && featuresService.getFeaturesType() == FeaturesType.PAID) {
+      Utils.buildDialog(
+          "You are using extended version",
+          "Features available:\n- Different levels of challenges\n- Statistics charts\n- No ads",
+          this,
+          null).show();
+      return;
+    }
+    if (upgradeFragment == null) {
+      upgradeFragment = new UpgradeFragment();
+    }
+    if (show) {
+      upgradeFragment.show(getSupportFragmentManager(), UpgradeFragment.TAG);
+    } else if (upgradeFragment.isVisible()) {
+      upgradeFragment.dismiss();
+    }
+  }
+
+  private void refreshUi() {
+    boolean extended = featuresService.getFeaturesType() == FeaturesType.PAID;
+
+    // Update charts.
+    Menu navigationMenu = navigationView.getMenu();
+    MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
+    item.setVisible(extended);
+
+    showAds(!extended);
   }
 
   private boolean isStartFromNotification() {
@@ -322,6 +333,9 @@ public class MainActivity extends AppCompatActivity
         break;
       case R.id.nav_help:
         replaceFragment(HelpFragment.TAG);
+        break;
+      case R.id.nav_upgrade:
+        showUpgradeDialog(true);
         break;
       case R.id.nav_feedback:
         Utils.sendFeedback(this);

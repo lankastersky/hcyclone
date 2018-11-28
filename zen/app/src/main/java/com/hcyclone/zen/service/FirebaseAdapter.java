@@ -168,10 +168,10 @@ public class FirebaseAdapter {
 
   /** The server has different challenges' file resources for different locales. */
   private static String getChallengesFilename(String challengesLocale) {
-    if (challengesLocale.equals(Locale.ENGLISH.getLanguage())) {
-      return CHALLENGES_FILENAME_EN;
+    if (challengesLocale.equalsIgnoreCase("ru")) {
+      return CHALLENGES_FILENAME_RU;
     }
-    return CHALLENGES_FILENAME_RU;
+    return CHALLENGES_FILENAME_EN;
   }
 
   private static String unzip(byte[] bytes) throws IOException {

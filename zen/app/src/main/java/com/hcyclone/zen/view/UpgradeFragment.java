@@ -10,23 +10,35 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import com.hcyclone.zen.service.BillingProvider;
+import android.widget.TextView;
+import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.SkuType;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.hcyclone.zen.Log;
+import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.R;
+import com.hcyclone.zen.service.BillingService;
+import java.util.ArrayList;
+import java.util.List;
 
+/** Shows upgrade features. */
 public final class UpgradeFragment extends AppCompatDialogFragment {
 
   public static final String TAG = UpgradeFragment.class.getSimpleName();
 
-  private BillingProvider billingProvider;
+  private BillingService billingService;
   private View loadingView;
-  private Button upgradeButton;
-  private Button cancelButton;
+  private Button buyButton;
+  private Button subscribeButton;
+  private TextView priceBuyTextView;
+  private TextView priceSubscribeTextView;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    if (context instanceof BillingProvider) {
-      billingProvider = (BillingProvider) context;
+    if (context instanceof MainActivity) {
+      billingService = ((MainActivity) context).getBillingService();
     } else {
       throw new RuntimeException(context.toString() + " must implement BillingProvider");
     }
@@ -44,37 +56,148 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
 
     View root = inflater.inflate(R.layout.fragment_upgrade, container, false);
 
-    setCancelable(false);
-
     loadingView = root.findViewById(R.id.screen_wait);
-    upgradeButton = root.findViewById(R.id.upgrade_dialog_upgrade);
-    upgradeButton.setOnClickListener(v -> {
-      enableButtons(false);
-      loadingView.setVisibility(View.VISIBLE);
-      // FeaturesService featuresService =
-      //     ((App) getContext().getApplicationContext()).getFeaturesService();
-      // featuresService.setExtendedVersion(true);
+    priceBuyTextView = root.findViewById(R.id.upgrade_dialog_price_buy);
+    priceSubscribeTextView = root.findViewById(R.id.upgrade_dialog_price_subscribe);
+
+    buyButton = root.findViewById(R.id.upgrade_dialog_buy);
+    buyButton.setOnClickListener(v -> {
+      enableUi(false);
+      String purchaseId;
+      if (Utils.isDebug()) {
+        purchaseId = getString(R.string.purchase_test_purchased);
+      } else {
+        purchaseId = getString(R.string.purchase_extended_version);
+      }
+      billingService.initiatePurchaseFlow(purchaseId, SkuType.INAPP, getActivity());
     });
 
-    cancelButton = root.findViewById(R.id.upgrade_dialog_cancel);
-    cancelButton.setOnClickListener(v -> dismiss() );
-
-    if (billingProvider != null) {
-      handleManagerAndUiReady();
+    subscribeButton = root.findViewById(R.id.upgrade_dialog_subscribe);
+    if (billingService.areSubscriptionsSupported()) {
+      subscribeButton.setOnClickListener(v -> {
+        enableUi(false);
+        String purchaseId;
+        if (Utils.isDebug()) {
+          purchaseId = getString(R.string.purchase_test_purchased);
+        } else {
+          purchaseId = getString(R.string.purchase_extended_version_monthly_subscription);
+        }
+        billingService.initiatePurchaseFlow(purchaseId, SkuType.SUBS, getActivity());
+      });
+    } else {
+      subscribeButton.setVisibility(View.GONE);
+      priceSubscribeTextView.setVisibility(View.GONE);
     }
+
+    querySkuDetailsAsync((responseCode, skuDetailsList) -> {
+      if (responseCode == BillingResponse.OK
+          && skuDetailsList != null
+          && !skuDetailsList.isEmpty()) {
+
+        for (SkuDetails skuDetails : skuDetailsList) {
+          Log.d(TAG, "Sku: " + skuDetails.toString());
+
+          // Cancel test purchases for debug purposes.
+          if (Utils.isDebug()) {
+            if (getContext().getString(R.string.purchase_test_purchased)
+                .equals(skuDetails.getSku())) {
+              String purchaseToken;
+              if (skuDetails.getType().equals(SkuType.INAPP)) {
+                purchaseToken = "inapp:" + getContext().getPackageName() + ":"
+                    + getContext().getString(R.string.purchase_test_purchased);
+              } else {
+                purchaseToken = "subs:" + getContext().getPackageName() + ":"
+                    + getContext().getString(R.string.purchase_test_purchased);
+              }
+              billingService.consumeAsync(purchaseToken);
+            }
+          }
+        }
+
+        refreshUi(skuDetailsList);
+      } else {
+        Log.e(TAG, "Failed to get sku details: " + responseCode);
+      }
+    });
     return root;
   }
 
-  private void handleManagerAndUiReady() {
-    billingProvider.getBillingService().queryPurchases();
+  // @Override
+  // public void onResume() {
+  //   super.onResume();
+  //   enableUi(true);
+  // }
+
+  /** Enables controls. */
+  public void enableUi(boolean enable) {
+    enableButtons(enable);
+    loadingView.setVisibility(enable ? View.GONE : View.VISIBLE);
+  }
+
+  private void refreshUi(List<SkuDetails> skuDetailsList) {
+    for (SkuDetails skuDetails : skuDetailsList) {
+      if (getContext().getString(R.string.purchase_extended_version).equals(skuDetails.getSku())) {
+        String text = String.format("One-time purchase - %s", skuDetails.getPrice());
+        priceBuyTextView.setText(text);
+        continue;
+      }
+
+      if (getContext().getString(R.string.purchase_extended_version_monthly_subscription)
+          .equals(skuDetails.getSku())) {
+
+        String text = String.format("Subscription - %s", skuDetails.getPrice());
+        priceSubscribeTextView.setText(text);
+        continue;
+      }
+
+      if (Utils.isDebug()) {
+        if (getContext().getString(R.string.purchase_test_purchased).equals(skuDetails.getSku())) {
+          if (skuDetails.getType().equals(SkuType.INAPP)) {
+            String text = String.format("One-time purchase - %s", skuDetails.getPrice());
+            priceBuyTextView.setText(text);
+          } else {
+            String text = String.format("Subscription - %s", skuDetails.getPrice());
+            priceSubscribeTextView.setText(text);
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Query purchases across various use cases and deliver the result in a formalized way through
+   * a listener.
+   */
+  private void querySkuDetailsAsync(SkuDetailsResponseListener listener) {
+    // Request in-app purchases.
+    List<String> skuInAppList = new ArrayList<>();
+    skuInAppList.add(getContext().getString(R.string.purchase_extended_version));
+    if (Utils.isDebug()) {
+      // See https://developer.android.com/google/play/billing/billing_testing#draft_apps
+      skuInAppList.add(getContext().getString(R.string.purchase_test_purchased));
+      //skuList.add("android.test.canceled");
+      //skuList.add("android.test.item_unavailable");
+    }
+    billingService.querySkuDetailsAsync(SkuType.INAPP, skuInAppList, listener);
+
+    // Request subscriptions.
+    if (billingService.areSubscriptionsSupported()) {
+      List<String> skuSubsList = new ArrayList<>();
+      skuSubsList.add(
+          getContext().getString(R.string.purchase_extended_version_monthly_subscription));
+      if (Utils.isDebug()) {
+        skuSubsList.add(getContext().getString(R.string.purchase_test_purchased));
+      }
+      billingService.querySkuDetailsAsync(SkuType.SUBS, skuSubsList, listener);
+    }
   }
 
   private void enableButtons(boolean enable) {
-    upgradeButton.setEnabled(enable);
-    cancelButton.setEnabled(enable);
+    buyButton.setEnabled(enable);
+    subscribeButton.setEnabled(enable);
 
     int colorResId = enable ? R.color.colorPrimaryDark : R.color.colorPrimaryDisabled;
-    upgradeButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
-    cancelButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
+    buyButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
+    subscribeButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
   }
 }

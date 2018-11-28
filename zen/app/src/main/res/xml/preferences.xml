@@ -68,9 +68,6 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_header_challenges_language"/>
 
-    <Preference android:title="@string/pref_upgrade"
-        android:key="pref_upgrade"/>
-
     <Preference android:title="@string/pref_privacy_policy"
         android:key="pref_privacy_policy"/>
 
