@@ -23,9 +23,12 @@ public final class PreferencesService {
   public static final String PREF_KEY_FINAL_ALARM_LIST = "pref_final_reminder_list";
   public static final String PREF_KEY_NOTIFICATION_RINGTONE = "notification_ringtone";
   public static final String PREF_KEY_NOTIFICATION_VIBRATE = "notification_vibrate";
-  public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
   public static final String PREF_KEY_CHALLENGES_LANGUAGE_LIST = "pref_challenges_locale";
   public static final String PREF_KEY_PRIVACY_POLICY = "pref_privacy_policy";
+
+  // Debug options
+  public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
+  public static final String PREF_KEY_CLEAR_PURCHASES = "pref_clear_purchases";
 
   private final Context context;
   private final SharedPreferences sharedPreferences;

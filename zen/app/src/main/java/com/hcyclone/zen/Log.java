@@ -1,9 +1,9 @@
 package com.hcyclone.zen;
 
-/**
- * Logger.
- */
-public class Log {
+/** Logger. */
+public final class Log {
+
+  private Log() {}
 
   public static void i(String tag, String string) {
     android.util.Log.i(tag, string);

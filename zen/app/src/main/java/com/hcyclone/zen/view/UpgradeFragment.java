@@ -27,10 +27,13 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
 
   public static final String TAG = UpgradeFragment.class.getSimpleName();
 
+  private static final String FEATURE_WITH_PRICE_FORMAT = "%s - %s";
+
   private BillingService billingService;
   private View loadingView;
   private Button buyButton;
   private Button subscribeButton;
+  private Button cancelButton;
   private TextView priceBuyTextView;
   private TextView priceSubscribeTextView;
 
@@ -40,7 +43,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     if (context instanceof MainActivity) {
       billingService = ((MainActivity) context).getBillingService();
     } else {
-      throw new RuntimeException(context.toString() + " must implement BillingProvider");
+      throw new RuntimeException(context.toString() + " must implement MainActivity");
     }
   }
 
@@ -60,6 +63,9 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     priceBuyTextView = root.findViewById(R.id.upgrade_dialog_price_buy);
     priceSubscribeTextView = root.findViewById(R.id.upgrade_dialog_price_subscribe);
 
+    cancelButton = root.findViewById(R.id.upgrade_dialog_cancel);
+    cancelButton.setOnClickListener(v -> dismiss());
+
     buyButton = root.findViewById(R.id.upgrade_dialog_buy);
     buyButton.setOnClickListener(v -> {
       enableUi(false);
@@ -76,18 +82,22 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     if (billingService.areSubscriptionsSupported()) {
       subscribeButton.setOnClickListener(v -> {
         enableUi(false);
-        String purchaseId;
-        if (Utils.isDebug()) {
-          purchaseId = getString(R.string.purchase_test_purchased);
-        } else {
-          purchaseId = getString(R.string.purchase_extended_version_monthly_subscription);
-        }
+        String purchaseId = getString(R.string.purchase_extended_version_monthly_subscription);
         billingService.initiatePurchaseFlow(purchaseId, SkuType.SUBS, getActivity());
       });
     } else {
       subscribeButton.setVisibility(View.GONE);
       priceSubscribeTextView.setVisibility(View.GONE);
     }
+
+    return root;
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+
+    enableUi(false);
 
     querySkuDetailsAsync((responseCode, skuDetailsList) -> {
       if (responseCode == BillingResponse.OK
@@ -96,40 +106,17 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
 
         for (SkuDetails skuDetails : skuDetailsList) {
           Log.d(TAG, "Sku: " + skuDetails.toString());
-
-          // Cancel test purchases for debug purposes.
-          if (Utils.isDebug()) {
-            if (getContext().getString(R.string.purchase_test_purchased)
-                .equals(skuDetails.getSku())) {
-              String purchaseToken;
-              if (skuDetails.getType().equals(SkuType.INAPP)) {
-                purchaseToken = "inapp:" + getContext().getPackageName() + ":"
-                    + getContext().getString(R.string.purchase_test_purchased);
-              } else {
-                purchaseToken = "subs:" + getContext().getPackageName() + ":"
-                    + getContext().getString(R.string.purchase_test_purchased);
-              }
-              billingService.consumeAsync(purchaseToken);
-            }
-          }
         }
-
         refreshUi(skuDetailsList);
       } else {
         Log.e(TAG, "Failed to get sku details: " + responseCode);
       }
+      enableUi(true);
     });
-    return root;
   }
 
-  // @Override
-  // public void onResume() {
-  //   super.onResume();
-  //   enableUi(true);
-  // }
-
   /** Enables controls. */
-  public void enableUi(boolean enable) {
+  private void enableUi(boolean enable) {
     enableButtons(enable);
     loadingView.setVisibility(enable ? View.GONE : View.VISIBLE);
   }
@@ -137,7 +124,10 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
   private void refreshUi(List<SkuDetails> skuDetailsList) {
     for (SkuDetails skuDetails : skuDetailsList) {
       if (getContext().getString(R.string.purchase_extended_version).equals(skuDetails.getSku())) {
-        String text = String.format("One-time purchase - %s", skuDetails.getPrice());
+        String text = String.format(
+            FEATURE_WITH_PRICE_FORMAT,
+            getString(R.string.upgrade_dialog_one_time_purchase),
+            skuDetails.getPrice());
         priceBuyTextView.setText(text);
         continue;
       }
@@ -145,20 +135,21 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
       if (getContext().getString(R.string.purchase_extended_version_monthly_subscription)
           .equals(skuDetails.getSku())) {
 
-        String text = String.format("Subscription - %s", skuDetails.getPrice());
+        String text = String.format(
+            FEATURE_WITH_PRICE_FORMAT,
+            getString(R.string.upgrade_dialog_subscription),
+            skuDetails.getPrice());
         priceSubscribeTextView.setText(text);
         continue;
       }
 
       if (Utils.isDebug()) {
         if (getContext().getString(R.string.purchase_test_purchased).equals(skuDetails.getSku())) {
-          if (skuDetails.getType().equals(SkuType.INAPP)) {
-            String text = String.format("One-time purchase - %s", skuDetails.getPrice());
-            priceBuyTextView.setText(text);
-          } else {
-            String text = String.format("Subscription - %s", skuDetails.getPrice());
-            priceSubscribeTextView.setText(text);
-          }
+          String text = String.format(
+              FEATURE_WITH_PRICE_FORMAT,
+              getString(R.string.upgrade_dialog_one_time_purchase),
+              skuDetails.getPrice());
+          priceBuyTextView.setText(text);
         }
       }
     }
@@ -195,9 +186,11 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
   private void enableButtons(boolean enable) {
     buyButton.setEnabled(enable);
     subscribeButton.setEnabled(enable);
+    cancelButton.setEnabled(enable);
 
     int colorResId = enable ? R.color.colorPrimaryDark : R.color.colorPrimaryDisabled;
-    buyButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
-    subscribeButton.setBackgroundColor(ContextCompat.getColor(getActivity(), colorResId));
+    buyButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
+    subscribeButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
+    cancelButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
   }
 }

@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="@dimen/text_margin"
+        android:paddingBottom="@dimen/text_margin_big"
         android:text="Title Stub"
         android:textSize="20sp"/>
 
@@ -19,13 +19,13 @@
         android:id="@+id/alert_dialog_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/text_margin"
+        android:paddingBottom="@dimen/text_margin_big"
         android:text="Message stub"
         android:textSize="16sp"/>
 
     <Button
         android:id="@+id/alert_dialog_button"
-        android:layout_width="180dp"
+        android:layout_width="@dimen/button_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@color/colorPrimaryDark"

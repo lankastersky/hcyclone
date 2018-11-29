@@ -110,6 +110,14 @@ public class MainActivity extends AppCompatActivity
         new ChallengesLoader(this, this).loadChallenges(this);
       });
     }
+
+    // Note: We query purchases in onResume() to handle purchases completed while the activity
+    // is inactive. For example, this can happen if the activity is destroyed during the
+    // purchase flow. This ensures that when the activity is resumed it reflects the user's
+    // current purchases.
+    if (billingService.getBillingClientResponseCode() == BillingResponse.OK) {
+      billingService.queryPurchases();
+    }
   }
 
   @Override
@@ -228,32 +236,43 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onConsumeFinished(String token, int result) {
+  public void onConsumeFinished(String token, @BillingResponse int result) {
     Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
     if (result == BillingResponse.OK) {
       Log.d(TAG, "Consumption successful.");
     } else {
       Log.e(TAG, "Error while consuming: " + result);
     }
-  }
-
-  @Override
-  public void onPurchasesUpdated(List<Purchase> purchases) {
-    for (Purchase purchase : purchases) {
-      Log.d(TAG, purchase.getSku() + " purchased");
-    }
-    // We have only one purchase for now.
-    //if (getString(R.string.purchase_extended_version).equals(purchase.getSku())) {
-    featuresService.storeExtendedVersion();
-    showUpgradeDialog(false);
     refreshUi();
-    //}
   }
 
   @Override
-  public void onPurchasesCancelled() {
-    if (upgradeFragment != null && upgradeFragment.isVisible()) {
-      upgradeFragment.enableUi(true);
+  public void onPurchasesUpdated(@BillingResponse int result, List<Purchase> purchases) {
+    boolean upgrade = false;
+    switch (result) {
+      case BillingResponse.OK:
+        boolean extendedVersionPurchased = false;
+        for (Purchase purchase : purchases) {
+          String sku = purchase.getSku();
+          Log.d(TAG, sku + " purchased");
+
+          extendedVersionPurchased |= getString(R.string.purchase_extended_version).equals(sku);
+          extendedVersionPurchased |= getString(
+              R.string.purchase_extended_version_monthly_subscription).equals(sku);
+
+          if (Utils.isDebug()) {
+            extendedVersionPurchased |= getString(R.string.purchase_test_purchased).equals(sku);
+          }
+        }
+        if (featuresService.getFeaturesType() == FeaturesType.FREE && extendedVersionPurchased) {
+          upgrade = true;
+        }
+        featuresService.storeExtendedVersion(extendedVersionPurchased);
+        break;
+    }
+    showNeedToUpgradeDialog(false);
+    if (upgrade) {
+      showAlreadyUpgradedDialog();
     }
     refreshUi();
   }
@@ -263,22 +282,31 @@ public class MainActivity extends AppCompatActivity
   }
 
   /** Shows upgrade dialog. */
-  public void showUpgradeDialog(boolean show) {
+  private void showUpgradeDialog(boolean show) {
     if (show && featuresService.getFeaturesType() == FeaturesType.PAID) {
-      Utils.buildDialog(
-          "You are using extended version",
-          "Features available:\n- Different levels of challenges\n- Statistics charts\n- No ads",
-          this,
-          null).show();
+      showAlreadyUpgradedDialog();
       return;
     }
+    showNeedToUpgradeDialog(show);
+  }
+
+  private void showAlreadyUpgradedDialog() {
+    Utils.buildDialog(
+        getString(R.string.dialog_premium_title),
+        getString(R.string.dialog_premium_features),
+        this,
+        null).show();
+  }
+
+  private void showNeedToUpgradeDialog(boolean show) {
     if (upgradeFragment == null) {
       upgradeFragment = new UpgradeFragment();
     }
+
     if (show) {
       upgradeFragment.show(getSupportFragmentManager(), UpgradeFragment.TAG);
     } else if (upgradeFragment.isVisible()) {
-      upgradeFragment.dismiss();
+      upgradeFragment.dismissAllowingStateLoss();
     }
   }
 

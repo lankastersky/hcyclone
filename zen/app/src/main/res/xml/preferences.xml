@@ -57,7 +57,13 @@
     <SwitchPreferenceCompat
         android:defaultValue="false"
         android:key="pref_show_challenges"
-        android:title="Show Challenges"/>
+        android:title="Show Challenges"
+        android:summary="Debug only"/>
+
+    <Preference
+        android:key="pref_clear_purchases"
+        android:title="Clear purchases"
+        android:summary="Debug only"/>
 
     <ListPreference
         android:defaultValue="@string/pref_language_ru"

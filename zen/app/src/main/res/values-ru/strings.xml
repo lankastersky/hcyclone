@@ -84,5 +84,16 @@
     <string name="pref_restart_needed_title">Требуется перезапуск</string>
     <string name="pref_restart_needed_message">Пожалуйста, перезапустите приложение</string>
     <string name="pref_privacy_policy">Политика конфиденциальности</string>
+  <string name="navigation_drawer_upgrade">Премиум-версия</string>
+    <string name="upgrade_dialog_levels">- Разные уровни сложности заданий</string>
+    <string name="upgrade_dialog_statistics">- Графики со статистикой выполнения</string>
+    <string name="upgrade_dialog_no_ads">- Нет рекламы</string>
+    <string name="upgrade_dialog_one_time_purchase">Покупка</string>
+    <string name="upgrade_dialog_buy">Купить</string>
+    <string name="upgrade_dialog_subscription">Подписка</string>
+    <string name="upgrade_dialog_subscribe">Купить</string>
+    <string name="upgrade_dialog_title">Возможности премиум-версии:</string>
+  <string name="dialog_premium_title">Вы используете премиум-версию</string>
+    <string name="dialog_premium_features">Доступные возможности:\n- Разные уровни сложности заданий\n- Графики со статистикой выполнения\n- Нет рекламы</string>
 
 </resources>

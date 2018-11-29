@@ -11,9 +11,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.service.BillingService;
 import com.hcyclone.zen.service.PreferencesService;
 
 import static android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -63,6 +65,16 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     // Showing all challenges in the Journal by default. Set visible for beta testing if needed.
     findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
+
+    Preference clearPurchasesButton = findPreference(PreferencesService.PREF_KEY_CLEAR_PURCHASES);
+    clearPurchasesButton.setVisible(Utils.isDebug());
+    clearPurchasesButton.setOnPreferenceClickListener(preference -> {
+      MainActivity mainActivity = (MainActivity) getActivity();
+      BillingService billingService = mainActivity.getBillingService();
+      billingService.clearPurchases(getContext());
+      ((App) mainActivity.getApplication()).getFeaturesService().storeExtendedVersion(false);
+      return true;
+    });
   }
 
   @Override

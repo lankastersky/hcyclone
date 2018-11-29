@@ -10,7 +10,7 @@
     <string name="navigation_drawer_statistics">Statistics</string>
     <string name="navigation_drawer_settings">Settings</string>
     <string name="navigation_drawer_help">Help</string>
-    <string name="navigation_drawer_upgrade">Upgrade</string>
+    <string name="navigation_drawer_upgrade">Premium Version</string>
     <string name="navigation_drawer_feedback">Feedback</string>
 
     <!-- Strings related to Settings -->
@@ -177,12 +177,27 @@
     <string name="rank_dialog_title">Estimate your level of consciousness</string>
     <string name="rank_dialog_rate">Rate</string>
 
-    <!-- Alert dialog -->
+    <!-- Alert dialogs -->
+
     <!-- Level up -->
     <string name="dialog_title_next_level_available">Next level is available</string>
     <string name="dialog_text_next_level_available">Challenges of %s level of difficulty are
         available.
     </string>
+
+    <!-- Premium version dialog -->
+    <string name="dialog_premium_title">Your are using Premium version</string>
+    <string name="dialog_premium_features">Features available:\n- Different levels of challenges\n- Statistics charts\n- No ads</string>
+
+    <!-- Upgrade dialog -->
+    <string name="upgrade_dialog_title">Premium version features:</string>
+    <string name="upgrade_dialog_levels">- Different levels of challenges</string>
+    <string name="upgrade_dialog_statistics">- Statistics charts</string>
+    <string name="upgrade_dialog_no_ads">- No ads</string>
+    <string name="upgrade_dialog_one_time_purchase">One-time purchase</string>
+    <string name="upgrade_dialog_buy">Buy</string>
+    <string name="upgrade_dialog_subscription">Subscription</string>
+    <string name="upgrade_dialog_subscribe">Subscribe</string>
 
     <!-- Firebase error -->
     <string name="dialog_title_something_wrong">Something is wrong</string>

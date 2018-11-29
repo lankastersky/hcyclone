@@ -64,8 +64,8 @@ public final class FeaturesService {
     return FeaturesType.FREE;
   }
 
-  public void storeExtendedVersion() {
-    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, true).apply();
+  public void storeExtendedVersion(boolean enable) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, enable).apply();
   }
 
   private boolean getExtendedVersion() {
