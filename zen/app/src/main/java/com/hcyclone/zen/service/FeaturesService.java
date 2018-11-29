@@ -67,9 +67,14 @@ public final class FeaturesService {
     return FeaturesType.FREE;
   }
 
-  /** Returns true if it's not a first install and the dialog wasn't shown before. */
+  /**
+   * Returns true if it's not a first install and the user is not upgraded and the dialog wasn't
+   * shown before.
+   */
   public boolean showExtendedVersionDialog() {
-    return !Utils.isFirstInstall(context) && !isExtendedVersionDialogShown();
+    return !Utils.isFirstInstall(context)
+        && !isUpgradedUser()
+        && !isExtendedVersionDialogShown();
   }
 
   /** Remembers if Extended version available dialog is shown. */
@@ -90,6 +95,7 @@ public final class FeaturesService {
     return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION_ACTIVATED, false);
   }
 
+  /** Returns true if the users was using our app before extended features (ads etc.). */
   private boolean isUpgradedUser() {
     if (Utils.isDebug()) {
       return sharedPreferences.getBoolean(
@@ -98,6 +104,10 @@ public final class FeaturesService {
     return sharedPreferences.getBoolean(KEY_UPGRADED_USER, false);
   }
 
+  /**
+   * Upgraded users are users who used the version without extended features (ads etc.).
+   * We didn't store versions of the app before that, so use it as a signal.
+   */
   private void storeUpgradedUserFlag() {
     // Upgraded users don't have version code stored.
     if (!Utils.isFirstInstall(context) && getVersionCode() == 0) {

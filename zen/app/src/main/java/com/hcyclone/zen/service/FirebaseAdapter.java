@@ -3,6 +3,7 @@ package com.hcyclone.zen.service;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -30,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipInputStream;
 
@@ -69,7 +69,7 @@ public class FirebaseAdapter {
         if (user != null) {
           Log.d(TAG, "User is signed in with uid: " + user.getUid());
         } else {
-          Log.e(TAG, "No user is signed in.");
+          Crashlytics.log(android.util.Log.ERROR, TAG, "No user is signed in.");
         }
     };
     FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
@@ -121,6 +121,7 @@ public class FirebaseAdapter {
               listener.onChallengesDownloaded(parseChallenges((Map<String, Object>) dataSnapshot.getValue()));
             } catch (Exception e) {
               Log.e(TAG, "Failed to parse challenges", e);
+              Crashlytics.logException(e);
               listener.onError(e);
             }
           }
@@ -151,6 +152,7 @@ public class FirebaseAdapter {
                 listener.onChallengesDownloaded(parseChallenges(jsonChallenges));
               } catch (Exception e) {
                 Log.e(TAG, "Failed to parse challenges", e);
+                Crashlytics.logException(e);
                 listener.onError(e);
               }
             })

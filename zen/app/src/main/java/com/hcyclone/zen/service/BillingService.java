@@ -128,7 +128,7 @@ public final class BillingService implements PurchasesUpdatedListener {
         if (subscriptionResult.getResponseCode() == BillingResponse.OK) {
           purchasesResult.getPurchasesList().addAll(subscriptionResult.getPurchasesList());
         } else {
-          Log.e(TAG, "Got an error response trying to query subscription purchases");
+          Log.w(TAG, "Got an error response trying to query subscription purchases");
         }
       } else if (purchasesResult.getResponseCode() == BillingResponse.OK) {
         Log.i(TAG, "Skipped subscription purchases query since they are not supported");

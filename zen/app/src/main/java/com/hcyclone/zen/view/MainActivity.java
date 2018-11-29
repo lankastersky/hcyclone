@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.Purchase;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -280,6 +281,7 @@ public class MainActivity extends AppCompatActivity
       showNeedToUpgradeDialog(false);
     }
     if (upgrade) {
+      // Let user know that he was upgraded.
       showAlreadyUpgradedDialog();
     }
     refreshUi();
@@ -402,6 +404,7 @@ public class MainActivity extends AppCompatActivity
       clazz = Class.forName(className).asSubclass(Fragment.class);
     } catch (ClassNotFoundException e) {
       Log.e(TAG, e.toString());
+      Crashlytics.logException(e);
       return;
     }
 

@@ -175,7 +175,7 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(TAG, "Wrong status to update: " + status);
+        Log.w(TAG, "Wrong status to update: " + status);
         break;
     }
   }
@@ -189,7 +189,7 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(TAG, "Wrong status to decline: " + status);
+        Log.w(TAG, "Wrong status to decline: " + status);
         break;
     }
   }

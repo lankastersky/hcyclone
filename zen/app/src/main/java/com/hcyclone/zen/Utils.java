@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zen.model.Challenge;
 
 import java.text.DateFormat;
@@ -45,7 +46,7 @@ public final class Utils {
   }
 
   public static long getDebugDailyAlarmTime() {
-    return 10_000;
+    return 5_000;
   }
 
   public static boolean isTimeLess6pm(Calendar date) {
@@ -59,7 +60,7 @@ public final class Utils {
     // Today.
     CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      CALENDAR.add(Calendar.SECOND, 15);
+      CALENDAR.add(Calendar.SECOND, 10);
     } else {
       CALENDAR.set(Calendar.HOUR_OF_DAY, 18);
       // Reset minutes, seconds and millis.
@@ -74,7 +75,7 @@ public final class Utils {
     // Today.
     CALENDAR.setTimeInMillis(time);
     if (isDebug()) {
-      CALENDAR.add(Calendar.SECOND, 10);
+      CALENDAR.add(Calendar.SECOND, 15);
     } else {
       // Reset hour, minutes, seconds and millis.
       CALENDAR.set(Calendar.HOUR_OF_DAY, 0);
@@ -101,6 +102,7 @@ public final class Utils {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {
       Log.e(TAG, "Can't get the version name.", e);
+      Crashlytics.logException(e);
       return "";
     }
   }
@@ -111,6 +113,7 @@ public final class Utils {
           .getPackageInfo(context.getPackageName(), 0).versionCode;
     } catch (Exception e) {
       Log.e(TAG, "Can't get the version code.", e);
+      Crashlytics.logException(e);
       return 0;
     }
   }
@@ -135,6 +138,7 @@ public final class Utils {
       return firstInstallTime == lastUpdateTime;
     } catch (PackageManager.NameNotFoundException e) {
       Log.e(TAG, "Can't get package info");
+      Crashlytics.logException(e);
       return true;
     }
   }

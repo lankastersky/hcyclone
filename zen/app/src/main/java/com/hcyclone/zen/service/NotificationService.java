@@ -92,7 +92,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   void showInitialAlarmNotification() {
     Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
-      Log.e(TAG, "Ignore initial alarm notification as challenge is null");
+      Log.w(TAG, "Ignore initial alarm notification as challenge is null");
       return;
     }
     if (!(challenge.getStatus() == Challenge.UNKNOWN || challenge.getStatus() == Challenge.SHOWN)) {
@@ -107,7 +107,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   void showFinalAlarmNotification() {
     Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
-      Log.e(TAG, "Ignore final alarm notification as challenge is null");
+      Log.w(TAG, "Ignore final alarm notification as challenge is null");
       return;
     }
     if (challenge.getStatus() != Challenge.ACCEPTED) {
@@ -123,7 +123,7 @@ public final class NotificationService implements OnSharedPreferenceChangeListen
   void showDailyAlarmNotification() {
     Challenge challenge = challengeModel.getSerializedCurrentChallenge();
     if (challenge == null) {
-      Log.e(TAG, "Ignore daily alarm notification as challenge is null");
+      Log.w(TAG, "Ignore daily alarm notification as challenge is null");
       return;
     }
     if (challenge.getStatus() != Challenge.ACCEPTED) {

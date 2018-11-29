@@ -12,8 +12,10 @@ import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge.LevelType;
 import com.hcyclone.zen.service.FeaturesService;
 
+import com.hcyclone.zen.service.FeaturesService.FeaturesType;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -149,8 +151,8 @@ public final class ChallengeModel {
   }
 
   /**
-   * Sets challenge status as {@link Challenge.SHOWN} if current status is
-   * {@link Challenge.UNKNOWN}.
+   * Sets challenge status as {@link Challenge#SHOWN} if current status is
+   * {@link Challenge#UNKNOWN}.
    */
   public void setChallengeShown(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
@@ -166,7 +168,7 @@ public final class ChallengeModel {
     storeState();
   }
 
-  /** Sets challenge status as {@link Challenge.ACCEPTED}. */
+  /** Sets challenge status as {@link Challenge#ACCEPTED}. */
   public void setChallengeAccepted(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -177,7 +179,7 @@ public final class ChallengeModel {
     storeState();
   }
 
-  /** Sets challenge status as {@link Challenge.FINISHED}. */
+  /** Sets challenge status as {@link Challenge#FINISHED}. */
   public void setChallengeFinished(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -226,7 +228,7 @@ public final class ChallengeModel {
       return false;
     }
     // Level up is disabled in the free version.
-    if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
+    if (featuresService.getFeaturesType() == FeaturesType.FREE) {
       return false;
     }
     Challenge challenge = getCurrentChallenge();
@@ -342,6 +344,12 @@ public final class ChallengeModel {
     // Ideally, we shouldn't have such challenges.
     nonfinishedChallenges.addAll(getChallengesByStatus(Challenge.SHOWN));
     nonfinishedChallenges = filterNonfinishedChallengesByLevel(nonfinishedChallenges);
+
+    // Only challenges of first level are available for free version.
+    if (featuresService.getFeaturesType() == FeaturesType.FREE) {
+      nonfinishedChallenges = filterChallengesByLevel(nonfinishedChallenges, Challenge.LEVEL_LOW);
+    }
+
     if (nonfinishedChallenges.size() > 0) {
       challenge = getRandomChallenge(nonfinishedChallenges);
       challengeId = challenge.getId();
@@ -354,15 +362,11 @@ public final class ChallengeModel {
         challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
-        Collection<Challenge> challenges = getChallengesMap().values();
-        if (featuresService.getFeaturesType() == FeaturesService.FeaturesType.FREE) {
-            challenges = filterNonfinishedChallengesByLevel(challenges);
-        }
-
         // All available challenges are finished. Return a random old one.
+        Collection<Challenge> challenges = getChallengesMap().values();
         challenge = getRandomChallenge(challenges);
         Challenge currentChallenge = getCurrentChallenge();
-        if (currentChallenge != null) {
+        if (currentChallenge != null && challenges.size() > 1) {
           while (challenge.getId().equals(currentChallenge.getId())) {
             challenge = getRandomChallenge(challenges);
           }
@@ -385,6 +389,19 @@ public final class ChallengeModel {
     }
     int id = (int) (Math.random() * challenges.size()); // Round up to floor value.
     return Iterables.get(challenges, id);
+  }
+
+  @NonNull
+  private List<Challenge> filterChallengesByLevel(
+      List<Challenge> challenges, @LevelType int level) {
+
+    List<Challenge> filteredChallenges = new ArrayList<>();
+    for (Challenge challenge : challenges) {
+      if (challenge.getLevel() == level) {
+        filteredChallenges.add(challenge);
+      }
+    }
+    return filteredChallenges;
   }
 
   /**
