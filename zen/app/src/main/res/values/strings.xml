@@ -191,6 +191,7 @@
 
     <!-- Upgrade dialog -->
     <string name="upgrade_dialog_title">Premium version features:</string>
+    <string name="upgrade_dialog_promo_title">Premium version is available now:</string>
     <string name="upgrade_dialog_levels">- Different levels of challenges</string>
     <string name="upgrade_dialog_statistics">- Statistics charts</string>
     <string name="upgrade_dialog_no_ads">- No ads</string>

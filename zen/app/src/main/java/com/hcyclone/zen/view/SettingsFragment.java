@@ -65,6 +65,8 @@ public class SettingsFragment extends PreferenceFragmentCompat
 
     // Showing all challenges in the Journal by default. Set visible for beta testing if needed.
     findPreference(PreferencesService.PREF_KEY_SHOW_CHALLENGES).setVisible(Utils.isDebug());
+    // Activates upgraded user features.
+    findPreference(PreferencesService.PREF_KEY_UPGRADED_USER).setVisible(Utils.isDebug());
 
     Preference clearPurchasesButton = findPreference(PreferencesService.PREF_KEY_CLEAR_PURCHASES);
     clearPurchasesButton.setVisible(Utils.isDebug());
@@ -72,7 +74,7 @@ public class SettingsFragment extends PreferenceFragmentCompat
       MainActivity mainActivity = (MainActivity) getActivity();
       BillingService billingService = mainActivity.getBillingService();
       billingService.clearPurchases(getContext());
-      ((App) mainActivity.getApplication()).getFeaturesService().storeExtendedVersion(false);
+      ((App) mainActivity.getApplication()).getFeaturesService().storeExtendedVersionActivated(false);
       return true;
     });
   }

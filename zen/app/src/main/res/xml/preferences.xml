@@ -60,6 +60,12 @@
         android:title="Show Challenges"
         android:summary="Debug only"/>
 
+    <SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="pref_upgraded_user"
+        android:title="Upgraded User"
+        android:summary="Debug only"/>
+
     <Preference
         android:key="pref_clear_purchases"
         android:title="Clear purchases"

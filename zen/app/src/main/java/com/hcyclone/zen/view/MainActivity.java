@@ -265,12 +265,20 @@ public class MainActivity extends AppCompatActivity
           }
         }
         if (featuresService.getFeaturesType() == FeaturesType.FREE && extendedVersionPurchased) {
+          Log.d(TAG, "Upgrading to extended version");
           upgrade = true;
         }
-        featuresService.storeExtendedVersion(extendedVersionPurchased);
+        featuresService.storeExtendedVersionActivated(extendedVersionPurchased);
+
         break;
     }
-    showNeedToUpgradeDialog(false);
+    if (featuresService.showExtendedVersionDialog()) {
+      Log.d(TAG, "Showing promo of extended version");
+      showNeedToUpgradeDialog(true, true);
+      featuresService.storeShowExtendedVersionDialogShown(true);
+    } else { // The dialog can be opened from main menu.
+      showNeedToUpgradeDialog(false);
+    }
     if (upgrade) {
       showAlreadyUpgradedDialog();
     }
@@ -299,24 +307,39 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void showNeedToUpgradeDialog(boolean show) {
-    if (upgradeFragment == null) {
-      upgradeFragment = new UpgradeFragment();
-    }
+    showNeedToUpgradeDialog(show, false);
+  }
 
+  private void showNeedToUpgradeDialog(boolean show, boolean promoMode) {
     if (show) {
+      if (upgradeFragment == null) {
+        upgradeFragment = new UpgradeFragment();
+      }
+      Bundle args = new Bundle();
+      args.putBoolean(UpgradeFragment.ARG_PROMO_MODE, promoMode);
+      upgradeFragment.setArguments(args);
       upgradeFragment.show(getSupportFragmentManager(), UpgradeFragment.TAG);
-    } else if (upgradeFragment.isVisible()) {
+    } else if (upgradeFragment != null && upgradeFragment.isVisible()) {
       upgradeFragment.dismissAllowingStateLoss();
     }
   }
 
   private void refreshUi() {
-    boolean extended = featuresService.getFeaturesType() == FeaturesType.PAID;
+    FeaturesType featuresType = featuresService.getFeaturesType();
+    boolean extended = featuresType != FeaturesType.FREE;
 
     // Update charts.
     Menu navigationMenu = navigationView.getMenu();
     MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
-    item.setVisible(extended);
+    item.setVisible(featuresType != FeaturesType.FREE);
+
+    boolean billingAvailable = billingService.getBillingClientResponseCode() == BillingResponse.OK;
+
+    item = navigationMenu.findItem(R.id.nav_upgrade);
+    // Show Upgrade menu item if billing available or the user is already using paid version.
+    item.setVisible(
+        (billingAvailable && featuresType == FeaturesType.FREE)
+            || featuresType == FeaturesType.PAID);
 
     showAds(!extended);
   }

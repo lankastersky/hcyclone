@@ -28,6 +28,7 @@ public final class PreferencesService {
 
   // Debug options
   public static final String PREF_KEY_SHOW_CHALLENGES = "pref_show_challenges";
+  public static final String PREF_KEY_UPGRADED_USER = "pref_upgraded_user";
   public static final String PREF_KEY_CLEAR_PURCHASES = "pref_clear_purchases";
 
   private final Context context;

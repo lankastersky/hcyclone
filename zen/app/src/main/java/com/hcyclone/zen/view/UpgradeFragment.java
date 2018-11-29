@@ -26,6 +26,7 @@ import java.util.List;
 public final class UpgradeFragment extends AppCompatDialogFragment {
 
   public static final String TAG = UpgradeFragment.class.getSimpleName();
+  public static final String ARG_PROMO_MODE = "arg_promo_mode";
 
   private static final String FEATURE_WITH_PRICE_FORMAT = "%s - %s";
 
@@ -34,6 +35,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
   private Button buyButton;
   private Button subscribeButton;
   private Button cancelButton;
+  private TextView title;
   private TextView priceBuyTextView;
   private TextView priceSubscribeTextView;
 
@@ -60,6 +62,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     View root = inflater.inflate(R.layout.fragment_upgrade, container, false);
 
     loadingView = root.findViewById(R.id.screen_wait);
+    title = root.findViewById(R.id.upgrade_dialog_title);
     priceBuyTextView = root.findViewById(R.id.upgrade_dialog_price_buy);
     priceSubscribeTextView = root.findViewById(R.id.upgrade_dialog_price_subscribe);
 
@@ -97,6 +100,9 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
   public void onStart() {
     super.onStart();
 
+    Bundle args = getArguments();
+    updateMode(args.getBoolean(ARG_PROMO_MODE));
+
     enableUi(false);
 
     querySkuDetailsAsync((responseCode, skuDetailsList) -> {
@@ -113,6 +119,12 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
       }
       enableUi(true);
     });
+  }
+
+  private void updateMode(boolean promoMode) {
+    title.setText(promoMode
+        ? getString(R.string.upgrade_dialog_promo_title)
+        : getString(R.string.upgrade_dialog_title));
   }
 
   /** Enables controls. */

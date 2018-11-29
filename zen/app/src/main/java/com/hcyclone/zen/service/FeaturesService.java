@@ -15,12 +15,15 @@ public final class FeaturesService {
     // Only free features are available.
     FREE,
     // Paid and free features are available.
-    PAID
+    PAID,
+    // Features for upgraded users are available (same as paid mostly)
+    UPGRADED
   }
 
   private static final String KEY_VERSION_CODE = "version_code";
   private static final String KEY_UPGRADED_USER = "upgraded_user";
-  private static final String KEY_EXTENDED_VERSION = "extended_version";
+  private static final String KEY_EXTENDED_VERSION_ACTIVATED = "extended_version_activated";
+  private static final String KEY_EXTENDED_VERSION_DIALOG_SHOWN = "extended_version_dialog_shown";
 
   private final Context context;
   private final SharedPreferences sharedPreferences;
@@ -38,18 +41,18 @@ public final class FeaturesService {
    * a new user installs ({@link Utils#isFirstInstall(Context) returns true}):
    *   return {@link FeaturesType#FREE}
    * an upgraded user updates:
-   *   return {@link FeaturesType#PAID}
-   * a new user paid for the content:
+   *   return {@link FeaturesType#UPGRADED}
+   * a user paid for the content:
    *   return {@link FeaturesType#PAID}
    * else return {@link FeaturesType#FREE}
    */
   public FeaturesType getFeaturesType() {
     if (isUpgradedUser()) {
         // Upgraded users have all features for free.
-        return FeaturesType.PAID;
+        return FeaturesType.UPGRADED;
     }
 
-    if (getExtendedVersion()) {
+    if (isExtendedVersionActivated()) {
       return FeaturesType.PAID;
     }
 
@@ -64,15 +67,34 @@ public final class FeaturesService {
     return FeaturesType.FREE;
   }
 
-  public void storeExtendedVersion(boolean enable) {
-    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION, enable).apply();
+  /** Returns true if it's not a first install and the dialog wasn't shown before. */
+  public boolean showExtendedVersionDialog() {
+    return !Utils.isFirstInstall(context) && !isExtendedVersionDialogShown();
   }
 
-  private boolean getExtendedVersion() {
-    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION, false);
+  /** Remembers if Extended version available dialog is shown. */
+  public void storeShowExtendedVersionDialogShown(boolean shown) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION_DIALOG_SHOWN, shown).apply();
+  }
+
+  private boolean isExtendedVersionDialogShown() {
+    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION_DIALOG_SHOWN, false);
+  }
+
+  /** Remembers if the user is using the extended version. */
+  public void storeExtendedVersionActivated(boolean enable) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION_ACTIVATED, enable).apply();
+  }
+
+  private boolean isExtendedVersionActivated() {
+    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION_ACTIVATED, false);
   }
 
   private boolean isUpgradedUser() {
+    if (Utils.isDebug()) {
+      return sharedPreferences.getBoolean(
+          PreferencesService.PREF_KEY_UPGRADED_USER, false);
+    }
     return sharedPreferences.getBoolean(KEY_UPGRADED_USER, false);
   }
 
