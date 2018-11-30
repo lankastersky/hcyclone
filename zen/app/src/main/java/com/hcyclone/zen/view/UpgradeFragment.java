@@ -15,6 +15,7 @@ import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.R;
@@ -71,6 +72,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
 
     buyButton = root.findViewById(R.id.upgrade_dialog_buy);
     buyButton.setOnClickListener(v -> {
+      Analytics.getInstance().sendBuyExtendedVersion();
       enableUi(false);
       String purchaseId;
       if (Utils.isDebug()) {
@@ -84,6 +86,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     subscribeButton = root.findViewById(R.id.upgrade_dialog_subscribe);
     if (billingService.areSubscriptionsSupported()) {
       subscribeButton.setOnClickListener(v -> {
+        Analytics.getInstance().sendSubscribeOnExtendedVersion();
         enableUi(false);
         String purchaseId = getString(R.string.purchase_extended_version_monthly_subscription);
         billingService.initiatePurchaseFlow(purchaseId, SkuType.SUBS, getActivity());

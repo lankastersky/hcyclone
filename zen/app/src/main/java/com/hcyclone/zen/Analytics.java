@@ -108,6 +108,19 @@ public class Analytics {
     send("Challenge backup", "Ratings", challenge.getPrevRatings().toString());
   }
 
+  public void sendBuyExtendedVersion() {
+    send("Purchase", "Buy", "Premium version");
+  }
+
+  public void sendSubscribeOnExtendedVersion() {
+    send("Purchase", "Subscribe", "Premium version");
+  }
+
+  public void sendScreen(String dialogName) {
+    tracker.setScreenName(dialogName);
+    tracker.send(new HitBuilders.ScreenViewBuilder().build());
+  }
+
   private void send(String category, String action, String label) {
     tracker.send(new HitBuilders.EventBuilder()
         .setCategory(category)

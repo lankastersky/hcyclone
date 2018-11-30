@@ -143,6 +143,7 @@ public final class Utils {
     }
   }
 
+  /** Builds dialog with OK button. */
   public static Dialog buildDialog(
       String title, String text, Context context, View.OnClickListener listener) {
     final Dialog dialog = new Dialog(context, R.style.AlertDialogCustom);
@@ -154,12 +155,7 @@ public final class Utils {
 
     Button updateButton = dialog.findViewById(R.id.alert_dialog_button);
     if (listener == null) {
-      updateButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          dialog.dismiss();
-        }
-      });
+      updateButton.setOnClickListener((v) -> dialog.dismiss());
     } else {
       updateButton.setOnClickListener(listener);
     }
@@ -183,7 +179,6 @@ public final class Utils {
     }
     return result;
   }
-
 
   public static String timeToString(long time) {
     return timeToString(time, SIMPLE_DATE_FORMAT);

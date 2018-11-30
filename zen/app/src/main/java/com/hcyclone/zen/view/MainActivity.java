@@ -24,6 +24,7 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.service.BillingService;
@@ -388,9 +389,11 @@ public class MainActivity extends AppCompatActivity
         replaceFragment(HelpFragment.TAG);
         break;
       case R.id.nav_upgrade:
+        Analytics.getInstance().sendScreen(getString(R.string.navigation_drawer_upgrade));
         showUpgradeDialog(true);
         break;
       case R.id.nav_feedback:
+        Analytics.getInstance().sendScreen(getString(R.string.navigation_drawer_feedback));
         Utils.sendFeedback(this);
         break;
       default:
