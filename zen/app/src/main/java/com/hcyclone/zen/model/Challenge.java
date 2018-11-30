@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /** Challenge data. */
-public class Challenge {
+public final class Challenge {
 
   private static final String TAG = Challenge.class.getSimpleName();
 

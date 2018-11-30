@@ -3,7 +3,7 @@ package com.hcyclone.zen.model;
 import java.util.List;
 
 /** Modifiable challenge data for serialization etc. */
-public class ChallengeData {
+public final class ChallengeData {
 
   public final String id;
   public final int status;

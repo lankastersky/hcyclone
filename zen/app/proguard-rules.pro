@@ -17,6 +17,7 @@
 #}
 #-dontobfuscate
 -ignorewarnings
+-keep class com.hcyclone.zen.model.Challenge* { *; }
 -keep class com.androidplot.** { *; }
 -keep class android.support.v7.widget.ShareActionProvider { *; }
 -keep class com.android.vending.billing.**
