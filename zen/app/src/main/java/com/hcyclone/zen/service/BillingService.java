@@ -191,14 +191,13 @@ public final class BillingService implements PurchasesUpdatedListener {
       @Override
       public void onBillingSetupFinished(@BillingResponse int billingResponseCode) {
         Log.d(TAG, "Setup finished. Response code: " + billingResponseCode);
-
+        billingClientResponseCode = billingResponseCode;
         if (billingResponseCode == BillingResponse.OK) {
           isServiceConnected = true;
           if (executeOnSuccess != null) {
             executeOnSuccess.run();
           }
         }
-        billingClientResponseCode = billingResponseCode;
       }
 
       @Override
