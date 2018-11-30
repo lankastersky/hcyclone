@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * Handles all the interactions with Play Store (via Billing library), maintains connection to
  * it through BillingClient and caches temporary states/data if needed.
+ * See https://goo.gl/HkyLFV
  */
 public final class BillingService implements PurchasesUpdatedListener {
 
