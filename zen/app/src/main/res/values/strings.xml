@@ -197,8 +197,12 @@
     <string name="upgrade_dialog_no_ads">- No ads</string>
     <string name="upgrade_dialog_one_time_purchase">One-time purchase</string>
     <string name="upgrade_dialog_buy">Buy</string>
-    <string name="upgrade_dialog_subscription">Subscription</string>
+    <string name="upgrade_dialog_subscription">Monthly subscription</string>
     <string name="upgrade_dialog_subscribe">Subscribe</string>
+
+    <!-- Billing service -->
+    <string name="dialog_title_failed_get_purchases">Failed to get purchases list</string>
+    <string name="dialog_text_billing_service_unavailable">Billing service is unavailable. Try again later.</string>
 
     <!-- Firebase error -->
     <string name="dialog_title_something_wrong">Something is wrong</string>
@@ -211,7 +215,7 @@
     <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~1657176734</string>
     <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/1402009957</string>
 
-  <string name="purchase_extended_version" translatable="false">no_ads_subscription</string>
+  <string name="purchase_extended_version" translatable="false">extended_version</string>
   <string name="purchase_extended_version_monthly_subscription" translatable="false">extended_version_monthly_subscription</string>
   <string name="purchase_test_purchased" translatable="false">android.test.purchased</string>
 </resources>

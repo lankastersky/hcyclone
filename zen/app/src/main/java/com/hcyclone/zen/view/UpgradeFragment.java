@@ -62,6 +62,8 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
 
     View root = inflater.inflate(R.layout.fragment_upgrade, container, false);
 
+    setCancelable(false);
+
     loadingView = root.findViewById(R.id.screen_wait);
     title = root.findViewById(R.id.upgrade_dialog_title);
     priceBuyTextView = root.findViewById(R.id.upgrade_dialog_price_buy);
@@ -104,7 +106,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     super.onStart();
 
     Bundle args = getArguments();
-    updateMode(args.getBoolean(ARG_PROMO_MODE));
+    refreshMode(args.getBoolean(ARG_PROMO_MODE));
 
     enableUi(false);
 
@@ -116,15 +118,24 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
         for (SkuDetails skuDetails : skuDetailsList) {
           Log.d(TAG, "Sku: " + skuDetails.toString());
         }
-        refreshUi(skuDetailsList);
+        refreshPrices(skuDetailsList);
       } else {
         Log.e(TAG, "Failed to get sku details: " + responseCode);
+        //if (isVisible()) {
+          Utils.buildDialog(getString(R.string.dialog_title_failed_get_purchases),
+              getString(R.string.dialog_text_billing_service_unavailable),
+              getContext(),
+              null)
+              .show();
+        //   dismiss();
+        // }
       }
-      enableUi(true);
+      loadingView.setVisibility(View.GONE);
+      enableButton(cancelButton, true);
     });
   }
 
-  private void updateMode(boolean promoMode) {
+  private void refreshMode(boolean promoMode) {
     title.setText(promoMode
         ? getString(R.string.upgrade_dialog_promo_title)
         : getString(R.string.upgrade_dialog_title));
@@ -136,7 +147,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     loadingView.setVisibility(enable ? View.GONE : View.VISIBLE);
   }
 
-  private void refreshUi(List<SkuDetails> skuDetailsList) {
+  private void refreshPrices(List<SkuDetails> skuDetailsList) {
     for (SkuDetails skuDetails : skuDetailsList) {
       if (getContext().getString(R.string.purchase_extended_version).equals(skuDetails.getSku())) {
         String text = String.format(
@@ -144,6 +155,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
             getString(R.string.upgrade_dialog_one_time_purchase),
             skuDetails.getPrice());
         priceBuyTextView.setText(text);
+        enableButton(buyButton, true);
         continue;
       }
 
@@ -155,6 +167,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
             getString(R.string.upgrade_dialog_subscription),
             skuDetails.getPrice());
         priceSubscribeTextView.setText(text);
+        enableButton(subscribeButton, true);
         continue;
       }
 
@@ -165,6 +178,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
               getString(R.string.upgrade_dialog_one_time_purchase),
               skuDetails.getPrice());
           priceBuyTextView.setText(text);
+          enableButton(buyButton, true);
         }
       }
     }
@@ -199,13 +213,14 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
   }
 
   private void enableButtons(boolean enable) {
-    buyButton.setEnabled(enable);
-    subscribeButton.setEnabled(enable);
-    cancelButton.setEnabled(enable);
+    enableButton(buyButton, enable);
+    enableButton(subscribeButton, enable);
+    enableButton(cancelButton, enable);
+  }
 
+  private void enableButton(Button button, boolean enable) {
+    button.setEnabled(enable);
     int colorResId = enable ? R.color.colorPrimaryDark : R.color.colorPrimaryDisabled;
-    buyButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
-    subscribeButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
-    cancelButton.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
+    button.setBackgroundColor(ContextCompat.getColor(getContext(), colorResId));
   }
 }

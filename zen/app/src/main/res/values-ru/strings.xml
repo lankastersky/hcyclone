@@ -90,11 +90,13 @@
     <string name="upgrade_dialog_no_ads">- Нет рекламы</string>
     <string name="upgrade_dialog_one_time_purchase">Покупка</string>
     <string name="upgrade_dialog_buy">Купить</string>
-    <string name="upgrade_dialog_subscription">Подписка</string>
+    <string name="upgrade_dialog_subscription">Ежемесячная подписка</string>
     <string name="upgrade_dialog_subscribe">Купить</string>
     <string name="upgrade_dialog_title">Возможности премиум-версии:</string>
   <string name="dialog_premium_title">Вы используете премиум-версию</string>
     <string name="dialog_premium_features">Доступные возможности:\n- Разные уровни сложности заданий\n- Графики со статистикой выполнения\n- Нет рекламы</string>
   <string name="upgrade_dialog_promo_title">Теперь доступна премиум-версия:</string>
+  <string name="dialog_title_failed_get_purchases">Не удалось получить список покупок</string>
+    <string name="dialog_text_billing_service_unavailable">Биллинг сервис недоступен. Попробуйте еще раз позже.</string>
 
 </resources>
