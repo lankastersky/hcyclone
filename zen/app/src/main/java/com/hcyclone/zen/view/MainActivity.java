@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity
       }
 
       @Override
-      public void onAdFailedToLoad(int errorCode) {
+      public void onAdFailedToLoad(/* AdRequest */ int errorCode) {
         Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
       }
 

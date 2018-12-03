@@ -111,6 +111,10 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
     enableUi(false);
 
     querySkuDetailsAsync((responseCode, skuDetailsList) -> {
+      if (!isAdded()) {
+        Log.d(TAG, "Detached; skipping updating prices");
+        return;
+      }
       if (responseCode == BillingResponse.OK
           && skuDetailsList != null
           && !skuDetailsList.isEmpty()) {
