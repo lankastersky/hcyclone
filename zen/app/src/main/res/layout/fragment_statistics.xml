@@ -45,8 +45,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyMedium"
-            android:paddingBottom="8dp"
             android:text="@string/fragment_statistics_average_rating"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/statistics_challenges_fo_levelup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:paddingBottom="8dp"
+            android:text="@string/fragment_statistics_challenges_for_levelup"
             android:textSize="16sp"/>
 
     </LinearLayout>

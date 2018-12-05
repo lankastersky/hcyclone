@@ -51,12 +51,10 @@
     <string name="fragment_help_version">Lankastesky Studio\nВерсия %s</string>
     <string name="fragment_challenge_can_start_task_before_6p_only">Взять задание можно до 18 часов
     </string>
-    <string name="dialog_text_next_level_available">Вам доступны задания следующего
-        уровня\nсложности: %s.
+    <string name="dialog_text_next_level_available">Поздравляем! Теперь доступны задания следующего уровня и будут скоро Вам назначены: %s.
     </string>
     <string name="dialog_title_next_level_available">Достигнут новый уровень</string>
-    <string name="dialog_text_failed_to_connect">Не удалось подключиться к серверу.\nПопробуйте еще
-        раз позже.
+    <string name="dialog_text_failed_to_connect">Не удалось подключиться к серверу.\nПопробуйте еще раз позже.
     </string>
     <string name="dialog_title_something_wrong">Что-то не так</string>
     <string name="challenges_filter">Фильтр</string>
@@ -72,8 +70,7 @@
     <string name="fragment_statistics_consciousness_plot_title">Уровень осознанности, %</string>
     <string name="fragment_statistics_line_chart">Линейный чарт</string>
     <string name="fragment_statistics_bar_chart">Бар чарт</string>
-    <string name="dialog_text_failed_to_load_challenges">Не удалось загрузить задания. Попробуйте
-        перезапустить приложение.
+    <string name="dialog_text_failed_to_load_challenges">Не удалось загрузить задания. Попробуйте перезапустить приложение.
     </string>
     <string name="fragment_help_text">"Каждое утро вам доступно новое задание в разделе \"Задание\". Вы можете начать его выполнять, нажав на кнопку \"Принять\". Задание выполняется в течение дня. После шести вечера, если вы готовы завершить задание, нажмите на кнопку \"Завершить\". При этом предлагается оценить текущий уровень осознанности: минимальный - \"на автопилоте\", максимальный - полностью осознанно.\n\nЗавершенные задания доступны в разделе \"Журнал\". Если задание не выполнено, к концу дня оно будет считаться пропущенным и не появится в журнале. Через некоторе время пропущенные задания будут снова предложены на выполнение.\n\nКаждое задание имеет свой уровень сложности. Постепенно будут даваться все более сложные задания.\n\nВ приложении ведется статистика по количеству выполненных заданий и текущему уровню осознанности.\n\nДля того чтобы не забывать брать, выполнять и завершать задания, можно использовать напоминания в разделе \"Настройки\"."
     </string>
@@ -98,5 +95,6 @@
   <string name="upgrade_dialog_promo_title">Теперь доступна премиум-версия:</string>
   <string name="dialog_title_failed_get_purchases">Не удалось получить список покупок</string>
     <string name="dialog_text_billing_service_unavailable">Биллинг сервис недоступен. Попробуйте еще раз позже.</string>
+    <string name="fragment_statistics_challenges_for_levelup">Кол-во заданий до следующего уровня: %d</string>
 
 </resources>

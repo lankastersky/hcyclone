@@ -159,6 +159,7 @@
     <string name="fragment_statistics">Statistics</string>
     <string name="fragment_statistics_level">Difficulty: %s</string>
     <string name="fragment_statistics_average_rating">Average level of consciousness: %d%%</string>
+    <string name="fragment_statistics_challenges_for_levelup">Challenges left for the level-up: %d</string>
     <string name="fragment_statistics_finished_challenges_number">Finished challenges: %d of %d
     </string>
     <string name="fragment_statistics_finished_challenges_plot_title">Finished challenges</string>
@@ -181,8 +182,8 @@
 
     <!-- Level up -->
     <string name="dialog_title_next_level_available">Next level is available</string>
-    <string name="dialog_text_next_level_available">Challenges of %s level of difficulty are
-        available.
+    <string name="dialog_text_next_level_available">Congratulations! Challenges of the %s level are
+        available now and will be assigned to you soon.
     </string>
 
     <!-- Premium version dialog -->

@@ -94,7 +94,11 @@ public class StatisticsFragment extends Fragment {
     averageRatingView.setText(
         String.format(
             getString(R.string.fragment_statistics_average_rating), averageRatingPercent));
-
+    TextView challengesForLevelUp = view.findViewById(R.id.statistics_challenges_fo_levelup);
+    challengesForLevelUp.setText(
+        String.format(
+            getString(R.string.fragment_statistics_challenges_for_levelup),
+            challengeModel.challengesForLevelUp()));
 
     ChallengesValuesBuilder challengesValuesBuilder = new ChallengesValuesBuilder();
     challengesValuesBuilder.build(challengeModel.getFinishedChallengesSorted(), getContext());
