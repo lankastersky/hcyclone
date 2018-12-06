@@ -51,7 +51,7 @@
     <string name="fragment_help_version">Lankastesky Studio\nВерсия %s</string>
     <string name="fragment_challenge_can_start_task_before_6p_only">Взять задание можно до 18 часов
     </string>
-    <string name="dialog_text_next_level_available">Поздравляем! Теперь доступны задания следующего уровня и будут скоро Вам назначены: %s.
+    <string name="dialog_text_next_level_available">Поздравляем! Теперь доступны задания следующего уровня (сложность: %s). Они будут скоро Вам назначены.
     </string>
     <string name="dialog_title_next_level_available">Достигнут новый уровень</string>
     <string name="dialog_text_failed_to_connect">Не удалось подключиться к серверу.\nПопробуйте еще раз позже.

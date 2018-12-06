@@ -24,10 +24,11 @@ public final class Challenge {
   public @interface StatusType {}
 
   // Levels
+  public static final int LEVEL_UNKNOWN = 0;
   public static final int LEVEL_LOW = 1;
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
-  @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
+  @IntDef({LEVEL_UNKNOWN, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
   public @interface LevelType {}
 
   // Locale-dependent properties.

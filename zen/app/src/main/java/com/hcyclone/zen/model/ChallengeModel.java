@@ -140,9 +140,9 @@ public final class ChallengeModel {
   public void saveChallenges(List<Challenge> challenges) {
     Log.d(TAG, "Save challenges");
     challengeMap.clear();
-//    if (Utils.isDebug()) {
-//      challenges = generateChallenges();
-//    }
+    // if (Utils.isDebug()) {
+    //   challenges = generateChallenges();
+    // }
     for (Challenge challenge : challenges) {
       challengeMap.put(challenge.getId(), challenge);
     }
@@ -221,39 +221,45 @@ public final class ChallengeModel {
    * upgraded level if needed.
    */
   public boolean checkLevelUp() {
-    if (challengesForLevelUp() == 0) {
-      switch (getLevel()) {
-        case Challenge.LEVEL_LOW:
-          setLevel(Challenge.LEVEL_MEDIUM);
-          break;
-        case Challenge.LEVEL_MEDIUM:
-          setLevel(Challenge.LEVEL_HIGH);
-          break;
-        default:
-          Log.w(TAG, "Max level reached already");
-      }
+    int[] upgradeToLevel = new int[1];
+    if (challengesForLevelUp(upgradeToLevel) <= 0
+        && upgradeToLevel[0] != Challenge.LEVEL_UNKNOWN
+        && upgradeToLevel[0] != Challenge.LEVEL_LOW) {
+
+      setLevel(upgradeToLevel[0]);
       challengeArchiver.storeLevel(getLevel());
       return true;
     }
     return false;
   }
 
-  /** Returns the number of challenges left for the level up. */
-  public int challengesForLevelUp() {
+  /**
+   * Returns the number of challenges left for the level up. {@code upgradeToLevel} returns the
+   * level to upgrade to.
+   * The result can be negative for backward compatibility (the old version used other mechanism
+   * to calculate the level-up).
+   */
+  public int challengesForLevelUp(int[] upgradeToLevel) {
     List<Challenge> finishedChallenges = getChallengesByStatus(Challenge.FINISHED);
     Collection<Challenge> challenges = getChallengesMap().values();
-    if (challenges.isEmpty()) {
-      return -1;
-    }
     int result = 0;
+    if (upgradeToLevel != null) {
+      upgradeToLevel[0] = Challenge.LEVEL_UNKNOWN;
+    }
     switch (level) {
       case Challenge.LEVEL_LOW:
         int lowChallengesNumber = (int) (challenges.size() * MEDIUM_LEVEL_CHALLENGES_RATIO);
         result = lowChallengesNumber - finishedChallenges.size();
+        if (upgradeToLevel != null) {
+          upgradeToLevel[0] = Challenge.LEVEL_MEDIUM;
+        }
         break;
       case Challenge.LEVEL_MEDIUM:
         int mediumChallengesNumber = (int) (challenges.size() * HIGH_LEVEL_CHALLENGES_RATIO);
         result = mediumChallengesNumber - finishedChallenges.size();
+        if (upgradeToLevel != null) {
+          upgradeToLevel[0] = Challenge.LEVEL_HIGH;
+        }
         break;
       default:
         break;

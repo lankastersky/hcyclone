@@ -18,14 +18,13 @@ import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.App;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.statistics.BarPlotBuilder;
 import com.hcyclone.zen.statistics.ChallengesValuesBuilder;
 import com.hcyclone.zen.statistics.LinePlotBuilder;
 
-/**
- * Shows challenges statistics.
- */
+/** Shows challenges statistics. */
 public class StatisticsFragment extends Fragment {
 
   enum ChartType {
@@ -82,6 +81,17 @@ public class StatisticsFragment extends Fragment {
     levelView.setText(String.format(getString(R.string.fragment_statistics_level),
         Utils.localizedChallengeLevel(level, getContext())));
 
+    TextView challengesForLevelUpView = view.findViewById(R.id.statistics_challenges_fo_levelup);
+    int[] upgradeToLevel = new int[1];
+    int challengesForLevelUp = challengeModel.challengesForLevelUp(upgradeToLevel);
+    boolean showChallengesForLevelUp = (challengesForLevelUp >= 0
+        && upgradeToLevel[0] != Challenge.LEVEL_UNKNOWN
+        && upgradeToLevel[0] != Challenge.LEVEL_LOW);
+    challengesForLevelUpView.setVisibility(showChallengesForLevelUp ? View.VISIBLE : View.GONE);
+    challengesForLevelUpView.setText(
+        String.format(
+            getString(R.string.fragment_statistics_challenges_for_levelup), challengesForLevelUp));
+
     TextView finishedChallengesView = view.findViewById(R.id.statistics_finished_challenges_number);
     finishedChallengesView.setText(
         String.format(
@@ -94,11 +104,6 @@ public class StatisticsFragment extends Fragment {
     averageRatingView.setText(
         String.format(
             getString(R.string.fragment_statistics_average_rating), averageRatingPercent));
-    TextView challengesForLevelUp = view.findViewById(R.id.statistics_challenges_fo_levelup);
-    challengesForLevelUp.setText(
-        String.format(
-            getString(R.string.fragment_statistics_challenges_for_levelup),
-            challengeModel.challengesForLevelUp()));
 
     ChallengesValuesBuilder challengesValuesBuilder = new ChallengesValuesBuilder();
     challengesValuesBuilder.build(challengeModel.getFinishedChallengesSorted(), getContext());
