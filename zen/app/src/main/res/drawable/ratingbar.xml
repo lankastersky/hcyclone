@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--suppress AndroidDomInspection -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/background"
-          android:drawable="@drawable/ratingbar_empty" />
-    <item android:id="@+id/secondaryProgress"
-          android:drawable="@drawable/ratingbar_empty" />
-    <item android:id="@+id/progress"
-          android:drawable="@drawable/ratingbar_filled" />
+    <item android:id="@android:id/background">
+        <bitmap
+            android:src="@drawable/ratingbar_staroff"/>
+    </item>
+    <item android:id="@android:id/secondaryProgress">
+        <bitmap
+            android:src="@drawable/ratingbar_staroff"/>
+    </item>
+    <item android:id="@android:id/progress">
+        <bitmap
+            android:src="@drawable/ratingbar_staron"/>
+    </item>
 </layer-list>
