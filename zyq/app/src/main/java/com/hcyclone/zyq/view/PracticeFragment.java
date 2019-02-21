@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
@@ -33,10 +34,14 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   private Exercise.LevelType level;
   private String description;
+  protected ExerciseModel exerciseModel;
+  PracticeRecyclerViewAdapter practiceAdapter;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+    App app = (App) getContext().getApplicationContext();
+    exerciseModel = app.getExerciseModel();
     MainActivity mainActivity = (MainActivity) context;
     level = mainActivity.getCurrentLevel();
   }
@@ -50,8 +55,8 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
     setHasOptionsMenu(true);
 
     recyclerView = view.findViewById(R.id.practice_recycler_view);
-    RecyclerView.Adapter adapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
-    createListLayout(recyclerView, adapter);
+    practiceAdapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
+    createListLayout(recyclerView, practiceAdapter);
 
     return view;
   }
@@ -85,7 +90,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   @Override
   protected Collection<ExerciseGroup> buildListItems() {
-    return ExerciseModel.buildExerciseGroups(level, getContext());
+    return exerciseModel.buildExerciseGroups(level, getContext());
   }
 
   @Override
@@ -127,5 +132,8 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
     description = exerciseModel.getPracticeDescription(level, getContext());
     getActivity().invalidateOptionsMenu();
+
+    practiceAdapter.setItems(buildListItems());
+    practiceAdapter.notifyDataSetChanged();
   }
 }

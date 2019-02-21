@@ -3,6 +3,7 @@ package com.hcyclone.zyq.model;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,7 +41,7 @@ public final class ExerciseModel {
     language = Utils.getCurrentLocale(context).getLanguage();
 
     try {
-      if ("ru".equals(language)) {
+      if (new Locale("ru").getLanguage().equals(language)) {
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises1_json, context));
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises2_json, context));
         exerciseBuilder.putAll(readExercisesFromResources(R.raw.exercises3_json, context));
@@ -51,6 +52,7 @@ public final class ExerciseModel {
       }
       exercisesMap = exerciseBuilder.build();
     } catch (IOException e) {
+      Crashlytics.logException(e);
       throw new IllegalStateException("Failed to read exercises", e);
     }
   }
@@ -63,10 +65,10 @@ public final class ExerciseModel {
     Map<String, Exercise> filteredExercisesMap = new LinkedHashMap<>();
     for (Exercise exercise : exercisesMap.values()) {
       if (type == null || type == ExerciseType.UNKNOWN) {
-        if (exercise.level.getValue() <= level.getValue()) {
+        if (exercise.level.getValue() == level.getValue()) {
           filteredExercisesMap.put(exercise.getId(), exercise);
         }
-      } else if (exercise.level.getValue() <= level.getValue() && exercise.type == type) {
+      } else if (exercise.level.getValue() == level.getValue() && exercise.type == type) {
         filteredExercisesMap.put(exercise.getId(), exercise);
       }
     }
@@ -96,7 +98,7 @@ public final class ExerciseModel {
             exercise.level.getValue(), exercise.type.getValue(), exercise.id), context);
   }
 
-  public static List<ExerciseGroup> buildExerciseGroups(LevelType level, Context context) {
+  public List<ExerciseGroup> buildExerciseGroups(LevelType level, Context context) {
     List<ExerciseGroup> items = new ArrayList<>();
     items.add(
         new ExerciseGroup(
@@ -113,11 +115,14 @@ public final class ExerciseModel {
             exerciseTypeToString(ExerciseType.ADDITIONAL_MEDITATION, context),
             level,
             ExerciseType.ADDITIONAL_MEDITATION));
-    items.add(
-        new ExerciseGroup(
-            exerciseTypeToString(ExerciseType.FINAL, context),
-            level,
-            ExerciseType.FINAL));
+    Map<String, Exercise> exercisesMap = getExercises(level, ExerciseType.FINAL);
+    if (!exercisesMap.isEmpty()) {
+      items.add(
+          new ExerciseGroup(
+              exerciseTypeToString(ExerciseType.FINAL, context),
+              level,
+              ExerciseType.FINAL));
+    }
     items.add(
         new ExerciseGroup(
             exerciseTypeToString(ExerciseType.TREATMENT, context),
@@ -158,6 +163,7 @@ public final class ExerciseModel {
     try {
       return Utils.readFromRawResources(resId, context);
     } catch (IOException e) {
+      Crashlytics.logException(e);
       Log.w(TAG, "Failed to read description: " + fileName, e);
       return "";
     }

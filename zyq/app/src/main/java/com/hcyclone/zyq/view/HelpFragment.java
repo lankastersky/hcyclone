@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class HelpFragment extends Fragment {
 
@@ -36,7 +38,7 @@ public class HelpFragment extends Fragment {
     try {
       String language = Utils.getCurrentLocale(getContext()).getLanguage();
       int resourceId;
-      if ("ru".equals(language)) {
+      if (new Locale("ru").getLanguage().equals(language)) {
         resourceId = R.raw.help_html;
       } else {
         resourceId = R.raw.help_en_html;
@@ -47,6 +49,7 @@ public class HelpFragment extends Fragment {
       ((TextView) view.findViewById(R.id.help_text)).setMovementMethod(
           LinkMovementMethod.getInstance());
     } catch (IOException e) {
+      Crashlytics.logException(e);
       Log.w(TAG, "Failed to read text from resources", e);
     }
 

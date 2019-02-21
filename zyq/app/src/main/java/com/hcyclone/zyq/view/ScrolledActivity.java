@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
 
@@ -54,6 +55,7 @@ public abstract class ScrolledActivity extends AdsActivity {
             .add(R.id.content_container, fragment, tag)
             .commit();
       } catch (IllegalAccessException | InstantiationException e) {
+        Crashlytics.logException(e);
         Log.e(getClass().getSimpleName(), "Failed to create fragment", e);
       }
     } else {

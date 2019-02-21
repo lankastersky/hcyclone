@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.Analytics;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;
@@ -167,6 +168,7 @@ public class MainActivity extends AdsActivity
       try {
         fragment = clazz.newInstance();
       } catch (InstantiationException | IllegalAccessException e) {
+        Crashlytics.logException(e);
         Log.e(TAG, "Failed to create fragment", e);
       }
     }

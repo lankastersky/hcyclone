@@ -9,3 +9,4 @@
 .externalNativeBuild
 /gradlew*
 /gradle.properties
+app/google-services.json
