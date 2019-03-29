@@ -46,13 +46,18 @@ public class ExerciseFragment extends Fragment implements Step {
 
     setHasOptionsMenu(true);
 
+    App app = (App) getContext().getApplicationContext();
+    exerciseModel = app.getExerciseModel();
+
     if (getArguments() != null) {
       String exerciseId = getArguments().getString(BundleConstants.EXERCISE_ID_KEY);
-      App app = (App) getContext().getApplicationContext();
-      exerciseModel = app.getExerciseModel();
       exercise = exerciseModel.getExercise(exerciseId);
     }
 
+    if (savedInstanceState != null) {
+      String exerciseId = savedInstanceState.getString(BundleConstants.EXERCISE_ID_KEY);
+      exercise = exerciseModel.getExercise(exerciseId);
+    }
     return view;
   }
 
@@ -66,7 +71,9 @@ public class ExerciseFragment extends Fragment implements Step {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
-    outState.putString(BundleConstants.EXERCISE_ID_KEY, exercise.id);
+    if (exercise.id != null) {
+      outState.putString(BundleConstants.EXERCISE_ID_KEY, exercise.getId());
+    }
   }
 
   @Override
@@ -80,6 +87,10 @@ public class ExerciseFragment extends Fragment implements Step {
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
+    if (TextUtils.isEmpty(exercise.videoUrl)) {
+      MenuItem item = menu.findItem(R.id.action_video);
+      item.setVisible(false);
+    }
     super.onCreateOptionsMenu(menu,inflater);
   }
 
@@ -90,6 +101,9 @@ public class ExerciseFragment extends Fragment implements Step {
       case R.id.action_description:
         Utils.showDescription(
             exerciseModel.getPracticeDescription(exercise, getContext()), getContext());
+        return true;
+      case R.id.action_video:
+        Utils.watchYoutubeVideo(exercise.videoUrl, getContext());
         return true;
     }
     return super.onOptionsItemSelected(item);

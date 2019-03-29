@@ -63,7 +63,15 @@ public final class ExerciseModel {
 
   public Map<String, Exercise> getExercises(LevelType level, ExerciseType type) {
     Map<String, Exercise> filteredExercisesMap = new LinkedHashMap<>();
+    if (level == null) {
+      Log.w(TAG, "Level is null for type: " + type);
+      return filteredExercisesMap;
+    }
     for (Exercise exercise : exercisesMap.values()) {
+      if (exercise.level == null) {
+        Log.w(TAG, "Exercise doesn't have level: " + exercise.getId());
+        continue;
+      }
       if (type == null || type == ExerciseType.UNKNOWN) {
         if (exercise.level.getValue() == level.getValue()) {
           filteredExercisesMap.put(exercise.getId(), exercise);

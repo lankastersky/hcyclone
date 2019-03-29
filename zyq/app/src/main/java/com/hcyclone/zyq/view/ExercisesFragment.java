@@ -69,6 +69,10 @@ public class ExercisesFragment extends ListFragment implements OnItemSelectListe
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
+    // Hide video icon
+    MenuItem item = menu.findItem(R.id.action_video);
+    item.setVisible(false);
+
     super.onCreateOptionsMenu(menu, inflater);
   }
 

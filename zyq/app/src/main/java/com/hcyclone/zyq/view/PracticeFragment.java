@@ -19,6 +19,7 @@ import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.Exercise.LevelType;
 import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
 import com.hcyclone.zyq.view.adapters.PracticeRecyclerViewAdapter;
@@ -54,6 +55,10 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
     setHasOptionsMenu(true);
 
+    if (savedInstanceState != null) {
+      level = (LevelType) savedInstanceState.get(BundleConstants.EXERCISE_LEVEL_KEY);
+    }
+
     recyclerView = view.findViewById(R.id.practice_recycler_view);
     practiceAdapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
     createListLayout(recyclerView, practiceAdapter);
@@ -68,12 +73,24 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   }
 
   @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (level != null) {
+      outState.putSerializable(BundleConstants.EXERCISE_LEVEL_KEY, level);
+    }
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.exercise_menu, menu);
     if (TextUtils.isEmpty(description)) {
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
+    // Hide video icon
+    MenuItem item = menu.findItem(R.id.action_video);
+    item.setVisible(false);
+
     super.onCreateOptionsMenu(menu, inflater);
   }
 
