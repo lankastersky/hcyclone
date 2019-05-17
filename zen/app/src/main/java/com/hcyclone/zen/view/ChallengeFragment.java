@@ -24,6 +24,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -52,7 +53,7 @@ public class ChallengeFragment extends Fragment {
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
-    challengeModel = ChallengeModel.getInstance();
+    challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
   }
 
   @Override
@@ -70,12 +71,9 @@ public class ChallengeFragment extends Fragment {
     commentsTextView = view.findViewById(R.id.fragment_challenge_comments_text_view);
     commentsEditText = view.findViewById(R.id.fragment_challenge_edit_text);
     // Allow scrolling.
-    commentsEditText.setOnTouchListener(new View.OnTouchListener() {
-      @Override
-      public boolean onTouch(View view, MotionEvent motionEvent) {
-        view.getParent().requestDisallowInterceptTouchEvent(true);
-        return false;
-      }
+    commentsEditText.setOnTouchListener((view1, motionEvent) -> {
+      view.getParent().requestDisallowInterceptTouchEvent(true);
+      return false;
     });
     createChallengeButton(view);
 
@@ -124,7 +122,6 @@ public class ChallengeFragment extends Fragment {
     Log.d(TAG, "Current challenge id: " + challengeId);
 
     challengeModel.setChallengeShown(challengeId);
-    showLevelUpIfNeeded();
     showChallengeData(getView());
     updateRatingBar();
     updateRankDialog();
@@ -168,7 +165,7 @@ public class ChallengeFragment extends Fragment {
   }
 
   private void showLevelUpIfNeeded() {
-    if (!challengeModel.checkLevelUp(challengeId)) {
+    if (!challengeModel.checkLevelUp()) {
       return;
     }
     int level = challengeModel.getLevel();
@@ -235,6 +232,7 @@ public class ChallengeFragment extends Fragment {
           challenge.setComments(commentsEditText.getText().toString());
           challengeModel.setChallengeFinished(challengeId);
           AlarmService.getInstance().stopDailyAlarm();
+          showLevelUpIfNeeded();
           break;
         default:
           Log.e(TAG, "Wrong challenge status: " + status);

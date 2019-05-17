@@ -21,7 +21,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin_big"
         android:orientation="vertical">
 
         <TextView
@@ -30,6 +30,14 @@
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyMedium"
             android:text="@string/fragment_statistics_level"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/statistics_challenges_fo_levelup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="@string/fragment_statistics_challenges_for_levelup"
             android:textSize="16sp"/>
 
         <TextView
@@ -44,8 +52,8 @@
             android:id="@+id/statistics_average_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@string/fontFamilyMedium"
             android:paddingBottom="8dp"
+            android:fontFamily="@string/fontFamilyMedium"
             android:text="@string/fragment_statistics_average_rating"
             android:textSize="16sp"/>
 
@@ -130,7 +138,7 @@
         androidPlot.rangeTitle.visible="false"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_marginBottom="@dimen/text_margin"
+        android:layout_marginBottom="@dimen/text_margin_big"
         android:visibility="gone"
         ap:backgroundColor="@android:color/white"
         ap:gridClippingEnabled="false"

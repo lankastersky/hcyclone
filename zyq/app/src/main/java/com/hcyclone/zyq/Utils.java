@@ -69,6 +69,16 @@ public final class Utils {
 //    }
 //  }
 
+  /**
+   * Opens Youtube video in the app
+   * @param id  youtube video id
+   * @param context context
+   */
+  public static void watchYoutubeVideo(String videoUrl, Context context) {
+      Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
+      context.startActivity(webIntent);
+  }
+
   public static void sendFeedback(Context context) {
     Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
         "mailto","lankastersky@gmail.com", null));

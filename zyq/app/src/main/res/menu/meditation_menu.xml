@@ -8,4 +8,10 @@
           android:icon="@mipmap/ic_help_outline_white_24dp"
           app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/action_video"
+        android:orderInCategory="100"
+        android:title="video"
+        android:icon="@mipmap/ic_baseline_video_library_white_24"
+        app:showAsAction="ifRoom"/>
+
 </menu>

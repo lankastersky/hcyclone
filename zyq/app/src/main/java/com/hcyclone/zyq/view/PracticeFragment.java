@@ -14,10 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
 import com.hcyclone.zyq.model.Exercise;
+import com.hcyclone.zyq.model.Exercise.LevelType;
 import com.hcyclone.zyq.model.ExerciseGroup;
 import com.hcyclone.zyq.model.ExerciseModel;
 import com.hcyclone.zyq.view.adapters.PracticeRecyclerViewAdapter;
@@ -33,10 +35,14 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   private Exercise.LevelType level;
   private String description;
+  protected ExerciseModel exerciseModel;
+  PracticeRecyclerViewAdapter practiceAdapter;
 
   @Override
   public void onAttach(Context context) {
     super.onAttach(context);
+    App app = (App) getContext().getApplicationContext();
+    exerciseModel = app.getExerciseModel();
     MainActivity mainActivity = (MainActivity) context;
     level = mainActivity.getCurrentLevel();
   }
@@ -49,9 +55,13 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
     setHasOptionsMenu(true);
 
+    if (savedInstanceState != null) {
+      level = (LevelType) savedInstanceState.get(BundleConstants.EXERCISE_LEVEL_KEY);
+    }
+
     recyclerView = view.findViewById(R.id.practice_recycler_view);
-    RecyclerView.Adapter adapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
-    createListLayout(recyclerView, adapter);
+    practiceAdapter = new PracticeRecyclerViewAdapter(buildListItems(), this);
+    createListLayout(recyclerView, practiceAdapter);
 
     return view;
   }
@@ -63,12 +73,24 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
   }
 
   @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (level != null) {
+      outState.putSerializable(BundleConstants.EXERCISE_LEVEL_KEY, level);
+    }
+  }
+
+  @Override
   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
     inflater.inflate(R.menu.exercise_menu, menu);
     if (TextUtils.isEmpty(description)) {
       MenuItem item = menu.findItem(R.id.action_description);
       item.setVisible(false);
     }
+    // Hide video icon
+    MenuItem item = menu.findItem(R.id.action_video);
+    item.setVisible(false);
+
     super.onCreateOptionsMenu(menu, inflater);
   }
 
@@ -85,7 +107,7 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
   @Override
   protected Collection<ExerciseGroup> buildListItems() {
-    return ExerciseModel.buildExerciseGroups(level, getContext());
+    return exerciseModel.buildExerciseGroups(level, getContext());
   }
 
   @Override
@@ -127,5 +149,8 @@ public class PracticeFragment extends ListFragment implements OnItemSelectListen
 
     description = exerciseModel.getPracticeDescription(level, getContext());
     getActivity().invalidateOptionsMenu();
+
+    practiceAdapter.setItems(buildListItems());
+    practiceAdapter.notifyDataSetChanged();
   }
 }

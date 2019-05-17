@@ -6,13 +6,17 @@ import android.text.TextUtils;
 
 import com.google.common.collect.Iterables;
 import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.ChallengeArchiver;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
+import com.hcyclone.zen.model.Challenge.LevelType;
+import com.hcyclone.zen.model.Challenge.StatusType;
 import com.hcyclone.zen.service.FeaturesService;
 
+import com.hcyclone.zen.service.FeaturesService.FeaturesType;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -28,29 +32,21 @@ public final class ChallengeModel {
 
   private static final String TAG = ChallengeModel.class.getSimpleName();
 
-  private static final ChallengeModel instance = new ChallengeModel();
-
   private static final double PROBABILITY_GET_DECLINED_CHALLENGE = 1D / 6;
-  private static final double PROPORTION_ACCEPT_MEDIUM_LEVEL_CHALLENGE = 1D / 3;
-  private static final double PROPORTION_ACCEPT_HIGH_LEVEL_CHALLENGE = 2D / 3;
+  private static final double MEDIUM_LEVEL_CHALLENGES_RATIO = 1D / 3;
+  private static final double HIGH_LEVEL_CHALLENGES_RATIO = 2D / 3;
 
   private final Map<String, Challenge> challengeMap = new HashMap<>();
+  private final ChallengeArchiver challengeArchiver;
+  private final FeaturesService featuresService;
 
   private String currentChallengeId;
   private long currentChallengeShownTime;
   private int level;
-  private ChallengeArchiver challengeArchiver;
 
-  private ChallengeModel() {}
-
-  public static ChallengeModel getInstance() {
-    return instance;
-  }
-
-  public void init(@NonNull Context context) {
-    if (challengeArchiver == null) {
-      challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
-    }
+  public ChallengeModel(@NonNull Context context) {
+    challengeArchiver = new ChallengeArchiver(context, AppLifecycleManager.getInstance());
+    featuresService = ((App)context.getApplicationContext()).getFeaturesService();
   }
 
   @Challenge.LevelType
@@ -132,12 +128,7 @@ public final class ChallengeModel {
   public void loadChallenges() {
     Log.d(TAG, "Load challenges");
     if (challengeMap.isEmpty()) {
-      List<Challenge> challenges;
-//      if (!Utils.isDebug()) {
-        challenges = challengeArchiver.restoreChallenges();
-//      } else {
-//        challenges = generateChallenges();
-//      }
+      List<Challenge> challenges = challengeArchiver.restoreChallenges();
       for (Challenge challenge : challenges) {
         challengeMap.put(challenge.getId(), challenge);
       }
@@ -149,6 +140,9 @@ public final class ChallengeModel {
   public void saveChallenges(List<Challenge> challenges) {
     Log.d(TAG, "Save challenges");
     challengeMap.clear();
+    // if (Utils.isDebug()) {
+    //   challenges = generateChallenges();
+    // }
     for (Challenge challenge : challenges) {
       challengeMap.put(challenge.getId(), challenge);
     }
@@ -156,8 +150,8 @@ public final class ChallengeModel {
   }
 
   /**
-   * Sets challenge status as {@link Challenge.SHOWN} if current status is
-   * {@link Challenge.UNKNOWN}.
+   * Sets challenge status as {@link Challenge#SHOWN} if current status is
+   * {@link Challenge#UNKNOWN}.
    */
   public void setChallengeShown(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
@@ -173,7 +167,7 @@ public final class ChallengeModel {
     storeState();
   }
 
-  /** Sets challenge status as {@link Challenge.ACCEPTED}. */
+  /** Sets challenge status as {@link Challenge#ACCEPTED}. */
   public void setChallengeAccepted(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -184,7 +178,7 @@ public final class ChallengeModel {
     storeState();
   }
 
-  /** Sets challenge status as {@link Challenge.FINISHED}. */
+  /** Sets challenge status as {@link Challenge#FINISHED}. */
   public void setChallengeFinished(String challengeId) {
     if (!challengeId.equals(currentChallengeId)) {
       Log.w(
@@ -223,27 +217,54 @@ public final class ChallengeModel {
   }
 
   /**
-   * Checks if the level of the given challenge is higher than the current one and updates the
-   * current one if needed.
+   * Checks if it's time for level up based on the number of finished challenges and stores the
+   * upgraded level if needed.
    */
-  public boolean checkLevelUp(String challengeId) {
-    if (!challengeId.equals(currentChallengeId)) {
-      Log.w(
-          TAG, "Can't check level up. ChallengeId is not current challenge: " + challengeId);
-      return false;
-    }
-    // Level up is disabled in the free version.
-    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
-      return false;
-    }
-    Challenge challenge = getCurrentChallenge();
-    int currentLevel = challenge.getLevel();
-    if (currentLevel > getLevel() && currentLevel >= Challenge.LEVEL_LOW) {
-      setLevel(challenge.getLevel());
+  public boolean checkLevelUp() {
+    int[] upgradeToLevel = new int[1];
+    if (challengesForLevelUp(upgradeToLevel) <= 0
+        && upgradeToLevel[0] != Challenge.LEVEL_UNKNOWN
+        && upgradeToLevel[0] != Challenge.LEVEL_LOW) {
+
+      setLevel(upgradeToLevel[0]);
       challengeArchiver.storeLevel(getLevel());
       return true;
     }
     return false;
+  }
+
+  /**
+   * Returns the number of challenges left for the level up. {@code upgradeToLevel} returns the
+   * level to upgrade to.
+   * The result can be negative for backward compatibility (the old version used other mechanism
+   * to calculate the level-up).
+   */
+  public int challengesForLevelUp(int[] upgradeToLevel) {
+    List<Challenge> finishedChallenges = getChallengesByStatus(Challenge.FINISHED);
+    Collection<Challenge> challenges = getChallengesMap().values();
+    int result = 0;
+    if (upgradeToLevel != null) {
+      upgradeToLevel[0] = Challenge.LEVEL_UNKNOWN;
+    }
+    switch (level) {
+      case Challenge.LEVEL_LOW:
+        int lowChallengesNumber = (int) (challenges.size() * MEDIUM_LEVEL_CHALLENGES_RATIO);
+        result = lowChallengesNumber - finishedChallenges.size();
+        if (upgradeToLevel != null) {
+          upgradeToLevel[0] = Challenge.LEVEL_MEDIUM;
+        }
+        break;
+      case Challenge.LEVEL_MEDIUM:
+        int mediumChallengesNumber = (int) (challenges.size() * HIGH_LEVEL_CHALLENGES_RATIO);
+        result = mediumChallengesNumber - finishedChallenges.size();
+        if (upgradeToLevel != null) {
+          upgradeToLevel[0] = Challenge.LEVEL_HIGH;
+        }
+        break;
+      default:
+        break;
+    }
+    return result;
   }
 
   private Map<String, Challenge> getChallengesMap() {
@@ -251,7 +272,7 @@ public final class ChallengeModel {
   }
 
   @NonNull
-  private List<Challenge> getChallengesByStatus(int status) {
+  private List<Challenge> getChallengesByStatus(@StatusType int status) {
     List<Challenge> challenges = new ArrayList<>();
     for (Challenge challenge : getChallengesMap().values()) {
       if (challenge.getStatus() == status) {
@@ -343,12 +364,13 @@ public final class ChallengeModel {
   private String getNewChallengeId() {
     String challengeId = "";
     Challenge challenge = null;
-    List<Challenge> nonfinishedChallenges = getChallengesByStatus(Challenge.UNKNOWN);
-    // Ideally, we shouldn't have such challenges.
-    nonfinishedChallenges.addAll(getChallengesByStatus(Challenge.ACCEPTED));
-    // Ideally, we shouldn't have such challenges.
-    nonfinishedChallenges.addAll(getChallengesByStatus(Challenge.SHOWN));
-    nonfinishedChallenges = filterNonfinishedChallengesByLevel(nonfinishedChallenges);
+    List<Challenge> nonfinishedChallenges = filterNonfinishedChallengesByLevel();
+
+    // Only challenges of first level are available for free version.
+    if (featuresService.getFeaturesType() == FeaturesType.FREE) {
+      nonfinishedChallenges = filterChallengesByLevel(nonfinishedChallenges, Challenge.LEVEL_LOW);
+    }
+
     if (nonfinishedChallenges.size() > 0) {
       challenge = getRandomChallenge(nonfinishedChallenges);
       challengeId = challenge.getId();
@@ -361,15 +383,11 @@ public final class ChallengeModel {
         challenge = getRandomChallenge(declinedChallenges);
         challengeId = challenge.getId();
       } else if (!getChallengesMap().isEmpty()) {
-        Collection<Challenge> challenges = getChallengesMap().values();
-        if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
-            challenges = filterNonfinishedChallengesByLevel(challenges);
-        }
-
         // All available challenges are finished. Return a random old one.
+        Collection<Challenge> challenges = getChallengesMap().values();
         challenge = getRandomChallenge(challenges);
         Challenge currentChallenge = getCurrentChallenge();
-        if (currentChallenge != null) {
+        if (currentChallenge != null && challenges.size() > 1) {
           while (challenge.getId().equals(currentChallenge.getId())) {
             challenge = getRandomChallenge(challenges);
           }
@@ -394,22 +412,34 @@ public final class ChallengeModel {
     return Iterables.get(challenges, id);
   }
 
+  @NonNull
+  private List<Challenge> filterChallengesByLevel(
+      List<Challenge> challenges, @LevelType int level) {
+
+    List<Challenge> filteredChallenges = new ArrayList<>();
+    for (Challenge challenge : challenges) {
+      if (challenge.getLevel() == level) {
+        filteredChallenges.add(challenge);
+      }
+    }
+    return filteredChallenges;
+  }
+
   /**
    * Low-level challenges are available from the beginning.
    * Medium-level challenges are available when 1/3 of challenges are finished.
    * High-level challenges are available when 2/3 of challenges are finished.
    */
-  private List<Challenge> filterNonfinishedChallengesByLevel(
-      @NonNull Collection<Challenge> nonfinished) {
-
+  private List<Challenge> filterNonfinishedChallengesByLevel() {
     Collection<Challenge> challenges = getChallengesMap().values();
     if (challenges.isEmpty()) {
       return new ArrayList<>();
     }
+    List<Challenge> nonfinished = getNonfinishedChallenges();
     double finishedProportion =
         (double) (challenges.size() - nonfinished.size()) / challenges.size();
-    boolean acceptMedium = finishedProportion >= PROPORTION_ACCEPT_MEDIUM_LEVEL_CHALLENGE;
-    boolean acceptHigh = finishedProportion >= PROPORTION_ACCEPT_HIGH_LEVEL_CHALLENGE;
+    boolean acceptMedium = finishedProportion >= MEDIUM_LEVEL_CHALLENGES_RATIO;
+    boolean acceptHigh = finishedProportion >= HIGH_LEVEL_CHALLENGES_RATIO;
 
     List<Challenge> filteredChallenges = new ArrayList<>();
     for (Challenge challenge : nonfinished) {
@@ -429,6 +459,15 @@ public final class ChallengeModel {
       }
     }
     return filteredChallenges;
+  }
+
+  private List<Challenge> getNonfinishedChallenges() {
+    List<Challenge> nonfinished = getChallengesByStatus(Challenge.UNKNOWN);
+    // Ideally, we shouldn't have such challenges.
+    nonfinished.addAll(getChallengesByStatus(Challenge.ACCEPTED));
+    // Ideally, we shouldn't have such challenges.
+    nonfinished.addAll(getChallengesByStatus(Challenge.SHOWN));
+    return nonfinished;
   }
 
   private void restoreState() {
@@ -458,12 +497,12 @@ public final class ChallengeModel {
   private List<Challenge> generateChallenges() {
     List<Challenge> challenges = new ArrayList<>();
 //      int days = 1;
-//      int days = 2;
+      int days = 3;
 //      int days = 13;
 //      int days = 14;
 //      int days = 14 * 7 - 1;
 //      int days = 14 * 7;
-      int days = 14 * 30 - 1;
+//      int days = 14 * 30 - 1;
 //    int days = 14 * 30;
 //    int days = 200;
     for (int i = 0; i < days; i++) {
@@ -477,17 +516,17 @@ public final class ChallengeModel {
           "url" + i,
           "quote" + i
       );
-      int status = Challenge.FINISHED;
+//      int status = Challenge.FINISHED;
 //      do {
 //        status = (int) (Math.random() * Challenge.STATUSES_LENGTH);
 //      } while (status == Challenge.ACCEPTED);
-      challenge.setStatus(status);
-      //challenge.setRating((float) Math.random() * getMaxRating(context));
-      challenge.setRating(i % 5);
-      CALENDAR.setTime(new Date());
-      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) -(Math.random() * days));
+//      challenge.setStatus(status);
+//      challenge.setRating((float) Math.random() * getMaxRating(context));
+//      challenge.setRating(i % 5);
+//      CALENDAR.setTime(new Date());
+//      CALENDAR.add(Calendar.DAY_OF_MONTH, (int) -(Math.random() * days));
       //CALENDAR.add(Calendar.DAY_OF_YEAR, i + 1);
-      challenge.setFinishedTime(CALENDAR.getTimeInMillis());
+//      challenge.setFinishedTime(CALENDAR.getTimeInMillis());
       challenges.add(challenge);
     }
     return challenges;

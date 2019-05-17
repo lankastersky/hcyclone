@@ -15,27 +15,22 @@ public final class FeaturesService {
     // Only free features are available.
     FREE,
     // Paid and free features are available.
-    PAID
+    PAID,
+    // Features for upgraded users are available (same as paid mostly)
+    UPGRADED
   }
 
-  private static final FeaturesService instance = new FeaturesService();
   private static final String KEY_VERSION_CODE = "version_code";
   private static final String KEY_UPGRADED_USER = "upgraded_user";
+  private static final String KEY_EXTENDED_VERSION_ACTIVATED = "extended_version_activated";
+  private static final String KEY_EXTENDED_VERSION_DIALOG_SHOWN = "extended_version_dialog_shown";
 
-  private Context context;
-  private SharedPreferences sharedPreferences;
+  private final Context context;
+  private final SharedPreferences sharedPreferences;
 
-  private FeaturesService() {}
-
-  public static FeaturesService getInstance() {
-    return instance;
-  }
-
-  public void init(@NonNull Context context) {
+  public FeaturesService(@NonNull Context context) {
     this.context = context;
-    if (sharedPreferences == null) {
-      this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    }
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     // Must be called before storing version code.
     storeUpgradedUserFlag();
     storeVersionCode();
@@ -43,44 +38,76 @@ public final class FeaturesService {
 
   /**
    * Cases:
-   * a new user installs ({@link Utils.isFirstInstall(Context) returns true}):
-   *   return {@code FeaturesType.FREE}
+   * a new user installs ({@link Utils#isFirstInstall(Context) returns true}):
+   *   return {@link FeaturesType#FREE}
    * an upgraded user updates:
-   *   return {@code FeaturesType.PAID}
-   * a new user paid for the content:
-   *   return {@code FeaturesType.PAID}
-   * else return {@code FeaturesType.FREE}
+   *   return {@link FeaturesType#UPGRADED}
+   * a user paid for the content:
+   *   return {@link FeaturesType#PAID}
+   * else return {@link FeaturesType#FREE}
    */
   public FeaturesType getFeaturesType() {
-    if (Utils.isDebug()) {
-      return FeaturesType.FREE;
+    if (isUpgradedUser()) {
+        // Upgraded users have all features for free.
+        return FeaturesType.UPGRADED;
+    }
+
+    if (isExtendedVersionActivated()) {
+      return FeaturesType.PAID;
     }
 
     if (Utils.isFirstInstall(context)) {
       return FeaturesType.FREE;
     }
 
-    if (isUpgradedUser()) {
-        // Upgraded users have all features for free.
-        return FeaturesType.PAID;
-    }
-
-    if (isPaidContent()) {
-      return FeaturesType.PAID;
+    if (Utils.isDebug()) {
+      return FeaturesType.FREE;
     }
 
     return FeaturesType.FREE;
   }
 
-  private boolean isPaidContent() {
-    // TODO: implement.
-    return false;
+  /**
+   * Returns true if it's not a first install and the user is not upgraded and the dialog wasn't
+   * shown before.
+   */
+  public boolean showExtendedVersionDialog() {
+    return !Utils.isFirstInstall(context)
+        && !isUpgradedUser()
+        && !isExtendedVersionDialogShown();
   }
 
+  /** Remembers if Extended version available dialog is shown. */
+  public void storeShowExtendedVersionDialogShown(boolean shown) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION_DIALOG_SHOWN, shown).apply();
+  }
+
+  private boolean isExtendedVersionDialogShown() {
+    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION_DIALOG_SHOWN, false);
+  }
+
+  /** Remembers if the user is using the extended version. */
+  public void storeExtendedVersionActivated(boolean enable) {
+    sharedPreferences.edit().putBoolean(KEY_EXTENDED_VERSION_ACTIVATED, enable).apply();
+  }
+
+  private boolean isExtendedVersionActivated() {
+    return sharedPreferences.getBoolean(KEY_EXTENDED_VERSION_ACTIVATED, false);
+  }
+
+  /** Returns true if the users was using our app before extended features (ads etc.). */
   private boolean isUpgradedUser() {
+    if (Utils.isDebug()) {
+      return sharedPreferences.getBoolean(
+          PreferencesService.PREF_KEY_UPGRADED_USER, false);
+    }
     return sharedPreferences.getBoolean(KEY_UPGRADED_USER, false);
   }
 
+  /**
+   * Upgraded users are users who used the version without extended features (ads etc.).
+   * We didn't store versions of the app before that, so use it as a signal.
+   */
   private void storeUpgradedUserFlag() {
     // Upgraded users don't have version code stored.
     if (!Utils.isFirstInstall(context) && getVersionCode() == 0) {

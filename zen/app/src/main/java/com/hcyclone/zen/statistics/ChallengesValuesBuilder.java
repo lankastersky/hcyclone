@@ -2,6 +2,7 @@ package com.hcyclone.zen.statistics;
 
 import android.content.Context;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 
@@ -98,6 +99,8 @@ public class ChallengesValuesBuilder {
       }
     }
 
+    ChallengeModel challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
+
     // Normalize rates.
     for (String dateString : challengeTimeToRates.keySet()) {
       int challengesNumber = challengeTimeToNumber.get(dateString);
@@ -105,7 +108,7 @@ public class ChallengesValuesBuilder {
       float normalizedRate =
           challengesRate * 100 // in %
               / challengesNumber
-              / ChallengeModel.getInstance().getMaxRating(context);
+              / challengeModel.getMaxRating(context);
       normalizedRate = (float) Math.round(normalizedRate * 10) / 10; // round up to 1 digit.
       challengeTimeToRates.put(dateString, normalizedRate);
     }

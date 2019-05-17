@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyMedium"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="20sp"
         />
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:autoLink="web"
             android:fontFamily="@string/fontFamilyMedium"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 
@@ -32,8 +32,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
-            android:paddingBottom="@dimen/text_margin"
-            android:paddingStart="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
+            android:paddingStart="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="14sp"/>
 
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyMedium"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 
@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyLight"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="16sp"/>
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:layout_gravity="center"
             android:isIndicator="true"
             android:numStars="4"
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@string/fontFamilyMedium"
-            android:paddingBottom="@dimen/text_margin"
+            android:paddingBottom="@dimen/text_margin_big"
             android:textAppearance="?attr/textAppearanceListItem"
             android:textSize="16sp"/>
 

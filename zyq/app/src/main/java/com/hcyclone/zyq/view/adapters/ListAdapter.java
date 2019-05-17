@@ -14,7 +14,7 @@ import java.util.Collection;
 public abstract class ListAdapter<T, VH extends ListAdapter.ViewHolder<T>>
     extends RecyclerView.Adapter<VH> {
 
-  protected final Collection<T> items;
+  protected Collection<T> items;
   protected final OnItemSelectListener<T> listener;
 
   ListAdapter(Collection<T> items, OnItemSelectListener<T> listener) {
@@ -38,6 +38,10 @@ public abstract class ListAdapter<T, VH extends ListAdapter.ViewHolder<T>>
   @Override
   public int getItemCount() {
     return items.size();
+  }
+
+  public void setItems(Collection<T> items) {
+    this.items = items;
   }
 
   abstract static class ViewHolder<T> extends RecyclerView.ViewHolder {

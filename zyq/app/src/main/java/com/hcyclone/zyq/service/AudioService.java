@@ -20,6 +20,7 @@ import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
 
+import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.AudioPlayer;
 import com.hcyclone.zyq.BundleConstants;
@@ -96,6 +97,7 @@ public class AudioService extends Service {
           try {
             play(audioName);
           } catch (IOException e) {
+            Crashlytics.logException(e);
             Log.e(AudioService.TAG, "Failed to play audio", e);
             break;
           }

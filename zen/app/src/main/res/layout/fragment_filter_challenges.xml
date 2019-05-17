@@ -4,14 +4,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/text_margin">
+    android:padding="@dimen/text_margin_big">
 
     <TextView
         android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="@dimen/text_margin"
+        android:paddingBottom="@dimen/text_margin_big"
         android:text="Title Stub"
         android:textSize="20sp"/>
 
@@ -19,7 +19,7 @@
         android:id="@+id/dialog_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/text_margin"
+        android:paddingBottom="@dimen/text_margin_big"
         android:text="Message stub"
         android:textSize="16sp"/>
 

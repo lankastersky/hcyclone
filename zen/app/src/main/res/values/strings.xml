@@ -10,6 +10,7 @@
     <string name="navigation_drawer_statistics">Statistics</string>
     <string name="navigation_drawer_settings">Settings</string>
     <string name="navigation_drawer_help">Help</string>
+    <string name="navigation_drawer_upgrade">Premium Version</string>
     <string name="navigation_drawer_feedback">Feedback</string>
 
     <!-- Strings related to Settings -->
@@ -158,6 +159,7 @@
     <string name="fragment_statistics">Statistics</string>
     <string name="fragment_statistics_level">Difficulty: %s</string>
     <string name="fragment_statistics_average_rating">Average level of consciousness: %d%%</string>
+    <string name="fragment_statistics_challenges_for_levelup">Challenges left for the level-up: %d</string>
     <string name="fragment_statistics_finished_challenges_number">Finished challenges: %d of %d
     </string>
     <string name="fragment_statistics_finished_challenges_plot_title">Finished challenges</string>
@@ -176,12 +178,32 @@
     <string name="rank_dialog_title">Estimate your level of consciousness</string>
     <string name="rank_dialog_rate">Rate</string>
 
-    <!-- Alert dialog -->
+    <!-- Alert dialogs -->
+
     <!-- Level up -->
     <string name="dialog_title_next_level_available">Next level is available</string>
-    <string name="dialog_text_next_level_available">Challenges of %s level of difficulty are
-        available.
+    <string name="dialog_text_next_level_available">Congratulations! Challenges of the %s level are
+        available now and will be assigned to you soon.
     </string>
+
+    <!-- Premium version dialog -->
+    <string name="dialog_premium_title">Your are using Premium version</string>
+    <string name="dialog_premium_features">Features available:\n- Different levels of challenges\n- Statistics charts\n- No ads</string>
+
+    <!-- Upgrade dialog -->
+    <string name="upgrade_dialog_title">Premium version features:</string>
+    <string name="upgrade_dialog_promo_title">Premium version is available now:</string>
+    <string name="upgrade_dialog_levels">- Different levels of challenges</string>
+    <string name="upgrade_dialog_statistics">- Statistics charts</string>
+    <string name="upgrade_dialog_no_ads">- No ads</string>
+    <string name="upgrade_dialog_one_time_purchase">One-time purchase</string>
+    <string name="upgrade_dialog_buy">Buy</string>
+    <string name="upgrade_dialog_subscription">Monthly subscription</string>
+    <string name="upgrade_dialog_subscribe">Subscribe</string>
+
+    <!-- Billing service -->
+    <string name="dialog_title_failed_get_purchases">Failed to get purchases list</string>
+    <string name="dialog_text_billing_service_unavailable">Billing service is unavailable. Try again later.</string>
 
     <!-- Firebase error -->
     <string name="dialog_title_something_wrong">Something is wrong</string>
@@ -193,4 +215,8 @@
     <!-- AdMob constants -->
     <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~1657176734</string>
     <string name="banner_challenge" translatable="false">ca-app-pub-4142226708429553/1402009957</string>
+
+  <string name="purchase_extended_version" translatable="false">extended_version</string>
+  <string name="purchase_extended_version_monthly_subscription" translatable="false">extended_version_monthly_subscription</string>
+  <string name="purchase_test_purchased" translatable="false">android.test.purchased</string>
 </resources>

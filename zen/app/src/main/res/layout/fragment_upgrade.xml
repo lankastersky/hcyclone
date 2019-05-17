@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:minWidth="500dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/dialog_margin">
+
+    <include layout="@layout/loading_indicator" />
+
+    <TextView
+        android:id="@+id/upgrade_dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingBottom="@dimen/text_margin_big"
+        android:text="@string/upgrade_dialog_title"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/upgrade_dialog_levels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_margin_small"
+        android:text="@string/upgrade_dialog_levels"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/upgrade_dialog_statistics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_margin_small"
+        android:text="@string/upgrade_dialog_statistics"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/upgrade_dialog_no_ads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/text_margin_big"
+        android:text="@string/upgrade_dialog_no_ads"
+        android:textSize="16sp"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/dialog_margin">
+
+        <TextView
+            android:id="@+id/upgrade_dialog_price_buy"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/upgrade_dialog_one_time_purchase"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/upgrade_dialog_buy"
+            app:layout_constraintEnd_toStartOf="@+id/upgrade_dialog_buy"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/upgrade_dialog_buy"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:focusable="false"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="@string/upgrade_dialog_buy"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/upgrade_dialog_price_subscribe"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/upgrade_dialog_subscription"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/upgrade_dialog_subscribe"
+            app:layout_constraintEnd_toStartOf="@+id/upgrade_dialog_subscribe"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <Button
+            android:id="@+id/upgrade_dialog_subscribe"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/text_margin_big"
+            android:background="@color/colorPrimaryDark"
+            android:focusable="false"
+            android:fontFamily="@string/fontFamilyMedium"
+            android:text="@string/upgrade_dialog_subscribe"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/upgrade_dialog_buy"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+  <Button
+      android:id="@+id/upgrade_dialog_cancel"
+      android:layout_width="@dimen/button_width"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="@color/colorPrimaryDark"
+      android:focusable="false"
+      android:fontFamily="@string/fontFamilyMedium"
+      android:text="@android:string/cancel"
+      android:textColor="@android:color/white"
+      android:textSize="16sp"/>
+
+</LinearLayout>

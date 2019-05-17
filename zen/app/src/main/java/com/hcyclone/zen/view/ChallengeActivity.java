@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.model.ChallengeModel;
@@ -21,7 +22,8 @@ public class ChallengeActivity extends AppCompatActivity {
     setupActionBar();
 
     String challengeId = getIntent().getExtras().getString(JournalChallengeFragment.CHALLENGE_ID);
-    setTitle(ChallengeModel.getInstance().getChallenge(challengeId).getContent());
+    ChallengeModel challengeModel = ((App)getApplication()).getChallengeModel();
+    setTitle(challengeModel.getChallenge(challengeId).getContent());
 
     FragmentManager fragmentManager = getSupportFragmentManager();
     FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

@@ -18,10 +18,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.Purchase;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.hcyclone.zen.Analytics;
+import com.hcyclone.zen.App;
 import com.hcyclone.zen.AppLifecycleManager;
+import com.hcyclone.zen.service.BillingService;
+import com.hcyclone.zen.service.BillingService.BillingUpdatesListener;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
@@ -29,11 +36,14 @@ import com.hcyclone.zen.model.Challenge;
 import com.hcyclone.zen.model.ChallengeModel;
 import com.hcyclone.zen.service.ChallengesLoader;
 import com.hcyclone.zen.service.FeaturesService;
+import com.hcyclone.zen.service.FeaturesService.FeaturesType;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
     implements NavigationView.OnNavigationItemSelectedListener,
     ChallengeListFragment.OnListFragmentInteractionListener,
-    ChallengesLoader.ChallengesLoadListener {
+    ChallengesLoader.ChallengesLoadListener,
+    BillingUpdatesListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
   public static final String INTENT_PARAM_START_FROM_NOTIFICATION = "start_from_notification";
@@ -42,8 +52,13 @@ public class MainActivity extends AppCompatActivity
 
   private ProgressBar progressBar;
   private DrawerLayout drawer;
+  private NavigationView navigationView;
   private boolean loadingChallenges;
   private String lastFragmentTag;
+  private BillingService billingService;
+  private ChallengeModel challengeModel;
+  private FeaturesService featuresService;
+  private UpgradeFragment upgradeFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +74,7 @@ public class MainActivity extends AppCompatActivity
     drawer.setDrawerListener(toggle);
     toggle.syncState();
 
-    NavigationView navigationView = findViewById(R.id.nav_view);
+    navigationView = findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
 
     progressBar = findViewById(R.id.progressBar);
@@ -68,18 +83,15 @@ public class MainActivity extends AppCompatActivity
     progressBar.setVisibility(View.VISIBLE);
     drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-    if (FeaturesService.getInstance().getFeaturesType() == FeaturesService.FeaturesType.FREE) {
-      // Disable charts.
-      Menu navigationMenu = navigationView.getMenu();
-      MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
-      item.setVisible(false);
-
-      showAds();
-    }
+    App app = (App) getApplication();
+    challengeModel = app.getChallengeModel();
+    featuresService = app.getFeaturesService();
 
     if (savedInstanceState != null) {
       lastFragmentTag = savedInstanceState.getString(KEY_LAST_FRAGMENT_TAG);
     }
+
+    billingService = new BillingService(this, this);
   }
 
   @Override
@@ -93,17 +105,28 @@ public class MainActivity extends AppCompatActivity
     super.onStart();
 
     if (loadingChallenges) {
-      // We load using background service which is not available on Android O+ in background. So
+      // We load using background service which is not available on Android 8+ in background. So
       // we have to wait for the activity to be in foreground (started) first.
+      // See https://developer.android.com/about/versions/oreo/background#services
       new Handler().post(() -> {
         new ChallengesLoader(this, this).loadChallenges(this);
       });
+    }
+
+    // Note: We query purchases in onResume() to handle purchases completed while the activity
+    // is inactive. For example, this can happen if the activity is destroyed during the
+    // purchase flow. This ensures that when the activity is resumed it reflects the user's
+    // current purchases.
+    if (billingService.getBillingClientResponseCode() == BillingResponse.OK) {
+      billingService.queryPurchases();
     }
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+
+    refreshUi();
 
     if (loadingChallenges) {
       return;
@@ -130,6 +153,13 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
+  public void onDestroy() {
+    Log.d(TAG, "Destroy");
+    super.onDestroy();
+    billingService.destroy();
+  }
+
+  @Override
   public void onBackPressed() {
     DrawerLayout drawer = findViewById(R.id.drawer_layout);
     if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -147,6 +177,8 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
+  // OnListFragmentInteractionListener
+
   @Override
   public void onListFragmentInteraction(Challenge item) {
     Log.d(MainActivity.class.getSimpleName(), "onListFragmentInteraction: " + item.getId());
@@ -158,6 +190,7 @@ public class MainActivity extends AppCompatActivity
   }
 
   // ChallengesLoadListener
+
   @Override
   public void onChallengesLoaded() {
     loadingChallenges = false;
@@ -168,7 +201,7 @@ public class MainActivity extends AppCompatActivity
       Log.d(TAG, "App in background. Skipping showing challenges");
       return;
     }
-    if (ChallengeModel.getInstance().getCurrentChallenge() != null) {
+    if (challengeModel.getCurrentChallenge() != null) {
       boolean fromNotification = isStartFromNotification();
       if (fromNotification || lastFragmentTag == null) {
         if (fromNotification) {
@@ -195,6 +228,123 @@ public class MainActivity extends AppCompatActivity
 
     Utils.buildDialog(getString(R.string.dialog_title_something_wrong),
         getString(R.string.dialog_text_failed_to_connect), this, null).show();
+  }
+
+  // BillingUpdatesListener
+
+  @Override
+  public void onBillingClientSetupFinished() {
+    Log.d(TAG, "On billing client setup finished");
+  }
+
+  @Override
+  public void onConsumeFinished(String token, @BillingResponse int result) {
+    Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
+    if (result == BillingResponse.OK) {
+      Log.d(TAG, "Consumption successful.");
+    } else {
+      Log.e(TAG, "Error while consuming: " + result);
+    }
+    refreshUi();
+  }
+
+  @Override
+  public void onPurchasesUpdated(@BillingResponse int result, List<Purchase> purchases) {
+    boolean upgrade = false;
+    switch (result) {
+      case BillingResponse.OK:
+        boolean extendedVersionPurchased = false;
+        for (Purchase purchase : purchases) {
+          String sku = purchase.getSku();
+          Log.d(TAG, sku + " purchased");
+
+          extendedVersionPurchased |= getString(R.string.purchase_extended_version).equals(sku);
+          extendedVersionPurchased |= getString(
+              R.string.purchase_extended_version_monthly_subscription).equals(sku);
+
+          if (Utils.isDebug()) {
+            extendedVersionPurchased |= getString(R.string.purchase_test_purchased).equals(sku);
+          }
+        }
+        if (featuresService.getFeaturesType() == FeaturesType.FREE && extendedVersionPurchased) {
+          Log.d(TAG, "Upgrading to extended version");
+          upgrade = true;
+        }
+        featuresService.storeExtendedVersionActivated(extendedVersionPurchased);
+
+        break;
+    }
+    if (featuresService.showExtendedVersionDialog()) {
+      Log.d(TAG, "Showing promo of extended version");
+      showNeedToUpgradeDialog(true, true);
+      featuresService.storeShowExtendedVersionDialogShown(true);
+    } else { // The dialog can be opened from main menu.
+      showNeedToUpgradeDialog(false);
+    }
+    if (upgrade) {
+      // Let user know that he was upgraded.
+      showAlreadyUpgradedDialog();
+    }
+    refreshUi();
+  }
+
+  public BillingService getBillingService() {
+    return billingService;
+  }
+
+  /** Shows upgrade dialog. */
+  private void showUpgradeDialog(boolean show) {
+    if (show && featuresService.getFeaturesType() == FeaturesType.PAID) {
+      showAlreadyUpgradedDialog();
+      return;
+    }
+    showNeedToUpgradeDialog(show);
+  }
+
+  private void showAlreadyUpgradedDialog() {
+    Utils.buildDialog(
+        getString(R.string.dialog_premium_title),
+        getString(R.string.dialog_premium_features),
+        this,
+        null).show();
+  }
+
+  private void showNeedToUpgradeDialog(boolean show) {
+    showNeedToUpgradeDialog(show, false);
+  }
+
+  private void showNeedToUpgradeDialog(boolean show, boolean promoMode) {
+    if (show) {
+      if (upgradeFragment == null) {
+        upgradeFragment = new UpgradeFragment();
+      }
+      Bundle args = new Bundle();
+      args.putBoolean(UpgradeFragment.ARG_PROMO_MODE, promoMode);
+      upgradeFragment.setArguments(args);
+      upgradeFragment.show(getSupportFragmentManager(), UpgradeFragment.TAG);
+    } else if (upgradeFragment != null && upgradeFragment.isVisible()) {
+      upgradeFragment.dismissAllowingStateLoss();
+    }
+  }
+
+  private void refreshUi() {
+    FeaturesType featuresType = featuresService.getFeaturesType();
+    boolean extended = featuresType != FeaturesType.FREE;
+
+    // Update charts.
+    Menu navigationMenu = navigationView.getMenu();
+    MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
+    item.setVisible(featuresType != FeaturesType.FREE);
+
+    boolean billingAvailable = billingService.getBillingClientResponseCode() == BillingResponse.OK;
+
+    item = navigationMenu.findItem(R.id.nav_upgrade);
+    // Show Upgrade menu item if billing available or the user is already using paid version.
+    item.setVisible(
+        (billingAvailable && featuresType == FeaturesType.FREE)
+            || featuresType == FeaturesType.PAID);
+
+    showAds(!extended);
   }
 
   private boolean isStartFromNotification() {
@@ -238,7 +388,12 @@ public class MainActivity extends AppCompatActivity
       case R.id.nav_help:
         replaceFragment(HelpFragment.TAG);
         break;
+      case R.id.nav_upgrade:
+        Analytics.getInstance().sendScreen(getString(R.string.navigation_drawer_upgrade));
+        showUpgradeDialog(true);
+        break;
       case R.id.nav_feedback:
+        Analytics.getInstance().sendScreen(getString(R.string.navigation_drawer_feedback));
         Utils.sendFeedback(this);
         break;
       default:
@@ -252,6 +407,7 @@ public class MainActivity extends AppCompatActivity
       clazz = Class.forName(className).asSubclass(Fragment.class);
     } catch (ClassNotFoundException e) {
       Log.e(TAG, e.toString());
+      Crashlytics.logException(e);
       return;
     }
 
@@ -274,9 +430,12 @@ public class MainActivity extends AppCompatActivity
     lastFragmentTag = className;
   }
 
-  private void showAds() {
+  private void showAds(boolean show) {
     AdView adView = findViewById(R.id.adView);
     adView.setVisibility(View.GONE);
+    if (!show) {
+      return;
+    }
     AdRequest.Builder adRequestBuilder = new AdRequest.Builder();
     if (Utils.isDebug()) {
       adRequestBuilder
@@ -292,7 +451,7 @@ public class MainActivity extends AppCompatActivity
       }
 
       @Override
-      public void onAdFailedToLoad(int errorCode) {
+      public void onAdFailedToLoad(/* AdRequest */ int errorCode) {
         Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
       }
 

@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 /** Challenge data. */
-public class Challenge {
+public final class Challenge {
 
   private static final String TAG = Challenge.class.getSimpleName();
 
@@ -24,10 +24,11 @@ public class Challenge {
   public @interface StatusType {}
 
   // Levels
+  public static final int LEVEL_UNKNOWN = 0;
   public static final int LEVEL_LOW = 1;
   public static final int LEVEL_MEDIUM = 2;
   public static final int LEVEL_HIGH = 3;
-  @IntDef({LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
+  @IntDef({LEVEL_UNKNOWN, LEVEL_LOW, LEVEL_MEDIUM, LEVEL_HIGH})
   public @interface LevelType {}
 
   // Locale-dependent properties.
@@ -175,7 +176,7 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(TAG, "Wrong status to update: " + status);
+        Log.w(TAG, "Wrong status to update: " + status);
         break;
     }
   }
@@ -189,7 +190,7 @@ public class Challenge {
         finishedTime = new Date().getTime();
         break;
       default:
-        Log.e(TAG, "Wrong status to decline: " + status);
+        Log.w(TAG, "Wrong status to decline: " + status);
         break;
     }
   }
