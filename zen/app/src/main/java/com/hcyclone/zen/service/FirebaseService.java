@@ -12,11 +12,13 @@ import com.hcyclone.zen.model.ChallengeModel;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public final class FirebaseService extends IntentService
     implements FirebaseAdapter.FirebaseAuthListener {
 
   private static final String TAG = FirebaseService.class.getSimpleName();
+  private static final int DOWNLOAD_CHALLENGES_WAIT_SEC = 30;
 
   public static final String INTENT_KEY_RECEIVER = "INTENT_KEY_RECEIVER";
   public static final int RESULT_CODE_OK = 0;
@@ -33,6 +35,12 @@ public final class FirebaseService extends IntentService
   }
 
   @Override
+  public int onStartCommand(Intent intent, int flags, int startId) {
+    super.onStartCommand(intent, startId, startId);
+    return START_REDELIVER_INTENT;
+  }
+
+  @Override
   protected void onHandleIntent(Intent intent) {
     receiver = intent.getParcelableExtra(INTENT_KEY_RECEIVER);
     locale = intent.getStringExtra(INTENT_CHALLENGES_LOCALE);
@@ -45,10 +53,11 @@ public final class FirebaseService extends IntentService
     }
     try {
       // Prevent service to be stopped before challenges were loaded.
-      countDownLatch.await();
+      countDownLatch.await(DOWNLOAD_CHALLENGES_WAIT_SEC, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       Log.e(TAG, e.toString());
       Crashlytics.logException(e);
+      Thread.currentThread().interrupt();
     }
   }
 
@@ -68,7 +77,7 @@ public final class FirebaseService extends IntentService
   }
 
   private void downloadChallenges() {
-    Log.d(TAG, "Load challenges");
+    Log.d(TAG, "Load challenges with locale " + locale);
     FirebaseAdapter.getInstance().downloadChallenges(locale, new ChallengesDownloadListener() {
       @Override
       public void onError(Exception e) {

@@ -19,6 +19,7 @@
 -ignorewarnings
 -keep class com.hcyclone.zen.model.Challenge* { *; }
 -keep class com.androidplot.** { *; }
--keep class android.support.v7.widget.ShareActionProvider { *; }
+-keep class androidx.appcompat.widget.** { *; }
+-keep class androidx.appcompat.widget.ShareActionProvider.** { *; }
 -keep class com.android.vending.billing.**
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/allocation/variable

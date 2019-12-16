@@ -1,8 +1,8 @@
 package com.hcyclone.zen.statistics;
 
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 
+import androidx.annotation.VisibleForTesting;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.StepMode;

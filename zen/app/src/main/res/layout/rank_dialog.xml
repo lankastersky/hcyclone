@@ -26,6 +26,7 @@
         android:numStars="@integer/stars_amount"
         android:rating="2"
         android:stepSize="1.0"
-        android:theme="@style/RatingBar"/>
+        android:theme="@style/RatingBar"
+        android:focusable="true" />
 
 </LinearLayout>

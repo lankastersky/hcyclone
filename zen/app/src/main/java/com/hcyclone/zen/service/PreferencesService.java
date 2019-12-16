@@ -3,10 +3,10 @@ package com.hcyclone.zen.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.preference.ListPreference;
-import android.support.v7.preference.Preference;
 
+import androidx.annotation.NonNull;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.AppLifecycleManager;
 import com.hcyclone.zen.Log;
@@ -62,12 +62,12 @@ public final class PreferencesService {
 
           Log.d(TAG, "Language changed to " + stringValue);
           Analytics.getInstance().sendChangeLanguage(stringValue);
-          Utils.buildDialog(
-              context.getString(R.string.pref_restart_needed_title),
-              context.getString(R.string.pref_restart_needed_message),
-              context,
-              null)
-              .show();
+          // Utils.buildDialog(
+          //     context.getString(R.string.pref_restart_needed_title),
+          //     context.getString(R.string.pref_restart_needed_message),
+          //     context,
+          //     null)
+          //     .show();
         }
       } else {
         // For all other preferences, set the summary to the value's

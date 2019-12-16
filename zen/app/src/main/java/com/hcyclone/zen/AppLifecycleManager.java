@@ -5,7 +5,7 @@ import android.app.Application.ActivityLifecycleCallbacks;
 import android.app.backup.BackupManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /** Determines global app lifecycle states.
  *

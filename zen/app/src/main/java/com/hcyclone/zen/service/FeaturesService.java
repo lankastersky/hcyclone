@@ -3,8 +3,8 @@ package com.hcyclone.zen.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 import com.hcyclone.zen.Utils;
 
 // Determines which feature are enabled for which users. Track the app version persistently.

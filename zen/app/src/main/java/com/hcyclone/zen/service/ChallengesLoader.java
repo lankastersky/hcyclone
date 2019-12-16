@@ -15,6 +15,7 @@ import com.hcyclone.zen.Log;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.ChallengeModel;
 
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -30,6 +31,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
   private final ChallengesLoadListener listener;
   private final ChallengeModel challengeModel;
   private final SharedPreferences sharedPreferences;
+  private WeakReference<Context> contextRef;
 
   public interface ChallengesLoadListener {
     void onError(Exception e);
@@ -63,6 +65,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
 
   public ChallengesLoader(ChallengesLoadListener listener, Context context) {
     this.listener = listener;
+    contextRef = new WeakReference<>(context);
     challengeModel = ((App) context.getApplicationContext()).getChallengeModel();
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     PreferenceManager.getDefaultSharedPreferences(context)
@@ -81,6 +84,10 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
       // Reset load time to force the new update for the other language.
       sharedPreferences
           .edit().putLong(KEY_CHALLENGES_LAST_LOAD_TIME, DEFAULT_LAST_LOAD_TIME).apply();
+      Context context = contextRef.get();
+      if (context != null) {
+        startFirebaseService(context);
+      }
     }
   }
 
@@ -90,7 +97,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
       onLoaded();
       return;
     }
-
+    Log.d(TAG, "Time to load challenges");
     if (Utils.isOnline(context)) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Avoid IllegalStateException: Not allowed to start service Intent.
@@ -145,6 +152,7 @@ public final class ChallengesLoader implements SharedPreferences.OnSharedPrefere
   }
 
   private void startFirebaseService(Context context) {
+    Log.d(TAG, "Starting Firebase service");
     Intent intent = new Intent(context, FirebaseService.class);
     intent.putExtra(FirebaseService.INTENT_KEY_RECEIVER,
         new ChallengesResultReceiver(new Handler(), this));

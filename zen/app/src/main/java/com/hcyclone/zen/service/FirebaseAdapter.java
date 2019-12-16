@@ -1,12 +1,8 @@
 package com.hcyclone.zen.service;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +18,7 @@ import com.hcyclone.zen.R;
 import com.hcyclone.zen.Utils;
 import com.hcyclone.zen.model.Challenge;
 
+import java.nio.charset.StandardCharsets;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -90,21 +87,18 @@ public class FirebaseAdapter {
       return;
     }
     auth.signInWithEmailAndPassword(firebaseUsername, firebasePassword)
-        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-          @Override
-          public void onComplete(@NonNull Task<AuthResult> task) {
-            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
-            if (firebaseAuthListener != null) {
-              if (task.isSuccessful()) {
-                firebaseAuthListener.onAuthSuccess();
-              } else if (!Utils.isOnline(context)) {
-                // Use cached data.
-                Log.w(TAG, "Offline, try use cached data");
-                firebaseAuthListener.onAuthSuccess();
-              } else {
-                // Auth error.
-                firebaseAuthListener.onAuthError(task.getException());
-              }
+        .addOnCompleteListener(task -> {
+          Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+          if (firebaseAuthListener != null) {
+            if (task.isSuccessful()) {
+              firebaseAuthListener.onAuthSuccess();
+            } else if (!Utils.isOnline(context)) {
+              // Use cached data.
+              Log.w(TAG, "Offline, try use cached data");
+              firebaseAuthListener.onAuthSuccess();
+            } else {
+              // Auth error.
+              firebaseAuthListener.onAuthError(task.getException());
             }
           }
         });
@@ -177,10 +171,9 @@ public class FirebaseAdapter {
   }
 
   private static String unzip(byte[] bytes) throws IOException {
-    ZipInputStream zis = new ZipInputStream(
+    try (ZipInputStream zis = new ZipInputStream(
         new BufferedInputStream(
-            new ByteArrayInputStream(bytes)));
-    try {
+            new ByteArrayInputStream(bytes)))) {
       int count;
       byte[] buffer = new byte[HALF_MEGABYTE];
       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -191,12 +184,10 @@ public class FirebaseAdapter {
         } finally {
           outputStream.close();
         }
-        return new String(outputStream.toByteArray(), "UTF-8");
+        return new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
       } else {
         throw new IOException("Bad zip format");
       }
-    } finally {
-      zis.close();
     }
   }
 

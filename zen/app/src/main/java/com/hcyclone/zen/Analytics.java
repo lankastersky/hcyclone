@@ -1,11 +1,11 @@
 package com.hcyclone.zen;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import androidx.annotation.NonNull;
 import com.hcyclone.zen.model.Challenge;
 
 import java.text.DateFormat;

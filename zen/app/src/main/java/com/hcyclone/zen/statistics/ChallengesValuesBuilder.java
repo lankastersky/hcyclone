@@ -42,7 +42,6 @@ public class ChallengesValuesBuilder {
   List<String> challengesDates;
   private DateFormat mergeDateFormat = CHALLENGES_TIME_BY_YEARS_DATE_FORMAT;
   private DateFormat domainDateFormat = DOMAIN_BY_YEARS_DATE_FORMAT;
-  private MergeDatesType mergeDatesType = MergeDatesType.YEARS;
 
   public int getValuesSize() {
     return challengesDates.size();
@@ -76,7 +75,7 @@ public class ChallengesValuesBuilder {
     challengeTimeToRates = new LinkedHashMap<>();
     challengesDates = new ArrayList<>();
     for (Challenge challenge : plotChallenges) {
-      /**
+      /*
        * TODO: we loose statistics if the challenge was taken before.
        * To solve this, we need to use {@link Challenge.getPrevFinishedTimes()}.
        */
@@ -87,7 +86,7 @@ public class ChallengesValuesBuilder {
         int challengesNumber = challengeTimeToNumber.get(dateString);
         challengeTimeToNumber.put(dateString, ++challengesNumber);
         float challengesRate = challengeTimeToRates.get(dateString);
-        /**
+        /*
          * TODO: we loose statistics if the challenge was taken before.
          * To solve this, we need to use {@link Challenge.getPrevRatings()}.
          */
@@ -115,6 +114,7 @@ public class ChallengesValuesBuilder {
   }
 
   private void initReduceByDateType(List<Challenge> challenges) {
+    MergeDatesType mergeDatesType = MergeDatesType.YEARS;
     if (challenges.size() < CHALLENGES_REDUCE_BY_DATE_SIZE) {
       mergeDatesType = MergeDatesType.DAYS;
       mergeDateFormat = CHALLENGES_TIME_BY_DAYS_DATE_FORMAT;

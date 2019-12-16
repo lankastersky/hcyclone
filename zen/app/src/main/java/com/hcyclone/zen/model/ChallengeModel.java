@@ -1,9 +1,9 @@
 package com.hcyclone.zen.model;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import com.google.common.collect.Iterables;
 import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.App;
@@ -66,7 +66,7 @@ public final class ChallengeModel {
     List<Challenge> challenges = getFinishedChallenges();
     // Sort by finished time in reverse order.
     Collections.sort(challenges, (Challenge challenge1, Challenge challenge2) ->
-      -Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime())
+      -Long.compare(challenge1.getFinishedTime(), challenge2.getFinishedTime())
     );
     return challenges;
   }
@@ -75,7 +75,7 @@ public final class ChallengeModel {
     List<Challenge> challenges = getFinishedChallenges();
     // Sort by finished time.
     Collections.sort(challenges, (Challenge challenge1, Challenge challenge2) ->
-     Long.valueOf(challenge1.getFinishedTime()).compareTo(challenge2.getFinishedTime())
+        Long.compare(challenge1.getFinishedTime(), challenge2.getFinishedTime())
     );
     return challenges;
   }

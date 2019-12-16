@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.hcyclone.zen"
         minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 44
-        versionName "1.4.3"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 29
+        versionCode 45
+        versionName "1.4.4"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
@@ -39,29 +39,28 @@ android {
     }
 }
 
-def uiVersion = "27.1.1"
-def gmsVersion = "16.0.5"
+def uiVersion = "1.0.0"
+def gmsVersion = "19.2.0"
 
 dependencies {
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation "com.android.support:preference-v7:${uiVersion}"
-    implementation "com.android.support:design:${uiVersion}"
-    implementation "com.android.support:support-v4:${uiVersion}"
-    implementation "com.android.support:recyclerview-v7:${uiVersion}"
-    implementation "com.android.support:cardview-v7:${uiVersion}"
-    implementation "com.android.support:support-vector-drawable:${uiVersion}"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation "androidx.preference:preference:1.1.0"
+    implementation "com.google.android.material:material:${uiVersion}"
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation "androidx.cardview:cardview:${uiVersion}"
+    implementation "androidx.vectordrawable:vectordrawable:1.1.0"
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation "com.google.code.gson:gson:2.8.5"
-    implementation 'com.google.guava:guava:20.0'
-    implementation "com.google.firebase:firebase-core:${gmsVersion}"
+    implementation 'com.google.guava:guava:24.1-jre'
+    implementation "com.google.firebase:firebase-core:17.2.1"
     implementation "com.google.firebase:firebase-database:${gmsVersion}"
-    implementation "com.google.firebase:firebase-storage:${gmsVersion}"
+    implementation "com.google.firebase:firebase-storage:19.1.0"
     implementation "com.google.firebase:firebase-auth:${gmsVersion}"
-    implementation 'com.google.android.gms:play-services-ads:17.1.1'
-    implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
-    implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation "com.google.android.gms:play-services-analytics:17.0.0"
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.android.billingclient:billing:1.2.2'
 
     // Why androidplot: https://codix.io/c?repos=5331%2C1158%2C5328%2C5326
     implementation "com.androidplot:androidplot-core:1.5.2"

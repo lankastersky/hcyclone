@@ -2,14 +2,9 @@ package com.hcyclone.zen.view;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.hcyclone.zen.Analytics;
 import com.hcyclone.zen.App;
 import com.hcyclone.zen.R;
@@ -91,13 +90,6 @@ public class ChallengeListFragment extends Fragment {
           + " must implement OnListFragmentInteractionListener");
     }
   }
-
-//  private void showFilterDialog() {
-//    FilterChallengesFragment fragment = new FilterChallengesFragment();
-//    fragment.setStyle(DialogFragment.STYLE_NORMAL, R.style.FilterDialogCustom);
-//    fragment.show(getActivity().getSupportFragmentManager(), FilterChallengesFragment.TAG);
-//  }
-
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -184,22 +176,14 @@ public class ChallengeListFragment extends Fragment {
   private void showFilterByLevelDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
     builder.setMultiChoiceItems(
-        R.array.levels, levels, new DialogInterface.OnMultiChoiceClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-            levels[which] = isChecked;
-          }
-        });
+        R.array.levels, levels, (dialog, which, isChecked) -> levels[which] = isChecked);
     builder.setTitle(getString(R.string.filter_challenges_by_level));
-    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        challengeFilterModel.storeLevels(levels);
-        ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
-            .filterByLevels(levelsToSet(levels));
-        Analytics.getInstance().sendFilterChallenges(
-            FilterType.BY_LEVEL.toString(), Arrays.toString(levels));
-      }
+    builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+      challengeFilterModel.storeLevels(levels);
+      ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
+          .filterByLevels(levelsToSet(levels));
+      Analytics.getInstance().sendFilterChallenges(
+          FilterType.BY_LEVEL.toString(), Arrays.toString(levels));
     });
     builder.create().show();
   }
@@ -207,22 +191,14 @@ public class ChallengeListFragment extends Fragment {
   private void showFilterByRatingDialog() {
     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
     builder.setMultiChoiceItems(
-        R.array.ratings, ratings, new DialogInterface.OnMultiChoiceClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-            ratings[which] = isChecked;
-          }
-        });
+        R.array.ratings, ratings, (dialog, which, isChecked) -> ratings[which] = isChecked);
     builder.setTitle(getString(R.string.filter_challenges_by_rating));
-    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        challengeFilterModel.storeRatings(ratings);
-        ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
-            .filterByRating(ratingsToSet(ratings));
-        Analytics.getInstance().sendFilterChallenges(
-            FilterType.BY_RATING.toString(), Arrays.toString(ratings));
-      }
+    builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+      challengeFilterModel.storeRatings(ratings);
+      ((ChallengeRecyclerViewAdapter) recyclerView.getAdapter())
+          .filterByRating(ratingsToSet(ratings));
+      Analytics.getInstance().sendFilterChallenges(
+          FilterType.BY_RATING.toString(), Arrays.toString(ratings));
     });
     builder.create().show();
   }
