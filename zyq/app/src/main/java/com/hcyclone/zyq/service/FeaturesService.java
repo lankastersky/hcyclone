@@ -3,8 +3,8 @@ package com.hcyclone.zyq.service;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 import com.hcyclone.zyq.Utils;
 
 // Determines which feature are enabled for which users. Track the app version persistently.
@@ -43,13 +43,13 @@ public final class FeaturesService {
 
   /**
    * Cases:
-   * a new user installs ({@link Utils.#isFirstInstall(Context) returns true}):
-   *   return {@link FeaturesType.#FREE}
+   * a new user installs ({@link Utils#isFirstInstall(Context) returns true}):
+   *   return {@link FeaturesType#FREE}
    * an upgraded user updates:
-   *   return {@link FeaturesType.#PAID}
+   *   return {@link FeaturesType#PAID}
    * a new user paid for the content:
-   *   return {@link FeaturesType.#PAID}
-   * else return {@link FeaturesType.#FREE}
+   *   return {@link FeaturesType#PAID}
+   * else return {@link FeaturesType#FREE}
    */
   public FeaturesType getFeaturesType() {
     if (Utils.isDebug()) {

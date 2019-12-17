@@ -1,8 +1,8 @@
 package com.hcyclone.zyq;
 
 import android.os.StrictMode;
-import android.support.multidex.MultiDexApplication;
 
+import androidx.multidex.MultiDexApplication;
 import com.google.android.gms.ads.MobileAds;
 import com.hcyclone.zyq.model.ExerciseModel;
 import com.hcyclone.zyq.service.FeaturesService;

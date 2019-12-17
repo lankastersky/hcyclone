@@ -2,7 +2,6 @@ package com.hcyclone.zyq.view.adapters;
 
 
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import com.hcyclone.zyq.view.OnItemSelectListener;
 import java.util.Collection;
 
 /**
- * {@link RecyclerView.Adapter} that can display audio list.
+ * {@link androidx.recyclerview.widget.RecyclerView.Adapter} that can display audio list.
  */
 public class AudioRecyclerViewAdapter
     extends ListAdapter<String, AudioRecyclerViewAdapter.ViewHolder> {
@@ -39,17 +38,15 @@ public class AudioRecyclerViewAdapter
     super.onBindViewHolder(holder, position);
 
     holder.nameView.setText(holder.item);
-    holder.view.setBackgroundColor(selectedPosition != position ? Color.WHITE : Color.GRAY);
+    int selectedColor = holder.view.getResources().getColor(R.color.colorSelected);
+    holder.view.setBackgroundColor(selectedPosition != position ? Color.WHITE : selectedColor);
     holder.view.setTag(position);
-    holder.view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        notifyItemChanged(selectedPosition);
-        selectedPosition = (int) v.getTag();
-        notifyItemChanged(selectedPosition);
-        if (listener != null) {
-          listener.onItemSelected(holder.item);
-        }
+    holder.view.setOnClickListener(v -> {
+      notifyItemChanged(selectedPosition);
+      selectedPosition = (int) v.getTag();
+      notifyItemChanged(selectedPosition);
+      if (listener != null) {
+        listener.onItemSelected(holder.item);
       }
     });
   }

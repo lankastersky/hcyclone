@@ -2,8 +2,8 @@ package com.hcyclone.zyq.view.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 
+import androidx.fragment.app.FragmentManager;
 import com.google.common.collect.Iterables;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.model.Exercise;

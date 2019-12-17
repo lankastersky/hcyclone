@@ -69,11 +69,7 @@ public final class Utils {
 //    }
 //  }
 
-  /**
-   * Opens Youtube video in the app
-   * @param id  youtube video id
-   * @param context context
-   */
+  /** Opens Youtube video in the app. */
   public static void watchYoutubeVideo(String videoUrl, Context context) {
       Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
       context.startActivity(webIntent);

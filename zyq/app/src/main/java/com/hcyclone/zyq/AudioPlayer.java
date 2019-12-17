@@ -81,19 +81,13 @@ public final class AudioPlayer {
     mediaPlayer.setLooping(true);
     preparing = true;
     mediaPlayer.prepareAsync();
-    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-      @Override
-      public void onPrepared(MediaPlayer mp) {
-        preparing = false;
-        mediaPlayer.start();
-      }
+    mediaPlayer.setOnPreparedListener(mp -> {
+      preparing = false;
+      mediaPlayer.start();
     });
-    mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-      @Override
-      public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-        preparing = false;
-        return errorListener.onError(mediaPlayer, i, i1);
-      }
+    mediaPlayer.setOnErrorListener((mediaPlayer, i, i1) -> {
+      preparing = false;
+      return errorListener.onError(mediaPlayer, i, i1);
     });
     mediaPlayer.setOnCompletionListener(completionListener);
   }

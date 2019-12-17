@@ -1,14 +1,14 @@
 package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.R;

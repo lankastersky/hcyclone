@@ -1,7 +1,5 @@
 package com.hcyclone.zyq.view;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.hcyclone.zyq.Analytics;
 import com.hcyclone.zyq.App;

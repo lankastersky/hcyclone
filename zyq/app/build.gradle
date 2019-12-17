@@ -2,15 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.hcyclone.zyq"
         minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 7
-        versionName "0.6"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        targetSdkVersion 29
+        versionCode 8
+        versionName "0.6.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
@@ -42,28 +42,26 @@ android {
     }
 }
 
-def uiVersion = "27.1.1"
-def gmsVersion = "16.0.5"
+def uiVersion = "1.0.0"
 
 dependencies {
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-    implementation "com.android.support:preference-v7:${uiVersion}"
-    implementation "com.android.support:design:${uiVersion}"
-    implementation "com.android.support:support-v4:${uiVersion}"
-    implementation "com.android.support:support-media-compat:${uiVersion}"
-    implementation "com.android.support:recyclerview-v7:${uiVersion}"
-    implementation "com.android.support:cardview-v7:${uiVersion}"
-    implementation "com.android.support:support-vector-drawable:${uiVersion}"
-    implementation "com.google.android.gms:play-services-analytics:${gmsVersion}"
+    implementation 'androidx.preference:preference:1.1.0'
+    implementation "com.google.android.material:material:${uiVersion}"
+    implementation 'androidx.media:media:1.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation "androidx.cardview:cardview:${uiVersion}"
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation "com.google.android.gms:play-services-analytics:17.0.0"
     implementation 'com.stepstone.stepper:material-stepper:2.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.3.1'
-    implementation "com.google.code.gson:gson:2.8.0"
-    implementation 'com.google.guava:guava:20.0'
+    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation "com.google.code.gson:gson:2.8.5"
+    implementation 'com.google.guava:guava:24.1-jre'
     implementation 'net.danlew:android.joda:2.9.9'
-    implementation 'com.google.android.gms:play-services-ads:17.1.1'
-    implementation "com.google.firebase:firebase-core:${gmsVersion}"
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.google.android.gms:play-services-ads:18.3.0'
+    implementation "com.google.firebase:firebase-core:17.2.1"
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 
 }
 

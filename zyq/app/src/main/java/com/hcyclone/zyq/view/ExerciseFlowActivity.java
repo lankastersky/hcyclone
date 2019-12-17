@@ -1,14 +1,12 @@
 package com.hcyclone.zyq.view;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.BundleConstants;
 import com.hcyclone.zyq.R;
@@ -20,6 +18,7 @@ import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Shows exercise workflow.
@@ -54,14 +53,18 @@ public class ExerciseFlowActivity
       stepperLayout = findViewById(R.id.stepperLayout);
       stepperLayout
           .setAdapter(new ExerciseFlowAdapter(exercises, getSupportFragmentManager(), this));
-      int currentStep;
+      int currentStep = 0;
       if (savedInstanceState == null) {
-        currentStep = Iterables.indexOf(exercises, new Predicate<Exercise>() {
-          @Override
-          public boolean apply(Exercise input) {
-            return input.getId().equals(exerciseId);
+        Iterator<Exercise> iter = exercises.iterator();
+        int i = 0;
+        while (iter.hasNext()) {
+          Exercise ex = iter.next();
+          if (ex.getId().equals(exerciseId)) {
+            currentStep = i;
+            break;
           }
-        });
+          i++;
+        }
       } else {
         currentStep = savedInstanceState.getInt(BundleConstants.CURRENT_ITEM_KEY);
       }

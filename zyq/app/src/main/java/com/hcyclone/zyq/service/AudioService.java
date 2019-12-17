@@ -12,14 +12,14 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.media.session.MediaButtonReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.support.v4.media.app.NotificationCompat.MediaStyle;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
 import android.text.format.DateUtils;
 import android.view.KeyEvent;
 
+import androidx.media.app.NotificationCompat.MediaStyle;
+import androidx.media.session.MediaButtonReceiver;
 import com.crashlytics.android.Crashlytics;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.AudioPlayer;
@@ -43,6 +43,7 @@ public class AudioService extends Service {
 
   private AudioPlayer player;
   private Handler updateNotificationHandler;
+  private NotificationManager notificationManager;
   private int startId;
 
   private final Runnable updateNotificationRunnable = new Runnable() {
@@ -62,14 +63,16 @@ public class AudioService extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
+
     App app = (App) getApplication();
     player = app.getPlayer();
+
+    updateNotificationHandler = new Handler();
+    notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       buildChannel();
     }
-
-    updateNotificationHandler = new Handler();
   }
 
   public int onStartCommand(Intent intent, int flags, final int startId) {
@@ -82,6 +85,7 @@ public class AudioService extends Service {
           if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
             sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_STOP);
           }
+          deleteNotification();
           stopSelf(startId);
           return START_NOT_STICKY;
         case KeyEvent.KEYCODE_MEDIA_PAUSE:
@@ -120,19 +124,13 @@ public class AudioService extends Service {
         player.play();
         return;
     }
-    player.play(audioName, new MediaPlayer.OnCompletionListener() {
-      @Override
-      public void onCompletion(MediaPlayer mp) {
-        Log.d(TAG, "Completed playing audio");
-        stopSelf(startId);
-      }
-    }, new MediaPlayer.OnErrorListener() {
-      @Override
-      public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+    player.play(audioName, (MediaPlayer mp) -> {
+      Log.d(TAG, "Completed playing audio");
+      stopSelf(startId);
+    }, (MediaPlayer mediaPlayer, int i, int i1) -> {
         Log.d(TAG, "Failed playing audio");
-        stopSelf(startId);
-        return true;
-      }
+      stopSelf(startId);
+      return true;
     });
   }
 
@@ -161,8 +159,6 @@ public class AudioService extends Service {
 
   @RequiresApi(Build.VERSION_CODES.O)
   private NotificationChannel buildChannel() {
-    NotificationManager notificationManager =
-        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     // The user-visible name of the channel.
     CharSequence name = "Media playback";
     // The user-visible description of the channel.
@@ -178,10 +174,11 @@ public class AudioService extends Service {
   }
 
   private void updateNotification() {
-    NotificationManager notificationManager =
-        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(
-        AUDIO_NOTIFICATION_ID, buildNotification());
+    notificationManager.notify(AUDIO_NOTIFICATION_ID, buildNotification());
+  }
+
+  private void deleteNotification() {
+    notificationManager.cancel(AUDIO_NOTIFICATION_ID);
   }
 
   /* See example http://shortn/_5pmxBDnjGC . */

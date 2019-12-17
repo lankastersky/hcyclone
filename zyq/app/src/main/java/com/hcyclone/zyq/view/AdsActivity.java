@@ -1,8 +1,8 @@
 package com.hcyclone.zyq.view;
 
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -38,7 +38,7 @@ public abstract class AdsActivity extends AppCompatActivity {
 
       @Override
       public void onAdFailedToLoad(int errorCode) {
-        Log.w(TAG, "Failed to load ad: " + String.valueOf(errorCode));
+        Log.w(TAG, "Failed to load ad: " + errorCode);
       }
 
       @Override

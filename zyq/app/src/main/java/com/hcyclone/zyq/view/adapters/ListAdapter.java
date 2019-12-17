@@ -1,8 +1,8 @@
 package com.hcyclone.zyq.view.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.common.collect.Iterables;
 import com.hcyclone.zyq.view.OnItemSelectListener;
 
@@ -25,12 +25,9 @@ public abstract class ListAdapter<T, VH extends ListAdapter.ViewHolder<T>>
   @Override
   public void onBindViewHolder(final VH holder, int position) {
     holder.item = Iterables.get(items, position);
-    holder.view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (listener != null) {
-          listener.onItemSelected(holder.item);
-        }
+    holder.view.setOnClickListener(v -> {
+      if (listener != null) {
+        listener.onItemSelected(holder.item);
       }
     });
   }

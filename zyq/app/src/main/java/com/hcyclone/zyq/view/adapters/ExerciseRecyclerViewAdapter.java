@@ -1,6 +1,5 @@
 package com.hcyclone.zyq.view.adapters;
 
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +13,7 @@ import com.hcyclone.zyq.view.OnItemSelectListener;
 import java.util.Collection;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Exercise}.
+ * {@link androidx.recyclerview.widget.RecyclerView.Adapter} that can display a {@link Exercise}.
  */
 public class ExerciseRecyclerViewAdapter
     extends ListAdapter<Exercise, ExerciseRecyclerViewAdapter.ViewHolder> {
