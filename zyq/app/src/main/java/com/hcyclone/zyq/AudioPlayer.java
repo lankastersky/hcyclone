@@ -4,8 +4,11 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.text.TextUtils;
 
+import com.danikula.videocache.CacheListener;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.common.collect.ImmutableSortedMap;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ public final class AudioPlayer {
   private MediaPlayer mediaPlayer;
   private int currentPosition;
   private String currentAudioName;
+  private HttpProxyCacheServer proxy;
   private volatile boolean preparing;
 
   private final Map<String, String> audioToUriMap;
@@ -35,6 +39,9 @@ public final class AudioPlayer {
 
   public AudioPlayer(Context context) {
     audioToUriMap = buildAudioToUriMap(context);
+    proxy = new HttpProxyCacheServer.Builder(context)
+        //.cacheDirectory(new File(context.getExternalCacheDir(), "video-cache"))
+        .build();
   }
 
   public int getCurrentPosition() {
@@ -61,6 +68,7 @@ public final class AudioPlayer {
 
   public void play(
       String audioName,
+      MediaPlayer.OnPreparedListener preparedListener,
       MediaPlayer.OnCompletionListener completionListener,
       final MediaPlayer.OnErrorListener errorListener) throws IOException {
 
@@ -76,14 +84,17 @@ public final class AudioPlayer {
     currentAudioName = audioName;
 
     mediaPlayer = new MediaPlayer();
-    mediaPlayer.setDataSource(uri);
-    // TODO: change loop mode in UI.
+
+    String proxyUrl = proxy.getProxyUrl(uri);
+
+    mediaPlayer.setDataSource(proxyUrl);
     mediaPlayer.setLooping(true);
     preparing = true;
     mediaPlayer.prepareAsync();
     mediaPlayer.setOnPreparedListener(mp -> {
       preparing = false;
       mediaPlayer.start();
+      preparedListener.onPrepared(mp);
     });
     mediaPlayer.setOnErrorListener((mediaPlayer, i, i1) -> {
       preparing = false;
@@ -104,7 +115,7 @@ public final class AudioPlayer {
 
   public void reset() {
     if (mediaPlayer != null) {
-      mediaPlayer.release();
+      mediaPlayer.reset();
       currentPosition = 0;
       currentAudioName = null;
       preparing = false;

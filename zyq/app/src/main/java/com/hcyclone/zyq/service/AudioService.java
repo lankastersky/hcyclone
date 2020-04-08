@@ -37,14 +37,15 @@ import java.io.IOException;
 public class AudioService extends Service {
 
   private static final String TAG = AudioService.class.getSimpleName();
-  private static final int AUDIO_NOTIFICATION_ID = 1;
+  private static final int AUDIO_NOTIFICATION_ID = 101;
   private static final String AUDIO_CHANNEL_ID = "audio_channel";
   private static final Duration UPDATE_NOTIFICATION_INTERVAL = Duration.standardSeconds(1);
+
+  public static final String ACTION_PREPARED_AUDIO = "com.hcyclone.zyq.service.action.PREPARED_AUDIO";
 
   private AudioPlayer player;
   private Handler updateNotificationHandler;
   private NotificationManager notificationManager;
-  private int startId;
 
   private final Runnable updateNotificationRunnable = new Runnable() {
     @Override
@@ -62,6 +63,7 @@ public class AudioService extends Service {
 
   @Override
   public void onCreate() {
+    Log.d(TAG, "onCreate");
     super.onCreate();
 
     App app = (App) getApplication();
@@ -73,29 +75,33 @@ public class AudioService extends Service {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       buildChannel();
     }
+    startForeground(AUDIO_NOTIFICATION_ID, buildNotification());
   }
 
   public int onStartCommand(Intent intent, int flags, final int startId) {
-    this.startId = startId;
+    Log.d(TAG, "onStartCommand");
     KeyEvent keyEvent = intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
     if (keyEvent != null) {
       int keyCode = keyEvent.getKeyCode();
       switch (keyCode) {
         case KeyEvent.KEYCODE_MEDIA_STOP:
+          Log.d(TAG, "Stop");
           if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
-            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_STOP);
+            sendAudioBroadcast(KeyEvent.KEYCODE_MEDIA_STOP);
           }
           deleteNotification();
-          stopSelf(startId);
+          stopSelf();
           return START_NOT_STICKY;
         case KeyEvent.KEYCODE_MEDIA_PAUSE:
+          Log.d(TAG, "Pause");
           player.pause();
           if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
-            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PAUSE);
+            sendAudioBroadcast(KeyEvent.KEYCODE_MEDIA_PAUSE);
           }
           updateNotification();
           break;
         case KeyEvent.KEYCODE_MEDIA_PLAY:
+          Log.d(TAG, "Play");
           // Can be empty when called from notification.
           String audioName = intent.getStringExtra(BundleConstants.AUDIO_NAME_KEY);
           try {
@@ -105,11 +111,10 @@ public class AudioService extends Service {
             Log.e(AudioService.TAG, "Failed to play audio", e);
             break;
           }
-          startForeground(AUDIO_NOTIFICATION_ID, buildNotification());
           updateNotificationHandler.post(updateNotificationRunnable);
           // Avoid broadcasting back to playback controls.
           if (!intent.getBooleanExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, false)) {
-            sendAudioBroadCast(KeyEvent.KEYCODE_MEDIA_PLAY);
+            sendAudioBroadcast(KeyEvent.KEYCODE_MEDIA_PLAY);
           }
           break;
         default:
@@ -124,20 +129,32 @@ public class AudioService extends Service {
         player.play();
         return;
     }
-    player.play(audioName, (MediaPlayer mp) -> {
-      Log.d(TAG, "Completed playing audio");
-      stopSelf(startId);
-    }, (MediaPlayer mediaPlayer, int i, int i1) -> {
-        Log.d(TAG, "Failed playing audio");
-      stopSelf(startId);
-      return true;
-    });
+    player.play(audioName,
+        (mp) -> {
+          Log.d(TAG, "Prepared playing audio");
+          sendActionBroadcast(ACTION_PREPARED_AUDIO);
+        },
+        (mp) -> {
+          Log.d(TAG, "Completed playing audio");
+          stopSelf();
+        },
+        (MediaPlayer mediaPlayer, int i, int i1) -> {
+          Log.d(TAG, "Failed playing audio");
+          stopSelf();
+          return true;
+        });
   }
 
-  private void sendAudioBroadCast(int keyEvent) {
+  private void sendAudioBroadcast(int keyEvent) {
     Intent broadcastIntent = new Intent();
     broadcastIntent.setAction(BundleConstants.AUDIO_BROADCAST_RECEIVER_ACTION);
     broadcastIntent.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, keyEvent));
+    sendBroadcast(broadcastIntent);
+  }
+
+  private void sendActionBroadcast(String action) {
+    Intent broadcastIntent = new Intent();
+    broadcastIntent.setAction(action);
     sendBroadcast(broadcastIntent);
   }
 
@@ -150,11 +167,11 @@ public class AudioService extends Service {
   public void onDestroy() {
     super.onDestroy();
     Log.d(TAG, "onDestroy");
-    player.reset();
-    player = null;
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
       stopForeground(true);
     }
+    player.reset();
+    player = null;
   }
 
   @RequiresApi(Build.VERSION_CODES.O)
@@ -211,7 +228,7 @@ public class AudioService extends Service {
         .setContentTitle(getString(R.string.app_name))
         .setContentText(player.getCurrentAudioName())
         .setSubText(String.valueOf(currentTimeHuman))
-        .setLargeIcon(BitmapFactory.decodeResource(getResources(),R.mipmap.play_launcher))
+        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.play_launcher))
         .setDeleteIntent(stopIntent);
 
     if (player.isPlaying()) {

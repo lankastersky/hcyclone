@@ -36,14 +36,14 @@
     <string name="stepper_complete">Complete</string>
 
     <!-- Exercise groups -->
-    <string name="warmup">Preliminary exericses</string>
+    <string name="warmup">Preliminary exercises</string>
     <string name="type_meditation">Main exercises</string>
     <string name="type_additional_meditation">Supporting exercises</string>
     <string name="type_final">Closing exercises</string>
     <string name="type_treatment">Diagnosis and treatment</string>
 
     <!-- Notifications -->
-    <string name="notif_no_internet">No internet connection. Try later.</string>
+    <string name="notif_no_internet">No internet connection. Please try again later.</string>
 
     <!-- AdMob constants -->
     <string name="admob_app_id" translatable="false">ca-app-pub-4142226708429553~8988353299</string>

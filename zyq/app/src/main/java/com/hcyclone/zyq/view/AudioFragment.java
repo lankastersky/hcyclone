@@ -16,13 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.google.common.collect.Iterables;
 import com.hcyclone.zyq.App;
 import com.hcyclone.zyq.AudioPlayer;
 import com.hcyclone.zyq.BundleConstants;
-import com.hcyclone.zyq.Log;
 import com.hcyclone.zyq.service.AudioService;
 import com.hcyclone.zyq.R;
 import com.hcyclone.zyq.Utils;
@@ -48,6 +47,7 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
   private String currentAudioName;
   private ControlsState controlsState;
   private AudioBroadcastReceiver audioBroadcastReceiver;
+  private ProgressBar progressBar;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,6 +71,9 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
     createListLayout(recyclerView, adapter);
     adapter.setSelectedPosition(selectedPosition);
 
+    progressBar = view.findViewById(R.id.progress_bar);
+    progressBar.setVisibility(View.GONE);
+
     audioBroadcastReceiver = new AudioBroadcastReceiver();
 
     return view;
@@ -82,6 +85,7 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
     controlsState = calcControlState();
 
     IntentFilter filter = new IntentFilter(BundleConstants.AUDIO_BROADCAST_RECEIVER_ACTION);
+    filter.addAction(AudioService.ACTION_PREPARED_AUDIO);
     getContext().registerReceiver(audioBroadcastReceiver, filter);
   }
 
@@ -186,19 +190,22 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
   }
 
   private boolean play() {
-    if (!Utils.isInternetConnected(getContext())) {
-      Log.w(TAG, "Can't play without internet");
-      Toast
-          .makeText(getContext(), getString(R.string.notif_no_internet), Toast.LENGTH_LONG)
-          .show();
-      return false;
-    }
+//    if (!Utils.isInternetConnected(getContext())) {
+//      Log.w(TAG, "Can't play without internet");
+//      Toast
+//          .makeText(getContext(), getString(R.string.notif_no_internet), Toast.LENGTH_LONG)
+//          .show();
+//      return false;
+//    }
     Intent intent = new Intent(getContext(), AudioService.class);
     intent.putExtra(BundleConstants.AUDIO_NAME_KEY, currentAudioName);
     intent.putExtra(
         Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY));
     intent.putExtra(BundleConstants.DO_NOT_RESEND_AUDIO_KEY, true);
     ContextCompat.startForegroundService(getContext(), intent);
+
+    progressBar.setVisibility(View.VISIBLE);
+
     return true;
   }
 
@@ -240,6 +247,11 @@ public class AudioFragment extends ListFragment implements OnItemSelectListener<
             throw new AssertionError("Wrong key event: " + keyCode);
         }
         getActivity().invalidateOptionsMenu();
+        return;
+      }
+      String action = intent.getAction();
+      if (AudioService.ACTION_PREPARED_AUDIO.equals(action)) {
+        progressBar.setVisibility(View.GONE);
       }
     }
   }
