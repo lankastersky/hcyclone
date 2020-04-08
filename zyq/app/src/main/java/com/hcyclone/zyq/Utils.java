@@ -13,6 +13,7 @@ import android.provider.AlarmClock;
 import android.text.Html;
 import android.text.Spanned;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.io.ByteStreams;
 import com.hcyclone.zyq.view.DescriptionActivity;
 
@@ -61,14 +62,6 @@ public final class Utils {
     }
   }
 
-//  public static void playMedia(Uri file, Context context) {
-//    Intent intent = new Intent(Intent.ACTION_VIEW);
-//    intent.setDataAndType(file, "audio/*");
-//    if (intent.resolveActivity(context.getPackageManager()) != null) {
-//      context.startActivity(intent);
-//    }
-//  }
-
   /** Opens Youtube video in the app. */
   public static void watchYoutubeVideo(String videoUrl, Context context) {
       Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
@@ -76,11 +69,12 @@ public final class Utils {
   }
 
   public static void sendFeedback(Context context) {
-    Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-        "mailto","lankastersky@gmail.com", null));
-    emailIntent.putExtra(Intent.EXTRA_SUBJECT, getApplicationName(context) + " feedback "
-        + getVersionName(context) + " (" + getVersionCode(context) + ")");
-
+    String subject = getApplicationName(context) + " feedback "
+        + getVersionName(context) + " (" + getVersionCode(context) + ")";
+    String email = "lankastersky@gmail.com";
+    Intent emailIntent = new Intent(Intent.ACTION_SENDTO,
+        Uri.parse("mailto:" + email + "?subject=" + subject));
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
     context.startActivity(Intent.createChooser(emailIntent,
         context.getString(R.string.feedback_send_email)));
   }
@@ -94,6 +88,7 @@ public final class Utils {
       long lastUpdateTime = packageManager.getPackageInfo(packageName, 0).lastUpdateTime;
       return firstInstallTime == lastUpdateTime;
     } catch (PackageManager.NameNotFoundException e) {
+      Crashlytics.logException(e);
       Log.e(TAG, "Can't get package info");
       return true;
     }
