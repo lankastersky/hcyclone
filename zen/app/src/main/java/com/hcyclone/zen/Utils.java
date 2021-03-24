@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hcyclone.zen.model.Challenge;
 
 import java.text.DateFormat;
@@ -102,7 +102,7 @@ public final class Utils {
       return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
     } catch (Exception e) {
       Log.e(TAG, "Can't get the version name.", e);
-      Crashlytics.logException(e);
+      FirebaseCrashlytics.getInstance().recordException(e);
       return "";
     }
   }
@@ -113,7 +113,7 @@ public final class Utils {
           .getPackageInfo(context.getPackageName(), 0).versionCode;
     } catch (Exception e) {
       Log.e(TAG, "Can't get the version code.", e);
-      Crashlytics.logException(e);
+      FirebaseCrashlytics.getInstance().recordException(e);
       return 0;
     }
   }
@@ -138,7 +138,7 @@ public final class Utils {
       return firstInstallTime == lastUpdateTime;
     } catch (PackageManager.NameNotFoundException e) {
       Log.e(TAG, "Can't get package info");
-      Crashlytics.logException(e);
+      FirebaseCrashlytics.getInstance().recordException(e);
       return true;
     }
   }

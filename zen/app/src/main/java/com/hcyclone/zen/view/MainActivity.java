@@ -17,9 +17,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.Purchase;
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity
     // is inactive. For example, this can happen if the activity is destroyed during the
     // purchase flow. This ensures that when the activity is resumed it reflects the user's
     // current purchases.
-    if (billingService.getBillingClientResponseCode() == BillingResponse.OK) {
+    if (billingService.getBillingClientResponseCode() == BillingResponseCode.OK) {
       billingService.queryPurchases();
     }
   }
@@ -238,9 +238,9 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onConsumeFinished(String token, @BillingResponse int result) {
+  public void onConsumeFinished(String token, @BillingResponseCode int result) {
     Log.d(TAG, "Consumption finished. Purchase token: " + token + ", result: " + result);
-    if (result == BillingResponse.OK) {
+    if (result == BillingResponseCode.OK) {
       Log.d(TAG, "Consumption successful.");
     } else {
       Log.e(TAG, "Error while consuming: " + result);
@@ -249,10 +249,10 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  public void onPurchasesUpdated(@BillingResponse int result, List<Purchase> purchases) {
+  public void onPurchasesUpdated(@BillingResponseCode int result, List<Purchase> purchases) {
     boolean upgrade = false;
     switch (result) {
-      case BillingResponse.OK:
+      case BillingResponseCode.OK:
         boolean extendedVersionPurchased = false;
         for (Purchase purchase : purchases) {
           String sku = purchase.getSku();
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity
     MenuItem item = navigationMenu.findItem(R.id.nav_statistics);
     item.setVisible(featuresType != FeaturesType.FREE);
 
-    boolean billingAvailable = billingService.getBillingClientResponseCode() == BillingResponse.OK;
+    boolean billingAvailable = billingService.getBillingClientResponseCode() == BillingResponseCode.OK;
 
     item = navigationMenu.findItem(R.id.nav_upgrade);
     // Show Upgrade menu item if billing available or the user is already using paid version.
@@ -407,7 +407,7 @@ public class MainActivity extends AppCompatActivity
       clazz = Class.forName(className).asSubclass(Fragment.class);
     } catch (ClassNotFoundException e) {
       Log.e(TAG, e.toString());
-      Crashlytics.logException(e);
+      FirebaseCrashlytics.getInstance().recordException(e);
       return;
     }
 

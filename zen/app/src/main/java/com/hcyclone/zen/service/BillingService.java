@@ -2,12 +2,18 @@ package com.hcyclone.zen.service;
 
 import android.app.Activity;
 import android.content.Context;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClient.FeatureType;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.Purchase.PurchasesResult;
 import com.android.billingclient.api.PurchasesUpdatedListener;
@@ -57,9 +63,10 @@ public final class BillingService implements PurchasesUpdatedListener {
   // PurchasesUpdatedListener
 
   @Override
-  public void onPurchasesUpdated(int resultCode, List<Purchase> purchases) {
+  public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
+    int resultCode = billingResult.getResponseCode();
     switch (resultCode) {
-      case BillingResponse.OK:
+      case BillingResponseCode.OK:
         //TODO: verify signature. See https://goo.gl/6d655g
         // for (Purchase purchase : purchases) {
         // }
@@ -104,11 +111,11 @@ public final class BillingService implements PurchasesUpdatedListener {
 
   /** Checks if subscriptions are supported for current client. */
   public boolean areSubscriptionsSupported() {
-    int responseCode = billingClient.isFeatureSupported(FeatureType.SUBSCRIPTIONS);
-    if (responseCode != BillingResponse.OK) {
+    int responseCode = billingClient.isFeatureSupported(FeatureType.SUBSCRIPTIONS).getResponseCode();
+    if (responseCode != BillingResponseCode.OK) {
       Log.w(TAG, "areSubscriptionsSupported() got an error response: " + responseCode);
     }
-    return responseCode == BillingResponse.OK;
+    return responseCode == BillingResponseCode.OK;
   }
 
   /**
@@ -126,12 +133,12 @@ public final class BillingService implements PurchasesUpdatedListener {
             + subscriptionResult.getResponseCode()
             + " res: " + subscriptionResult.getPurchasesList().size());
 
-        if (subscriptionResult.getResponseCode() == BillingResponse.OK) {
+        if (subscriptionResult.getResponseCode() == BillingResponseCode.OK) {
           purchasesResult.getPurchasesList().addAll(subscriptionResult.getPurchasesList());
         } else {
           Log.w(TAG, "Got an error response trying to query subscription purchases");
         }
-      } else if (purchasesResult.getResponseCode() == BillingResponse.OK) {
+      } else if (purchasesResult.getResponseCode() == BillingResponseCode.OK) {
         Log.i(TAG, "Skipped subscription purchases query since they are not supported");
       } else {
         Log.w(TAG, "queryPurchases() got an error response code: "
@@ -181,18 +188,22 @@ public final class BillingService implements PurchasesUpdatedListener {
   /** Consumes the purchase asynchronously. */
   private void consumeAsync(String purchaseToken) {
     executeServiceRequest(() ->
-        billingClient.consumeAsync(purchaseToken, (responseCode, purchaseToken1) ->
-            billingUpdatesListener.onConsumeFinished(purchaseToken1, responseCode)));
+        billingClient.consumeAsync(
+                ConsumeParams.newBuilder().setPurchaseToken(purchaseToken).build(),
+                (responseCode, purchaseToken1) ->
+                        billingUpdatesListener.onConsumeFinished(
+                                purchaseToken1, responseCode.getResponseCode())));
   }
 
   private void startServiceConnection(final Runnable executeOnSuccess) {
     billingClient.startConnection(new BillingClientStateListener() {
 
       @Override
-      public void onBillingSetupFinished(@BillingResponse int billingResponseCode) {
+      public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+        int billingResponseCode = billingResult.getResponseCode();
         Log.d(TAG, "Setup finished. Response code: " + billingResponseCode);
         billingClientResponseCode = billingResponseCode;
-        if (billingResponseCode == BillingResponse.OK) {
+        if (billingResponseCode == BillingResponseCode.OK) {
           isServiceConnected = true;
           if (executeOnSuccess != null) {
             executeOnSuccess.run();
@@ -212,7 +223,6 @@ public final class BillingService implements PurchasesUpdatedListener {
       runnable.run();
     } else {
       // If billing service was disconnected, we try to reconnect 1 time.
-      // (feel free to introduce your retry policy here).
       startServiceConnection(runnable);
     }
   }
@@ -223,7 +233,7 @@ public final class BillingService implements PurchasesUpdatedListener {
    */
   public interface BillingUpdatesListener {
     void onBillingClientSetupFinished();
-    void onConsumeFinished(String token, @BillingResponse int result);
-    void onPurchasesUpdated(@BillingResponse int result, List<Purchase> purchases);
+    void onConsumeFinished(String token, @BillingResponseCode int result);
+    void onPurchasesUpdated(@BillingResponseCode int result, List<Purchase> purchases);
   }
 }

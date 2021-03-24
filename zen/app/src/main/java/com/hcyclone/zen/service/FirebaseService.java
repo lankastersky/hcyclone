@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.os.ResultReceiver;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.hcyclone.zen.App;
 import com.hcyclone.zen.Log;
 import com.hcyclone.zen.model.Challenge;
@@ -56,7 +56,7 @@ public final class FirebaseService extends IntentService
       countDownLatch.await(DOWNLOAD_CHALLENGES_WAIT_SEC, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       Log.e(TAG, e.toString());
-      Crashlytics.logException(e);
+      FirebaseCrashlytics.getInstance().recordException(e);
       Thread.currentThread().interrupt();
     }
   }
@@ -69,7 +69,7 @@ public final class FirebaseService extends IntentService
   @Override
   public void onAuthError(Exception e) {
     Log.e(TAG, e.toString());
-    Crashlytics.logException(e);
+    FirebaseCrashlytics.getInstance().recordException(e);
     if (receiver != null) {
       receiver.send(RESULT_CODE_ERROR, null);
     }
@@ -82,7 +82,7 @@ public final class FirebaseService extends IntentService
       @Override
       public void onError(Exception e) {
         Log.e(TAG, "Failed to load challenges", e);
-        Crashlytics.logException(e);
+        FirebaseCrashlytics.getInstance().recordException(e);
         if (receiver != null) {
           receiver.send(RESULT_CODE_ERROR, null);
         }

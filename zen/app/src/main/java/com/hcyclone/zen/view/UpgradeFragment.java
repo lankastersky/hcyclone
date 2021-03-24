@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
-import com.android.billingclient.api.BillingClient.BillingResponse;
+import com.android.billingclient.api.BillingClient.BillingResponseCode;
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
@@ -115,7 +115,7 @@ public final class UpgradeFragment extends AppCompatDialogFragment {
         Log.d(TAG, "Detached; skipping updating prices");
         return;
       }
-      if (responseCode == BillingResponse.OK
+      if (responseCode.getResponseCode() == BillingResponseCode.OK
           && skuDetailsList != null
           && !skuDetailsList.isEmpty()) {
 
